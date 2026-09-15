@@ -43,7 +43,7 @@ class Settings:
         self._lock = threading.RLock()
         self.revision = 0
         self.mode: str = "manual"                       # manual | auto
-        self.channel: str = "flights"                   # pinned channel in manual mode
+        self.channel: str = "flightwall"                # pinned channel in manual mode
         self.cycle: list[str] | None = None             # auto mode: channels to rotate; None = all loaded
         self.dwell_seconds: float = 20.0                # auto mode: time on each channel
         self.alerts: bool = True                        # auto mode: let priority>=20 spikes interrupt

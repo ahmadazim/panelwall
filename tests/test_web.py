@@ -88,7 +88,8 @@ def test_default_is_manual_and_channel_endpoint_pins(server, tmp_path):
     srv, settings, sched = server
     status, _, body = _get(srv, "/api/state")
     st = json.loads(body)
-    assert st["mode"] == "manual" and st["channel"] == "flights" and sched.pick(0.0).name == "flights"
+    assert st["mode"] == "manual" and st["channel"] == "flightwall"
+    assert sched.pick(0.0).name == "flights"                  # the pinned channel isn't loaded here -> first channel
     status, st = _post(srv, "/api/channel", {"channel": "mbta"})
     assert status == 200 and st["mode"] == "manual" and st["channel"] == "mbta"
     assert sched.pick(1.0).name == "mbta" and sched.pick(500.0).name == "mbta"

@@ -91,6 +91,20 @@ class ForecastConfig:
 
 
 @dataclass
+class FlightWallConfig:
+    """The FlightWall Widescreen replica card (channels/flightwall.py)."""
+    title: str = _env("PW_FW_TITLE", "airline")           # airline | flight   (row 1: 'Southwest Airlines' or 'WN 1187')
+    cycle_seconds: float = _env("PW_FW_CYCLE", 5.0)       # FlightWall app: 5 / 3 / 2 s per flight
+    units: str = _env("PW_FW_UNITS", "imperial")          # imperial (ft, kts, ft/m) | metric (m/km, kph, kph)
+    max_flights: int = 5                                  # cycle the nearest N; '+M more' beyond that
+    no_flights: str = _env("PW_FW_IDLE", "dots")          # dots | clock
+    clocks: list = field(default_factory=lambda: [("EST", "America/New_York")])   # up to 3 (label, IANA tz)
+    hour24: bool = True
+    show_seconds: bool = True
+    home_airport: str = _env("PW_HOME", "BOS")
+
+
+@dataclass
 class Config:
     display: DisplayConfig = field(default_factory=DisplayConfig)
     location: LocationConfig = field(default_factory=LocationConfig)
@@ -99,6 +113,7 @@ class Config:
     mbta: MbtaConfig = field(default_factory=MbtaConfig)
     sports: SportsConfig = field(default_factory=SportsConfig)
     forecast: ForecastConfig = field(default_factory=ForecastConfig)
+    flightwall: FlightWallConfig = field(default_factory=FlightWallConfig)
 
 
 CONFIG = Config()

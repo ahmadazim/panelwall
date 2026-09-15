@@ -1,0 +1,133 @@
+{
+ "_comment": "Case (c): seven airborne aircraft -> the card cycles the nearest 5 and shows '+2 more'.",
+ "ac": [
+  {
+   "hex": "a1b2c3",
+   "flight": "JBU1287 ",
+   "r": "N2044J",
+   "t": "A21N",
+   "desc": "AIRBUS A-321neo",
+   "alt_baro": 4250,
+   "gs": 242.1,
+   "track": 247.3,
+   "baro_rate": 2112,
+   "lat": 42.379,
+   "lon": -71.021,
+   "seen": 0.4
+  },
+  {
+   "hex": "4ca1d2",
+   "flight": "EIN138  ",
+   "r": "EI-LRB",
+   "t": "A21N",
+   "desc": "AIRBUS A-321neo",
+   "alt_baro": 3100,
+   "gs": 190.0,
+   "track": 40.0,
+   "baro_rate": 1408,
+   "lat": 42.35,
+   "lon": -71.03,
+   "seen": 0.6
+  },
+  {
+   "hex": "ac10ff",
+   "flight": "N741CG  ",
+   "r": "N741CG",
+   "t": "PC12",
+   "desc": "PILATUS PC-12",
+   "alt_baro": 2800,
+   "gs": 168.0,
+   "track": 96.0,
+   "baro_rate": -640,
+   "lat": 42.41,
+   "lon": -71.09,
+   "seen": 0.2
+  },
+  {
+   "hex": "a55555",
+   "flight": "SWA1187 ",
+   "r": "N734UQ",
+   "t": "B737",
+   "desc": "BOEING 737-700",
+   "alt_baro": 12500,
+   "gs": 330,
+   "track": 305,
+   "baro_rate": 1400,
+   "lat": 42.3,
+   "lon": -71.15,
+   "seen": 0.5
+  },
+  {
+   "hex": "a66666",
+   "flight": "DAL2314 ",
+   "r": "N835DN",
+   "t": "B739",
+   "desc": "BOEING 737-900",
+   "alt_baro": 6100,
+   "gs": 281,
+   "track": 215,
+   "baro_rate": 1856,
+   "lat": 42.33,
+   "lon": -71.12,
+   "seen": 0.5
+  },
+  {
+   "hex": "a77777",
+   "flight": "KAP1121 ",
+   "r": "N1213G",
+   "t": "C402",
+   "desc": "CESSNA 402",
+   "alt_baro": 1900,
+   "gs": 140,
+   "track": 120,
+   "baro_rate": -320,
+   "lat": 42.31,
+   "lon": -70.98,
+   "seen": 0.5
+  },
+  {
+   "hex": "a88888",
+   "flight": "AAL2570 ",
+   "r": "N123NN",
+   "t": "A321",
+   "desc": "AIRBUS A-321",
+   "alt_baro": 34000,
+   "gs": 462,
+   "track": 240,
+   "baro_rate": 0,
+   "lat": 42.5,
+   "lon": -71.2,
+   "seen": 0.5
+  }
+ ],
+ "_routes": [
+  [
+   "BOS",
+   "LAX"
+  ],
+  [
+   "DUB",
+   "BOS"
+  ],
+  [
+   "",
+   ""
+  ],
+  [
+   "OAK",
+   "SEA"
+  ],
+  [
+   "BOS",
+   "ATL"
+  ],
+  [
+   "BOS",
+   "ACK"
+  ],
+  [
+   "MCO",
+   "BOS"
+  ]
+ ]
+}

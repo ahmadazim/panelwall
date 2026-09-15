@@ -28,8 +28,8 @@ def _sink(args):
     return make_sink("sim", png_path=args.png, window=None if not args.no_window else False)
 
 
-DEFAULT_CHANNELS = ["flights", "radar", "silhouette", "mbta", "sports", "forecast"]
-AIRCRAFT_CHANNELS = {"flights", "radar", "silhouette"}
+DEFAULT_CHANNELS = ["flightwall", "flights", "radar", "silhouette", "mbta", "sports", "forecast"]
+AIRCRAFT_CHANNELS = {"flightwall", "flights", "radar", "silhouette"}
 
 
 def build_channels(names: list[str]):
@@ -42,7 +42,9 @@ def build_channels(names: list[str]):
         feed = AircraftFeed()
     out = []
     for name in names:
-        if name == "flights":
+        if name == "flightwall":
+            out.append(ch.FlightWallChannel(feed=feed))
+        elif name == "flights":
             out.append(ch.FlightsChannel(feed=feed))
         elif name == "radar":
             out.append(ch.RadarChannel(feed=feed))
@@ -95,15 +97,15 @@ def cmd_run(args):
 FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
 
 
-def fixture_aircraft(around=None):
-    """Aircraft from fixtures/bos_point.json, re-centred on `around` (lat, lon) if given.
+def fixture_aircraft(around=None, path: str = "bos_point.json"):
+    """Aircraft from a readsb-shaped fixture (+ `_routes` sidecar), re-centred on `around` (lat, lon).
 
-    The fixture is Boston traffic; when the configured location is elsewhere the
+    The fixtures are Boston traffic; when the configured location is elsewhere the
     positions are shifted so the radar scope still shows them in range.
     """
     from .data.adsb import parse_aircraft
 
-    fx = json.loads((FIXTURES / "bos_point.json").read_text())
+    fx = json.loads((FIXTURES / path).read_text())
     lat0, lon0 = 42.3601, -71.0589
     lat, lon = around or (lat0, lon0)
     raw = []
@@ -118,12 +120,12 @@ def fixture_aircraft(around=None):
     return acs
 
 
-def fixture_feed(n: int | None = None):
+def fixture_feed(n: int | None = None, path: str = "bos_point.json"):
     """A static AircraftFeed with the fixture traffic (first n aircraft if given)."""
     from .data.feed import AircraftFeed
 
     loc = CONFIG.location
-    acs = fixture_aircraft((loc.lat, loc.lon))
+    acs = fixture_aircraft((loc.lat, loc.lon), path)
     return AircraftFeed(static=acs if n is None else acs[:n])
 
 
@@ -133,6 +135,9 @@ def fixture_channel(name: str, **kw):
 
     if name == "flights":
         return ch.FlightsChannel(feed=fixture_feed())
+    if name == "flightwall":
+        case = kw.get("case") or "a"
+        return ch.FlightWallChannel(feed=fixture_feed(path=f"flightwall_{case}.json"))
     if name == "radar":
         return ch.RadarChannel(feed=fixture_feed())
     if name == "silhouette":
@@ -151,13 +156,15 @@ def fixture_channel(name: str, **kw):
     raise ValueError(f"no fixture demo for {name!r}")
 
 
-DEMO_CHANNELS = ["flights", "radar", "silhouette", "mbta", "sports", "forecast", "testpattern"]
+DEMO_CHANNELS = ["flightwall", "flights", "radar", "silhouette", "mbta", "sports", "forecast", "testpattern"]
 
 
 def cmd_demo(args):
     from .scheduler import Scheduler
 
     kw = {"view": args.view} if getattr(args, "view", None) else {}
+    if getattr(args, "case", None):
+        kw["case"] = args.case
     Scheduler([fixture_channel(args.channel, **kw)], _sink(args), args.fps).run(args.seconds)
 
 
@@ -186,7 +193,10 @@ def cmd_sheet(args):
     font = ImageFont.truetype(fonts.SMALL.path, 16)
     tiles = []
     for n in DEMO_CHANNELS:
-        if n == "forecast":
+        if n == "flightwall":
+            for case in "abcd":
+                tiles.append((f"flightwall (case {case})", led_image(render_channel_frame(n, case=case), scale)))
+        elif n == "forecast":
             for v in ("week", "hourly"):
                 tiles.append((f"forecast ({v})", led_image(render_channel_frame(n, view=v), scale)))
         else:
@@ -320,6 +330,9 @@ def main(argv=None):
         common(sp)
         if name == "forecast":
             sp.add_argument("--view", choices=["week", "hourly"], default=None, help="pin one view (default: alternate)")
+        if name == "flightwall":
+            sp.add_argument("--case", choices=["a", "b", "c", "d"], default="a",
+                            help="a: 3 flights with routes, b: private no route, c: 7 flights (+2 more), d: empty sky")
         sp.set_defaults(fn=cmd_demo, channel=name)
     sub.add_parser("sheet", help="render every channel's fixture demo to design/channels_sheet.png").set_defaults(fn=cmd_sheet)
     sub.add_parser("sprites", help="render every aircraft sprite to design/sprites_sheet.png").set_defaults(fn=cmd_sprites)

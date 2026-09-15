@@ -1,0 +1,61 @@
+{
+ "_comment": "Case (a): three airline flights with full routes. Same readsb shape as bos_point.json; _routes is the (origin, dest) sidecar.",
+ "ac": [
+  {
+   "hex": "a1b2c3",
+   "flight": "JBU1287 ",
+   "r": "N2044J",
+   "t": "A21N",
+   "desc": "AIRBUS A-321neo",
+   "alt_baro": 4250,
+   "gs": 242.1,
+   "track": 247.3,
+   "baro_rate": 2112,
+   "lat": 42.379,
+   "lon": -71.021,
+   "seen": 0.4
+  },
+  {
+   "hex": "4ca1d2",
+   "flight": "EIN138  ",
+   "r": "EI-LRB",
+   "t": "A21N",
+   "desc": "AIRBUS A-321neo",
+   "alt_baro": 3100,
+   "gs": 190.0,
+   "track": 40.0,
+   "baro_rate": 1408,
+   "lat": 42.35,
+   "lon": -71.03,
+   "seen": 0.6
+  },
+  {
+   "hex": "a3d4e5",
+   "flight": "UAL458  ",
+   "r": "N37273",
+   "t": "B738",
+   "desc": "BOEING 737-800",
+   "alt_baro": 8900,
+   "gs": 305.0,
+   "track": 268.0,
+   "baro_rate": 0,
+   "lat": 42.44,
+   "lon": -71.0,
+   "seen": 2.0
+  }
+ ],
+ "_routes": [
+  [
+   "BOS",
+   "LAX"
+  ],
+  [
+   "DUB",
+   "BOS"
+  ],
+  [
+   "BOS",
+   "ORD"
+  ]
+ ]
+}

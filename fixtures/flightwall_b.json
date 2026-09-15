@@ -1,0 +1,25 @@
+{
+ "_comment": "Case (b): one private aircraft, no route.",
+ "ac": [
+  {
+   "hex": "ac10ff",
+   "flight": "N741CG  ",
+   "r": "N741CG",
+   "t": "PC12",
+   "desc": "PILATUS PC-12",
+   "alt_baro": 2800,
+   "gs": 168.0,
+   "track": 96.0,
+   "baro_rate": -640,
+   "lat": 42.41,
+   "lon": -71.09,
+   "seen": 0.2
+  }
+ ],
+ "_routes": [
+  [
+   "",
+   ""
+  ]
+ ]
+}

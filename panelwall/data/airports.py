@@ -8,7 +8,7 @@ Loaded lazily on first use (~8,800 rows, a few ms).
 display_name() mimics the FlightWall's wording, verified against product photos:
   "Seattle-Tacoma International Airport" -> "Seattle-Tacoma Intl"
   "Detroit Metropolitan Wayne County Airport" -> "Detroit Metropolitan Wayne County"
-Rule: drop a trailing " Airport", International->Intl, Regional->Rgnl, Municipal->Muni,
+Rule: drop the word " Airport" (trailing or embedded), International->Intl, Regional->Rgnl, Municipal->Muni,
 en/em dashes -> "-". A few codes are overridden where OurAirports' current name is
 not what the photos show (OAK was renamed in 2025; DCA/DFW wording).
 
@@ -72,8 +72,7 @@ def lookup(iata: str | None) -> Airport | None:
 def shorten_name(name: str) -> str:
     """Apply the FlightWall wording rule to a full OurAirports name."""
     n = name.replace("\u2013", "-").replace("\u2014", "-").strip()
-    if n.endswith(" Airport"):
-        n = n[: -len(" Airport")]
+    n = n.replace(" Airport", "")            # trailing ("Dublin Airport") or embedded ("Amsterdam Airport Schiphol")
     for long, short in (("International", "Intl"), ("Regional", "Rgnl"), ("Municipal", "Muni")):
         n = n.replace(long, short)
     return n.strip()

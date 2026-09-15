@@ -64,10 +64,15 @@ class Frame:
         self.draw = ImageDraw.Draw(self.img)
 
     # ---- drawing helpers -------------------------------------------------
-    def text(self, x: int, y: int, s: str, font=None, fill=WHITE):
+    def text(self, x: int, y: int, s: str, font=None, fill=WHITE, max_w: int | None = None):
+        """Draw cached text. `max_w` clips the string to that many pixels (hard clip, no ellipsis)."""
         if not s:
             return
         tile = _TEXT_CACHE.get(s, font or fonts.SMALL, fill)
+        if max_w is not None and tile.width > max_w:
+            if max_w <= 0:
+                return
+            tile = tile.crop((0, 0, max_w, tile.height))
         self.img.paste(tile, (int(x), int(y)), tile)
 
     def text_right(self, x_right: int, y: int, s: str, font=None, fill=WHITE):
