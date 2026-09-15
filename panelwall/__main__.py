@@ -80,12 +80,15 @@ def fixture_channel(name: str):
         return ch.RadarChannel(feed=fixture_feed())
     if name == "silhouette":
         return ch.SilhouetteChannel(feed=fixture_feed(1))   # one aircraft -> the hero card shows
+    if name == "mbta":
+        from .data.mbta import MbtaFeed
+        return ch.MbtaChannel(feed=MbtaFeed(static=json.loads((FIXTURES / "mbta_red.json").read_text())))
     if name == "testpattern":
         return ch.TestPatternChannel()
     raise ValueError(f"no fixture demo for {name!r}")
 
 
-DEMO_CHANNELS = ["flights", "radar", "silhouette", "testpattern"]
+DEMO_CHANNELS = ["flights", "radar", "silhouette", "mbta", "testpattern"]
 
 
 def cmd_demo(args):

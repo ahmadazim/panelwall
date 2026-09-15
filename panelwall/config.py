@@ -43,11 +43,24 @@ class DataConfig:
 
 
 @dataclass
+class MbtaConfig:
+    # MBTA V3 API. Works with no key (20 req/min, we use 8); a free key raises the limit.
+    base: str = _env("PW_MBTA_BASE", "https://api-v3.mbta.com")
+    api_key: str = _env("MBTA_API_KEY", "")
+    route: str = _env("PW_MBTA_ROUTE", "Red")
+    home_stop: str = _env("PW_MBTA_STOP", "place-harsq")     # Harvard
+    branch: str = _env("PW_MBTA_BRANCH", "Braintree")        # Red Line forks after JFK/UMass
+    direction_names: tuple[str, str] = ("ASHMONT/BRAINTREE", "ALEWIFE")   # direction_id 0, 1
+    poll_seconds: float = 15.0
+
+
+@dataclass
 class Config:
     display: DisplayConfig = field(default_factory=DisplayConfig)
     location: LocationConfig = field(default_factory=LocationConfig)
     colorlight: ColorlightConfig = field(default_factory=ColorlightConfig)
     data: DataConfig = field(default_factory=DataConfig)
+    mbta: MbtaConfig = field(default_factory=MbtaConfig)
 
 
 CONFIG = Config()
