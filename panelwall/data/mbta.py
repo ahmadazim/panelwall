@@ -23,7 +23,6 @@ Everything network-facing is wrapped; a dead API yields None and sets
 from __future__ import annotations
 
 import json
-import threading
 import time
 import urllib.error
 import urllib.parse
@@ -32,6 +31,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 
 from ..config import CONFIG
+from .polling import Backoff, DemandPoller, retry_after_seconds
 
 # Red Line branches south of JFK/UMass. Drawing both on one horizontal strip is
 # impossible, so the channel picks one (CONFIG.mbta.branch).
@@ -147,6 +147,7 @@ class MbtaClient:
         self.api_key = api_key if api_key is not None else CONFIG.mbta.api_key
         self.timeout = timeout or CONFIG.data.http_timeout
         self.last_error: str | None = None
+        self.backoff = Backoff()
 
     def _get(self, path: str, params: dict) -> dict | None:
         url = f"{self.base}{path}?{urllib.parse.urlencode(params)}"
@@ -157,9 +158,14 @@ class MbtaClient:
             with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=self.timeout) as r:
                 doc = json.loads(r.read().decode("utf-8", "replace"))
             self.last_error = None
+            self.backoff.reset()
             return doc
         except urllib.error.HTTPError as e:
-            self.last_error = f"HTTP {e.code} {path}"
+            if e.code == 429:
+                wait = self.backoff.note(retry_after_seconds(e.headers))
+                self.last_error = f"HTTP 429 rate limited by MBTA; retrying in {int(wait)} s"
+            else:
+                self.last_error = f"HTTP {e.code} {path}"
         except Exception as e:  # DNS, timeout, bad JSON
             self.last_error = f"{type(e).__name__}: {e}"
         return None
@@ -174,7 +180,7 @@ class MbtaClient:
         return self._get("/predictions", {"filter[stop]": stop, "filter[route]": route, "sort": "arrival_time"})
 
 
-class MbtaFeed:
+class MbtaFeed(DemandPoller):
     """Background poller. Stops are fetched once an hour (they don't move);
     vehicles + predictions every CONFIG.mbta.poll_seconds.
 
@@ -192,7 +198,7 @@ class MbtaFeed:
         self.updated_at = 0.0
         self._stops_at = 0.0
         self._fixed_now: datetime | None = None
-        self._stop = threading.Event()
+        self._init_demand()
         self._thread = None
         if static is not None:
             self._ingest(static.get("stops"), static.get("vehicles"), static.get("predictions"))
@@ -218,6 +224,7 @@ class MbtaFeed:
             self.predictions = parse_predictions(preds_doc)
 
     def _poll_loop(self):
+        self._wait_wanted()
         while not self._stop.is_set():
             t = time.time()
             stops_doc = None
@@ -225,15 +232,15 @@ class MbtaFeed:
                 stops_doc = self.client.stops(self.route)
                 if stops_doc is not None:
                     self._stops_at = t
-            veh = self.client.vehicles(self.route)
-            preds = self.client.predictions(self.home, self.route)
+            veh = self.client.vehicles(self.route) if self.client.backoff.remaining() == 0 else None
+            preds = self.client.predictions(self.home, self.route) if self.client.backoff.remaining() == 0 else None
             self._ingest(stops_doc, veh, preds)
             if veh is not None or preds is not None:
                 self.updated_at = time.time()
-            self._stop.wait(CONFIG.mbta.poll_seconds)
+            self._sleep_or_pause(max(CONFIG.mbta.poll_seconds, self.client.backoff.remaining()))
 
     def status(self) -> dict:
-        return {"updated_at": self.updated_at or None, "last_error": self.last_error,
+        return {"updated_at": self.updated_at or None, "last_error": self.last_error, "paused": self.paused,
                 "stops": len(self.stops), "vehicles": len(self.vehicles), "predictions": len(self.predictions)}
 
     def close(self):

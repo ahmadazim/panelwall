@@ -208,8 +208,10 @@ panelwall/
                        POST /api/channels, /api/show, /api/brightness, /api/location. Port 80 -> 8080.
   glyphs.py            shared pixel art: draw_glyph(d, sun|cloud|partly|rain|snow|storm|fog, x, y, scale 1|2) 12x10,
                        team_mark(d, x, y, color, alt) 8x8 two-tone badge, hex_color(). Used by channels AND design/mockups2.py
+    polling.py         DemandPoller mixin (register/wanted/paused, pause while no active channel) + Backoff
   channels/
-    base.py            Channel: tick(dt), priority() (<=0 = don't show), render(frame), status(), close()
+    base.py            Channel: tick(dt), priority() (<=0 = don't show), render(frame), status(), close();
+                       `active` flag set by the scheduler each frame (feeds pause when False)
     sports.py          SportsChannel — "BOSTON TONIGHT": featured game card left (live > next > last final; badges,
                        LARGE scores right-aligned at x=92, MLB bases+outs / NFL down&distance+possession) + one row per
                        other tracked team right (label + <=13-char status). prio 25 (15 s after a score) / 12 live /
@@ -354,7 +356,15 @@ coordinates from the reply drive the silhouette's progress dot. Politeness: at m
 lookups per poll (closest first), 1 h cache, 6 h negative cache, N-numbers never asked.
 `PW_ROUTES_BASE=""` disables lookups.
 
-**Rate limiting (hit on 15 Sep):** adsb.lol returned `429 Too Many Requests` (nginx) after
+**Rate limiting, round 2 (15 Sep ~01:30, Ahmad: "I keep getting rate limited by all these APIs"):**
+polling is now demand-driven - `data/polling.py`. Each feed knows its channels (`register`);
+the scheduler marks a channel `active` when it can be shown (manual: pinned; auto: cycle members;
+plus forced) and a feed with no active channel PAUSES (no requests at all, resumes within 2 s of
+being selected). Defaults slowed: adsb 15 s, adsbdb 2 lookups/poll, MBTA 30 s, ESPN 60 s live /
+10 min idle, Open-Meteo 30 min. MBTA/ESPN/Open-Meteo clients gained the same Retry-After /
+exponential 429 backoff adsb.lol already had (ESPN also on transient 403).
+
+**Rate limiting, round 1 (hit on 15 Sep):** adsb.lol returned `429 Too Many Requests` (nginx) after
 roughly ten minutes at a 5 s poll. Its README says limits are "dynamic based on load".
 Poll is now 10 s (`PW_POLL_SECONDS`); on 429 the client honours `Retry-After` or backs off
 15 s → 30 → 60 → … 5 min, keeps the last good aircraft list, and reports

@@ -19,7 +19,6 @@ Parsing is per-event defensive: a malformed event is skipped, never the whole re
 from __future__ import annotations
 
 import json
-import threading
 import time
 import urllib.error
 import urllib.request
@@ -27,6 +26,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 
 from ..config import CONFIG
+from .polling import Backoff, DemandPoller, retry_after_seconds
 
 SPORT_OF = {"mlb": "baseball", "nfl": "football", "nba": "basketball", "nhl": "hockey",
             "wnba": "basketball", "mls": "soccer", "ncaaf": "football", "ncaab": "basketball"}
@@ -205,6 +205,7 @@ class EspnClient:
         self.base = (base or CONFIG.sports.base).rstrip("/")
         self.timeout = timeout or CONFIG.data.http_timeout
         self.last_error: str | None = None
+        self.backoff = Backoff()
 
     def url(self, league: str, start: datetime | None = None, end: datetime | None = None) -> str:
         sport = SPORT_OF.get(league, league)
@@ -220,15 +221,20 @@ class EspnClient:
             with urllib.request.urlopen(req, timeout=self.timeout) as r:
                 doc = json.loads(r.read().decode("utf-8", "replace"))
             self.last_error = None
+            self.backoff.reset()
             return doc
         except urllib.error.HTTPError as e:
-            self.last_error = f"HTTP {e.code} {league} scoreboard"
+            if e.code in (429, 403):      # ESPN answers 403 transiently when it is unhappy
+                wait = self.backoff.note(retry_after_seconds(e.headers))
+                self.last_error = f"HTTP {e.code} from ESPN; retrying in {int(wait)} s"
+            else:
+                self.last_error = f"HTTP {e.code} {league} scoreboard"
         except Exception as e:
             self.last_error = f"{type(e).__name__}: {e}"
         return None
 
 
-class SportsFeed:
+class SportsFeed(DemandPoller):
     """Background poller for every tracked league. Snapshot: `games` = tracked games
     (any competitor is one of CONFIG.sports.teams), sorted by start. `event_until`
     is set 15 s into the future when a tracked team's score changes."""
@@ -244,7 +250,7 @@ class SportsFeed:
         self.event_game: str | None = None
         self._scores: dict[tuple[str, str], int] = {}
         self._fixed_now: datetime | None = None
-        self._stop = threading.Event()
+        self._init_demand()
         self._thread = None
         if static is not None:
             self._fixed_now = datetime.fromisoformat(static["_now"]) if static.get("_now") else None
@@ -311,18 +317,22 @@ class SportsFeed:
 
     def _poll_loop(self):
         cfg = CONFIG.sports
+        self._wait_wanted()
         while not self._stop.is_set():
             today = datetime.now().astimezone().date()
             start = datetime.combine(today - timedelta(days=1), datetime.min.time())
             end = datetime.combine(today + timedelta(days=cfg.days_ahead), datetime.min.time())
-            docs = {lg: self.client.scoreboard(lg, start, end) for lg in self.leagues()}
+            docs = {}
+            for lg in self.leagues():
+                docs[lg] = self.client.scoreboard(lg, start, end) if self.client.backoff.remaining() == 0 else None
             if any(d is not None for d in docs.values()):
                 self._ingest(docs)
                 self.updated_at = time.time()
-            self._stop.wait(cfg.poll_live_seconds if self.any_live() else cfg.poll_idle_seconds)
+            interval = cfg.poll_live_seconds if self.any_live() else cfg.poll_idle_seconds
+            self._sleep_or_pause(max(interval, self.client.backoff.remaining()))
 
     def status(self) -> dict:
-        return {"updated_at": self.updated_at or None, "last_error": self.last_error,
+        return {"updated_at": self.updated_at or None, "last_error": self.last_error, "paused": self.paused,
                 "games": len(self.games), "live": self.any_live()}
 
     def close(self):

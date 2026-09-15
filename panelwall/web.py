@@ -428,7 +428,7 @@ function render() {
     </div>` : `
     <div class="row pick ${c.name === s.channel ? 'on' : ''}" data-pick="${c.name}">
       <div><div class="name">${c.name}</div>
-           <div class="meta">${c.status.last_error ? '<span class="err">error</span>' : 'data ' + ago(c.status.updated_at)}</div></div>
+           <div class="meta">${c.status.last_error ? '<span class="err">error</span>' : c.status.paused ? 'paused, not on screen' : 'data ' + ago(c.status.updated_at)}</div></div>
       <div class="radio"></div>
     </div>`).join('');
   if (!dirtyBright) { $('bright').value = s.brightness.configured; }
@@ -441,7 +441,7 @@ function render() {
   $('status').innerHTML = s.channels.map(c => `
     <div class="row"><div><div class="name">${c.name}</div>
       <div class="meta">${Object.entries(c.status).filter(([k]) => !['last_error','updated_at'].includes(k)).map(([k,v]) => `${k} ${v}`).join(' · ') || ''}</div>
-      <div class="meta">${c.status.last_error ? '<span class="err">' + c.status.last_error + '</span>' : 'last fetch ' + ago(c.status.updated_at)}</div></div></div>`).join('')
+      <div class="meta">${c.status.last_error ? '<span class="err">' + c.status.last_error + '</span>' : (c.status.paused ? 'paused (not on screen) · ' : '') + 'last fetch ' + ago(c.status.updated_at)}</div></div></div>`).join('')
     + `<div class="row"><div class="meta">settings: ${s.settings_path}${s.settings_error ? ' <span class="err">' + s.settings_error + '</span>' : ''} · ${s.frames} frames</div></div>`;
 }
 

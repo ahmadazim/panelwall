@@ -45,6 +45,7 @@ class FlightsChannel(Channel):
         # Passing client/static builds a private feed - kept for the old call sites.
         self.feed = feed or AircraftFeed(client=client, poll_seconds=poll_seconds, static=static)
         self._owns_feed = feed is None
+        self.feed.register(self)
         self.t = 0.0
 
     # ---- data --------------------------------------------------------------

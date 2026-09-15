@@ -137,6 +137,7 @@ class FlightWallChannel(Channel):
     def __init__(self, feed: AircraftFeed | None = None, static: list[Aircraft] | None = None):
         self.feed = feed or AircraftFeed(static=static)
         self._owns_feed = feed is None
+        self.feed.register(self)
         self.cfg = CONFIG.flightwall
         self.t = 0.0
         self.order: list[str] = []          # hex codes, nearest first, stable while the set is unchanged

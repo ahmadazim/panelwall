@@ -18,7 +18,6 @@ naive datetimes and compared with a naive local 'now'.
 from __future__ import annotations
 
 import json
-import threading
 import time
 import urllib.error
 import urllib.parse
@@ -27,6 +26,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 
 from ..config import CONFIG
+from .polling import Backoff, DemandPoller, retry_after_seconds
 
 # WMO weather_code -> (glyph name, word)
 _WMO = [
@@ -159,6 +159,7 @@ class OpenMeteoClient:
         self.base = (base or CONFIG.forecast.base).rstrip("/")
         self.timeout = timeout or CONFIG.data.http_timeout
         self.last_error: str | None = None
+        self.backoff = Backoff()
 
     def url(self, lat: float, lon: float) -> str:
         q = {"latitude": f"{lat:.4f}", "longitude": f"{lon:.4f}",
@@ -174,15 +175,20 @@ class OpenMeteoClient:
             with urllib.request.urlopen(req, timeout=self.timeout) as r:
                 doc = json.loads(r.read().decode("utf-8", "replace"))
             self.last_error = None
+            self.backoff.reset()
             return doc
         except urllib.error.HTTPError as e:
-            self.last_error = f"HTTP {e.code} open-meteo"
+            if e.code == 429:
+                wait = self.backoff.note(retry_after_seconds(e.headers))
+                self.last_error = f"HTTP 429 rate limited by Open-Meteo; retrying in {int(wait)} s"
+            else:
+                self.last_error = f"HTTP {e.code} open-meteo"
         except Exception as e:
             self.last_error = f"{type(e).__name__}: {e}"
         return None
 
 
-class ForecastFeed:
+class ForecastFeed(DemandPoller):
     """Polls every CONFIG.forecast.poll_seconds. `forecast` is replaced whole on success.
     `alert_until` is set 60 s ahead when the current weather_code changes INTO precipitation."""
 
@@ -195,7 +201,7 @@ class ForecastFeed:
         self.alert_until = 0.0
         self._last_code: int | None = None
         self._fixed_now: datetime | None = None
-        self._stop = threading.Event()
+        self._init_demand()
         self._thread = None
         if static is not None:
             self._fixed_now = _dt(static.get("_now"))
@@ -223,17 +229,18 @@ class ForecastFeed:
         self.forecast = fc
 
     def _poll_loop(self):
+        self._wait_wanted()
         while not self._stop.is_set():
             loc = CONFIG.location
             doc = self.client.fetch(loc.lat, loc.lon)
             if doc is not None:
                 self._ingest(doc)
                 self.updated_at = time.time()
-            self._stop.wait(CONFIG.forecast.poll_seconds)
+            self._sleep_or_pause(max(CONFIG.forecast.poll_seconds, self.client.backoff.remaining()))
 
     def status(self) -> dict:
         fc = self.forecast
-        return {"updated_at": self.updated_at or None, "last_error": self.last_error,
+        return {"updated_at": self.updated_at or None, "last_error": self.last_error, "paused": self.paused,
                 "temp": fc.temp if fc else None, "code": fc.code if fc else None, "alert": time.time() < self.alert_until}
 
     def close(self):

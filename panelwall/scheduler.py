@@ -105,8 +105,22 @@ class Scheduler:
         return showable[0]
 
     # ---- one frame -------------------------------------------------------------
+    def needed(self) -> set[str]:
+        """Channels that could be shown right now; their feeds keep polling, the others pause."""
+        s = self.settings
+        if s is None:
+            return {c.name for c in self.channels}
+        out = {s.forced()} if s.forced() else set()
+        if s.mode == "manual":
+            out.add(s.channel if s.channel in self.by_name else (self.channels[0].name if self.channels else ""))
+        else:
+            out |= {c.name for c in self._cycle()}
+        return out
+
     def step(self, frame: Frame, now: float, dt: float) -> np.ndarray:
+        needed = self.needed()
         for ch in self.channels:
+            ch.active = ch.name in needed
             ch.tick(dt)
         ch = self.pick(now)
         if ch is not self.current:

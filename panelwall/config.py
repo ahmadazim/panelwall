@@ -23,9 +23,9 @@ class DisplayConfig:
 class LocationConfig:
     # Where the display physically is. Used for "what's overhead" queries.
     # Default: downtown Boston. Replace with your apartment's coordinates.
-    lat: float = _env("PW_LAT", 40.38902863041299)
-    lon: float = _env("PW_LON", -75.12736827681987)
-    radius_nm: float = _env("PW_RADIUS_NM", 50.0)   # look this far around you
+    lat: float = _env("PW_LAT", 40.7128)
+    lon: float = _env("PW_LON", -74.0060)
+    radius_nm: float = _env("PW_RADIUS_NM", 250.0)   # look this far around you
     home_airport: str = "BOS"
 
 
@@ -37,9 +37,9 @@ class ColorlightConfig:
 @dataclass
 class DataConfig:
     adsb_base: str = _env("PW_ADSB_BASE", "https://api.adsb.lol")
-    poll_seconds: float = _env("PW_POLL_SECONDS", 10.0)   # adsb.lol 429s when polled harder; FlightWall refreshes ~30 s
+    poll_seconds: float = _env("PW_POLL_SECONDS", 15.0)   # adsb.lol 429s when polled harder; feeds pause when their panel is off screen
     routes_base: str = _env("PW_ROUTES_BASE", "https://api.adsbdb.com")   # "" disables route lookups
-    route_lookups_per_poll: int = 3      # be polite to adsbdb: a busy sky fills in over a few polls
+    route_lookups_per_poll: int = 2      # be polite to adsbdb: a busy sky fills in over a few polls
     route_cache_seconds: float = 3600.0  # origin/destination rarely changes mid-flight
     http_timeout: float = 6.0
 
@@ -53,7 +53,7 @@ class MbtaConfig:
     home_stop: str = _env("PW_MBTA_STOP", "place-harsq")     # Harvard
     branch: str = _env("PW_MBTA_BRANCH", "Braintree")        # Red Line forks after JFK/UMass
     direction_names: tuple[str, str] = ("ASHMONT/BRAINTREE", "ALEWIFE")   # direction_id 0, 1
-    poll_seconds: float = 15.0
+    poll_seconds: float = _env("PW_MBTA_POLL", 30.0)      # 2 requests per poll -> 4/min, well under the keyless 20/min
 
 
 def _teams(default):
@@ -77,8 +77,8 @@ class SportsConfig:
     city: str = _env("PW_CITY", "BOSTON")
     teams: list = field(default_factory=lambda: _teams([
         ("mlb", "BOS", "SOX"), ("nfl", "NE", "PATS"), ("nba", "BOS", "CELTS"), ("nhl", "BOS", "B'S")]))
-    poll_live_seconds: float = 30.0      # while a tracked game is in progress
-    poll_idle_seconds: float = 300.0
+    poll_live_seconds: float = 60.0      # while a tracked game is in progress (one request per league)
+    poll_idle_seconds: float = 600.0
     days_ahead: int = 7                  # scoreboard window: yesterday .. today+days_ahead
 
 
@@ -86,7 +86,7 @@ class SportsConfig:
 class ForecastConfig:
     base: str = _env("PW_METEO_BASE", "https://api.open-meteo.com")
     timezone: str = _env("PW_TZ", "America/New_York")
-    poll_seconds: float = 900.0
+    poll_seconds: float = 1800.0         # forecasts don't change faster than this
     view_seconds: float = 20.0           # WEEK <-> HOURLY alternation
 
 

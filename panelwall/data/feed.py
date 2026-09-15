@@ -18,14 +18,14 @@ demos use.
 
 from __future__ import annotations
 
-import threading
 import time
 
 from ..config import CONFIG
 from .adsb import AdsbClient, Aircraft
+from .polling import DemandPoller
 
 
-class AircraftFeed:
+class AircraftFeed(DemandPoller):
     def __init__(self, client: AdsbClient | None = None, poll_seconds: float | None = None,
                  static: list[Aircraft] | None = None):
         self.client = client or AdsbClient()
@@ -33,7 +33,7 @@ class AircraftFeed:
         self.static = static is not None
         self.aircraft: list[Aircraft] = [a for a in (static or []) if not a.on_ground]
         self.updated_at = time.time() if self.static else 0.0
-        self._stop = threading.Event()
+        self._init_demand()
         self._thread = None
         if not self.static:
             self._thread = threading.Thread(target=self._poll_loop, daemon=True, name="adsb-poll")
@@ -48,6 +48,7 @@ class AircraftFeed:
         return CONFIG.location.radius_nm
 
     def _poll_loop(self):
+        self._wait_wanted()                          # don't spend a request on a panel nobody is looking at
         while not self._stop.is_set():
             loc = CONFIG.location  # re-read each time: the control server may move it
             acs = self.client.nearby(loc.lat, loc.lon, loc.radius_nm)
@@ -55,10 +56,11 @@ class AircraftFeed:
                 self.aircraft = [a for a in acs if not a.on_ground]
                 self.updated_at = time.time()
             # after a 429 the client asks us to wait longer than the normal poll
-            self._stop.wait(max(self.poll, self.client.backoff_until - time.time()))
+            self._sleep_or_pause(max(self.poll, self.client.backoff_until - time.time()))
 
     def status(self) -> dict:
-        return {"updated_at": self.updated_at or None, "last_error": self.last_error, "count": len(self.aircraft)}
+        return {"updated_at": self.updated_at or None, "last_error": self.last_error, "count": len(self.aircraft),
+                "paused": self.paused}
 
     def close(self):
         self._stop.set()

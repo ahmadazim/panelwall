@@ -63,6 +63,7 @@ class MbtaChannel(Channel):
     def __init__(self, feed: MbtaFeed | None = None, static: dict | None = None):
         self.feed = feed or MbtaFeed(static=static)
         self._owns_feed = feed is None
+        self.feed.register(self)
         self.t = 0.0
 
     def status(self) -> dict:

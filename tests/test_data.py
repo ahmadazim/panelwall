@@ -83,10 +83,14 @@ def test_routes_are_throttled_and_cached(monkeypatch):
     acs = [adsb.parse_aircraft({"hex": f"h{i}", "flight": f"JBU{100+i} ", "lat": 42.4, "lon": -71.0, "alt_baro": 5000}, 42.36, -71.06) for i in range(5)]
     acs.append(adsb.parse_aircraft({"hex": "pvt", "flight": "N741CG", "lat": 42.4, "lon": -71.0, "alt_baro": 3000}, 42.36, -71.06))
     c._attach_routes(acs)
-    assert len(seen) == CONFIG.data.route_lookups_per_poll                 # polite: 3 lookups per poll
+    per_poll = CONFIG.data.route_lookups_per_poll
+    assert len(seen) == per_poll == 2                                      # polite: 2 lookups per poll
     assert acs[0].route == "BOS>LAX" and acs[0].extra["route_pos"] == ((42.36, -71.01), (33.94, -118.41))
     assert acs[4].route == ""                                              # not yet looked up
     assert not any(u.endswith("N741CG") for u in seen)                     # N-numbers are never asked
     seen.clear()
     c._attach_routes(acs)
-    assert len(seen) == 2 and acs[4].route == "BOS>LAX"                    # the rest fill in, cache hits cost nothing
+    assert len(seen) == 2 and acs[3].route == "BOS>LAX" and acs[4].route == ""   # cache hits cost nothing
+    seen.clear()
+    c._attach_routes(acs)
+    assert len(seen) == 1 and acs[4].route == "BOS>LAX"                    # the last one fills in

@@ -46,6 +46,7 @@ class ForecastChannel(Channel):
     def __init__(self, feed: ForecastFeed | None = None, static: dict | None = None, view: str | None = None):
         self.feed = feed or ForecastFeed(static=static)
         self._owns_feed = feed is None
+        self.feed.register(self)
         self.t = 0.0
         self.fixed_view = view          # demo --view; None = alternate
         self.view_seconds = CONFIG.forecast.view_seconds

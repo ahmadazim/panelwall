@@ -86,8 +86,9 @@ All optional. The app runs with none of them set.
 | `PW_LAT`, `PW_LON` | Doylestown PA (edit `config.py` for Boston) | where the display is |
 | `PW_RADIUS_NM` | `50` | how far around you to look (8 is right for an apartment near BOS) |
 | `PW_ADSB_BASE` | `https://api.adsb.lol` | readsb-style aircraft API; `https://api.airplanes.live` has the same shape |
-| `PW_POLL_SECONDS` | `10` | aircraft poll interval. adsb.lol sent 429s at 5 s; the client backs off automatically on 429 |
-| `PW_ROUTES_BASE` | `https://api.adsbdb.com` | origin/destination lookups per callsign (3 per poll, cached 1 h). Set to `""` to disable |
+| `PW_POLL_SECONDS` | `15` | aircraft poll interval. adsb.lol sent 429s at 5 s; the client backs off automatically on 429 |
+| `PW_ROUTES_BASE` | `https://api.adsbdb.com` | origin/destination lookups per callsign (2 per poll, cached 1 h). Set to `""` to disable |
+| `PW_MBTA_POLL` | `30` | MBTA poll interval (2 requests per poll) |
 | `PW_IFACE` | `eth0` | interface cabled to the Colorlight |
 | `PW_SETTINGS` | `~/.panelwall/settings.json` | where phone-UI settings persist |
 | `MBTA_API_KEY` | unset | **optional.** Free key from api-v3.mbta.com raises the rate limit from 20 to 1000 req/min; we use 8/min. Nothing is disabled without it. |
@@ -105,6 +106,13 @@ is per-event defensive, so a shape change degrades to "NO GAMES" rather than a c
 
 Values saved from the phone UI (location, radius, brightness, quiet hours, enabled
 channels) override these at startup.
+
+**Polling is demand-driven.** A feed only polls while a panel that uses it can be shown:
+the pinned panel in manual mode, the ticked panels in auto mode. Everything else is paused
+(the phone UI says "paused, not on screen") and resumes within 2 s of being selected.
+Defaults: aircraft 15 s, MBTA 30 s, ESPN 60 s during a game / 10 min otherwise, forecast
+30 min. Every client backs off on HTTP 429 (Retry-After if sent, else 15 s doubling to
+5 min). Never run two `run` instances at once; they share your IP's quota.
 
 ## Control it from your phone
 
