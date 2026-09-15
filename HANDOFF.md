@@ -169,38 +169,69 @@ Power budget: panels ≈ 2.4 A each at full white on a Colorlight → ~19 A wors
 
 ## 4. Software — the `panelwall` package (this repo)
 
-Python 3.11+, deps: numpy, pillow (+ pygame on the Mac for the live window; pytest).
+Python 3.11+, deps: numpy, pillow (+ pygame on the Mac for the live window; pytest). No
+other third-party packages: the control server is `http.server`.
 Tested on the Mac via `.venv`; **Ahmad sometimes runs from his conda `tf` env by mistake** —
 if a module is "missing", that's why.
 
 ```
 panelwall/
-  __main__.py          CLI: run | demo | test | probe
+  __main__.py          CLI: run [--channels a,b --port N --no-web] | test | probe |
+                       demo-{flights,radar,silhouette,mbta,testpattern} | sheet | sprites
+                       fixture_channel(name) builds any channel from fixtures/ (used by demos, sheet, tests)
   config.py            DisplayConfig(256x64, fps 20, brightness 0xBF)
                        LocationConfig(lat, lon, radius_nm) — env PW_LAT / PW_LON / PW_RADIUS_NM
                        ColorlightConfig(iface='eth0')  DataConfig(adsb_base, poll 5 s, route cache 1 h)
+                       MbtaConfig(route Red, home place-harsq, branch Braintree, MBTA_API_KEY optional, poll 15 s)
+  settings.py          Settings: what the phone UI changes (enabled channels, brightness, quiet hours,
+                       location, forced channel). Persists to ~/.panelwall/settings.json (PW_SETTINGS);
+                       loaded at startup and pushed into CONFIG.location. Web thread writes, scheduler reads.
   framebuffer.py       Frame = PIL RGB 256x64 + drawing helpers; _TextCache (see perf note)
-  fonts.py             SMALL = Silkscreen 8px (5px caps, ~6px advance, ~42 chars/line)
-                       MEDIUM = Press Start 2P 8px (8x8)   LARGE = Press Start 2P 16px
-  scheduler.py         each frame: tick all channels, pick max priority(), render, sink.show()
+  fonts.py             SMALL = Silkscreen 8px (5px caps, ~6px advance, ~42 chars/line; NOTE: drawn at y it
+                       lights rows y+4..y+8)   MEDIUM = Press Start 2P 8px (8x8)   LARGE = Press Start 2P 16px
+  scheduler.py         each frame: tick all channels, pick (forced > higher priority preempts unless it left
+                       the screen <8 s ago > equal priorities rotate every 20 s), render, 300 ms wipe on
+                       switch, sink.show(). Applies Settings.effective_brightness() once a minute.
+                       `latest` (last frame) and `current_name` are read by the web server.
+  sprites.py           procedural side-profile aircraft sprites: SpriteParams(length, height, engines,
+                       engine_pos wing|tail|nose, prop, tail conventional|t_tail, winglets, high_wing, kind)
+                       + TYPE_PARAMS for ~130 ICAO types + AIRLINE_COLORS (tail/stripe). sprite_for() cached.
+  web.py               ControlServer: GET / (inline mobile UI, iOS home-screen installable), /api/state,
+                       /preview.png (led_image 3x, <=1/s), /manifest.webmanifest, /icon.png;
+                       POST /api/channels, /api/show, /api/brightness, /api/location. Port 80 -> 8080.
   channels/
-    base.py            Channel: tick(dt), priority() (<=0 = don't show), render(frame), close()
-    flights.py         FlightsChannel — the FlightWall replica (layout below)
+    base.py            Channel: tick(dt), priority() (<=0 = don't show), render(frame), status(), close()
+    flights.py         FlightsChannel — the FlightWall replica (layout below). prio 10 / 1
+    radar.py           RadarChannel — 64x64 scope left (rings 1/3-2/3-full, sweep 4 s, blips colored by
+                       altitude <3000 amber <10000 green else cyan), list of 4 right. prio 10 / 1
+    silhouette.py      SilhouetteChannel — closest aircraft hero card: sprite, airline+flight, ORIGIN -o-> DEST
+                       (dot = great-circle fraction flown, data/airports.py), alt/spd/phase, hdg/reg/type.
+                       prio 20 when exactly 1 aircraft; 25 for 8 s when a NEW closest appears ("detail"); else 0
+    mbta.py            MbtaChannel — Red Line strip (stations spaced evenly, labels alternate above/below,
+                       home amber, trains as arrows N above / S below the line) + 2 arrival rows. prio 5
     testpattern.py     panel numbers 1–8 + RGB bars + origin marker + moving dot; for bring-up
   sinks/
-    base.py            Sink.show(np.ndarray HxWx3 uint8 RGB)
-    simulator.py       pygame window (Mac) or PNG every 10 frames; prints its mode at startup
+    base.py            Sink.show(np.ndarray HxWx3 uint8 RGB), set_brightness(level)
+    simulator.py       pygame window (Mac) or PNG every 10 frames; prints its mode at startup; led_image()
     colorlight.py      ColorlightSink + pure packet builders (protocol in §5)
   data/
     adsb.py            AdsbClient (adsb.lol), Aircraft dataclass, parse_aircraft, parse_route
+    feed.py            AircraftFeed — ONE background poller shared by flights/radar/silhouette (never poll twice)
+    mbta.py            MbtaClient + pure parsers (parse_stops/vehicles/predictions, select_branch, upcoming),
+                       MbtaFeed poller (stops hourly, vehicles+predictions every 15 s), ABBREV table
     airlines.py        ICAO operator → (IATA, name): JBU→(B6, JETBLUE). ~60 carriers
     aircraft_types.py  ICAO type → ≤10-char name: A21N→A321NEO. ~170 types incl. GA
+    airports.py        IATA → (lat, lon) for ~150 airports; route_progress() for the silhouette dot
 assets/fonts/          PressStart2P.ttf, Silkscreen.ttf (OFL)
 fixtures/bos_point.json  hand-built readsb-shaped Boston traffic + `_routes` sidecar (test only)
-tests/                 test_colorlight.py (byte-level), test_data.py — 10 tests, all pass
+fixtures/mbta_red.json   trimmed LIVE capture of the MBTA V3 API (stops, vehicles+included, predictions), 14 Sep
+design/                led_mockups.py + led_layout_ideas.png (the 6 mockups; A, D, F deliberately unbuilt)
+                       channels_sheet.png (`sheet`), sprites_sheet.png (`sprites`) — regenerate, don't hand-edit
+tests/                 test_colorlight (bytes), test_data, test_radar, test_sprites, test_mbta, test_scheduler,
+                       test_web (real HTTP against a ControlServer on port 0) — 47 tests, all pass
 ```
 
-Run `python -m pytest -q` (or the ad-hoc runner if pytest is missing).
+Run `python -m pytest -q`.
 
 ### FlightsChannel layout (256 × 64)
 
@@ -215,14 +246,16 @@ Ground aircraft (`alt_baro == "ground"`) are filtered out. Sorted by distance.
 Empty state: "NO AIRCRAFT OVERHEAD / WITHIN n NM" or red "NO DATA - CHECK NETWORK".
 The header separator line was removed (looked like a glitch on the dot grid) — don't re-add.
 
+The other channels' layouts are documented in their module docstrings (row-exact). See
+`design/channels_sheet.png` for all five side by side.
+
 ### Performance note (important on the Pi)
 
 Pillow re-rasterizes text through FreeType on every `draw.text` (~1.4 ms each). The first
 version took 30 ms/frame; **`_TextCache` in framebuffer.py** caches rendered (string, font,
 color) tiles → **0.76 ms/frame** warm, including packetization. Always draw text through
-`Frame.text/text_right/text_center`, never `frame.draw.text` directly.
-
----
+`Frame.text/text_right/text_center`, never `frame.draw.text`. Sprites are cached per
+(type, airline) in `sprites.py`; the radar sweep is ~30 `draw.line` calls, negligible.
 
 ## 5. Colorlight 5A-75B protocol (implemented in `sinks/colorlight.py`, unit-tested)
 
@@ -311,21 +344,38 @@ protocol. Step 6 isolates the first two; step 8 isolates the third.
 
 ## 8. Immediate next steps (in order)
 
+Done on 14–15 Sep (Mac, all offline-verified via fixtures + pytest, live-verified where noted):
+Radar, Silhouette (+ sprites), MBTA channels; rotation scheduler with hold/wipe/quiet hours;
+phone control server; `sheet` / `sprites` review renders. Departures, Now Playing, Ambient
+remain unbuilt by design — their mockups in `design/` are untouched.
+
 1. Ahmad to run `probe --routes <airline callsigns>` on the Mac and paste the raw reply → fix
-   `parse_route` if needed.
+   `parse_route` if needed. (Still open. Until then ROUTE shows `---` and the silhouette's
+   progress dot sits centred with `---` for origin/dest.)
 2. Verify `netplan-eth0` autoconnect is off on the Pi.
 3. Get the code onto the Pi (`scp -r` or git); `python3 -m panelwall probe` there to confirm the
-   Pi reaches adsb.lol; `python3 -m panelwall test --no-window --seconds 2` renders a PNG as a
-   smoke test.
-4. Prep Windows: download LEDVision 8.x, read the WiredWatts P5 guide, download the 5A-75B manual
+   Pi reaches adsb.lol AND `curl -s 'https://api-v3.mbta.com/stops?filter\[route\]=Red' | head -c 300`
+   to confirm it reaches the MBTA; `python3 -m panelwall sheet` as a render smoke test.
+4. On the Pi, `sudo python3 -m panelwall run --sink colorlight` also serves the control UI on :80 →
+   open `http://panelwall.local` on the phone, Share → Add to Home Screen. Settings land in
+   `/root/.panelwall/settings.json` when run with sudo (set `PW_SETTINGS` to move them).
+5. Prep Windows: download LEDVision 8.x, read the WiredWatts P5 guide, download the 5A-75B manual
    (linked from wallyslights.com/products/colorlight-5a-75b).
-5. Buy tools (§2e).
-6. Hardware bring-up per §7 from Thursday.
-7. After it works: systemd service, brightness/night schedule, then design iteration
-   (silhouette sprites, departures board, etc.). Six pixel-accurate mockups from the
-   design brainstorm are in `design/led_layout_ideas.png`, generated by `design/led_mockups.py`.
+6. Buy tools (§2e).
+7. Hardware bring-up per §7 from Thursday.
+8. After it works: systemd service (`run --sink colorlight`, Restart=always); set the Boston
+   coordinates + radius 8 from the phone UI; then design iteration.
 
----
+Verified vs. unverified for the new channels:
+- **VERIFIED live from the Mac, 14 Sep 23:29 EDT:** all four MBTA endpoints return the shapes in
+  `data/mbta.py`'s docstring; `/stops?filter[route]=Red` returns 22 parent stations in route order
+  with both branches after JFK/UMass (fixture is a trimmed capture). A 9 s live `run` showed 6
+  aircraft (Doylestown, 30 nm), 18 stops / 16 trains / 18 predictions, control UI answering
+  `/api/state`, `/preview.png`, `POST /api/show`, quiet-hours brightness applied.
+- **UNVERIFIED:** the sprites and layouts on real LEDs (only the simulator so far); the control
+  UI on an actual iPhone (built to spec: manifest + apple-touch-icon + standalone meta, tested
+  only with urllib); MBTA train placement between stations is an approximation (50 % / 85 % of
+  the way for IN_TRANSIT_TO / INCOMING_AT — the API gives no fractional position).
 
 ## 9. Mistakes already made — don't repeat them
 
@@ -340,7 +390,10 @@ protocol. Step 6 isolates the first two; step 8 isolates the third.
 - Pillow text without caching → 30 ms/frame. Fixed with `_TextCache`.
 - A 1-px separator line adjacent to glyph bottoms reads as a bug on an LED grid. Use spacing.
 - Column collisions: 10-char type + 5-digit altitude. Column positions in `flights.py` are
-  tuned; if you add text, re-render with `demo --no-window` and **look at the PNG**.
+  tuned; if you add text, re-render with `demo-<name> --no-window` and **look at the PNG**.
+- Silkscreen (SMALL) drawn at `y` lights rows `y+4..y+8`, not `y..y+4`. Lay out with that offset
+  or things collide 4 px lower than you planned (bit me on the MBTA strip; station labels clipped
+  at the display edges too — clamp x).
 
 Terminology he had to have clarified (don't re-derive, just be consistent): HUB75 = the panel
 connector/protocol (like HDMI on a monitor). Colorlight = standalone card that drives HUB75 from

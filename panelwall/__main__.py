@@ -1,10 +1,13 @@
 """CLI.
 
-  python -m panelwall run   --sink sim                 # develop on the Mac
-  python -m panelwall run   --sink colorlight          # on the Pi (sudo)
+  python -m panelwall run   --sink sim                 # develop on the Mac (+ control UI on :8080)
+  python -m panelwall run   --sink colorlight          # on the Pi (sudo; control UI on :80)
+  python -m panelwall run   --channels flights,mbta    # restrict which channels load
   python -m panelwall test  --sink colorlight          # bring-up test pattern
   python -m panelwall probe                            # dump live API JSON
-  python -m panelwall demo  --sink sim                 # fixture data, no network
+  python -m panelwall demo-<name>                      # fixture data, no network (flights, radar, silhouette, mbta)
+  python -m panelwall sheet                            # every channel -> design/channels_sheet.png
+  python -m panelwall sprites                          # every aircraft sprite -> design/sprites_sheet.png
 """
 
 from __future__ import annotations
@@ -25,14 +28,64 @@ def _sink(args):
     return make_sink("sim", png_path=args.png, window=None if not args.no_window else False)
 
 
-def cmd_run(args):
-    from .channels import FlightsChannel
-    from .scheduler import Scheduler
+DEFAULT_CHANNELS = ["flights", "radar", "silhouette", "mbta"]
+AIRCRAFT_CHANNELS = {"flights", "radar", "silhouette"}
 
+
+def build_channels(names: list[str]):
+    """Live channels. Aircraft channels share ONE AircraftFeed (one adsb.lol poller)."""
+    from . import channels as ch
+
+    feed = None
+    if AIRCRAFT_CHANNELS & set(names):
+        from .data.feed import AircraftFeed
+        feed = AircraftFeed()
+    out = []
+    for name in names:
+        if name == "flights":
+            out.append(ch.FlightsChannel(feed=feed))
+        elif name == "radar":
+            out.append(ch.RadarChannel(feed=feed))
+        elif name == "silhouette":
+            out.append(ch.SilhouetteChannel(feed=feed))
+        elif name == "mbta":
+            out.append(ch.MbtaChannel())
+        elif name == "testpattern":
+            out.append(ch.TestPatternChannel())
+        else:
+            raise SystemExit(f"unknown channel {name!r}; choose from {DEFAULT_CHANNELS + ['testpattern']}")
+    if feed is not None:   # exactly one channel closes the shared feed on shutdown
+        sharers = [c for c in out if getattr(c, "feed", None) is feed]
+        for c in sharers:
+            c._owns_feed = c is sharers[0]
+    return out
+
+
+def cmd_run(args):
+    from .scheduler import Scheduler
+    from .settings import Settings
+
+    settings = Settings()          # ~/.panelwall/settings.json overrides config.py defaults
+    if settings.load_error:
+        print(f"[settings] {settings.load_error} (using defaults)", flush=True)
+    names = [n.strip() for n in args.channels.split(",") if n.strip()]
     loc = CONFIG.location
-    print(f"[run] aircraft within {loc.radius_nm:g} nm of {loc.lat:.4f},{loc.lon:.4f} via {CONFIG.data.adsb_base}, "
-          f"polling every {CONFIG.data.poll_seconds:g}s", flush=True)
-    Scheduler([FlightsChannel()], _sink(args), args.fps).run(args.seconds)
+    print(f"[run] channels: {', '.join(names)}", flush=True)
+    if AIRCRAFT_CHANNELS & set(names):
+        print(f"[run] aircraft within {loc.radius_nm:g} nm of {loc.lat:.4f},{loc.lon:.4f} via {CONFIG.data.adsb_base}, "
+              f"polling every {CONFIG.data.poll_seconds:g}s", flush=True)
+    if "mbta" in names:
+        m = CONFIG.mbta
+        print(f"[run] MBTA {m.route} line, home {m.home_stop}, {m.branch} branch, key {'set' if m.api_key else 'not set (fine)'}", flush=True)
+    sched = Scheduler(build_channels(names), _sink(args), args.fps, settings=settings)
+    if not args.no_web:
+        from .web import ControlServer
+        try:
+            web = ControlServer(sched, settings, port=args.port).start()
+            print(f"[web] control UI at {web.url()}  (open on your phone; Share > Add to Home Screen)", flush=True)
+        except OSError as e:
+            print(f"[web] disabled: {e}", flush=True)
+    sched.run(args.seconds)
 
 
 FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
@@ -100,6 +153,42 @@ def cmd_demo(args):
 DESIGN = Path(__file__).resolve().parent.parent / "design"
 
 
+def render_channel_frame(name: str, warm_seconds: float = 1.3):
+    """One representative frame of a fixture channel (numpy HxWx3)."""
+    from .framebuffer import Frame
+
+    ch = fixture_channel(name)
+    for _ in range(int(warm_seconds / 0.05)):   # let sweeps/animations move off their zero state
+        ch.tick(0.05)
+    f = Frame()
+    ch.render(f)
+    ch.close()
+    return f.to_array()
+
+
+def cmd_sheet(args):
+    from PIL import Image, ImageDraw, ImageFont
+    from . import fonts
+    from .sinks.simulator import led_image
+
+    scale, pad, label_h = 4, 16, 26
+    font = ImageFont.truetype(fonts.SMALL.path, 16)
+    names = DEMO_CHANNELS
+    tiles = [(n, led_image(render_channel_frame(n), scale)) for n in names]
+    tw, th = tiles[0][1].size
+    sheet = Image.new("RGB", (tw + 2 * pad, len(tiles) * (th + label_h + pad) + pad), (20, 20, 22))
+    d = ImageDraw.Draw(sheet)
+    y = pad
+    for n, tile in tiles:
+        d.text((pad, y), f"{n.upper()}   (256 x 64, fixture data)", font=font, fill=(220, 220, 220))
+        y += label_h
+        sheet.paste(tile, (pad, y))
+        y += th + pad
+    out = DESIGN / "channels_sheet.png"
+    sheet.save(out)
+    print(f"wrote {out}  {sheet.size[0]}x{sheet.size[1]}")
+
+
 def cmd_sprites(args):
     from .sprites import render_sheet
 
@@ -155,10 +244,15 @@ def main(argv=None):
         sp.add_argument("--png", default="sim.png", help="simulator output path when no window")
         sp.add_argument("--no-window", action="store_true", help="simulator: force PNG output")
 
-    for name, fn in (("run", cmd_run), ("test", cmd_test)):
-        sp = sub.add_parser(name)
-        common(sp)
-        sp.set_defaults(fn=fn)
+    sp = sub.add_parser("run", help="live data; starts the phone control UI")
+    common(sp)
+    sp.add_argument("--channels", default=",".join(DEFAULT_CHANNELS), help="comma list of channels to load")
+    sp.add_argument("--port", type=int, default=None, help="control UI port (default: 80, then 8080)")
+    sp.add_argument("--no-web", action="store_true", help="don't start the control UI")
+    sp.set_defaults(fn=cmd_run)
+    sp = sub.add_parser("test", help="panel bring-up test pattern")
+    common(sp)
+    sp.set_defaults(fn=cmd_test)
     sp = sub.add_parser("demo", help="fixture-driven flights channel (alias of demo-flights)")
     common(sp)
     sp.set_defaults(fn=cmd_demo, channel="flights")
@@ -166,6 +260,7 @@ def main(argv=None):
         sp = sub.add_parser(f"demo-{name}", help=f"fixture-driven {name} channel, no network")
         common(sp)
         sp.set_defaults(fn=cmd_demo, channel=name)
+    sub.add_parser("sheet", help="render every channel's fixture demo to design/channels_sheet.png").set_defaults(fn=cmd_sheet)
     sub.add_parser("sprites", help="render every aircraft sprite to design/sprites_sheet.png").set_defaults(fn=cmd_sprites)
     sp = sub.add_parser("probe")
     sp.add_argument("-n", type=int, default=3)
