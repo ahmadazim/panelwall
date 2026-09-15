@@ -78,18 +78,31 @@ def fixture_channel(name: str):
         return ch.FlightsChannel(feed=fixture_feed())
     if name == "radar":
         return ch.RadarChannel(feed=fixture_feed())
+    if name == "silhouette":
+        return ch.SilhouetteChannel(feed=fixture_feed(1))   # one aircraft -> the hero card shows
     if name == "testpattern":
         return ch.TestPatternChannel()
     raise ValueError(f"no fixture demo for {name!r}")
 
 
-DEMO_CHANNELS = ["flights", "radar", "testpattern"]
+DEMO_CHANNELS = ["flights", "radar", "silhouette", "testpattern"]
 
 
 def cmd_demo(args):
     from .scheduler import Scheduler
 
     Scheduler([fixture_channel(args.channel)], _sink(args), args.fps).run(args.seconds)
+
+
+DESIGN = Path(__file__).resolve().parent.parent / "design"
+
+
+def cmd_sprites(args):
+    from .sprites import render_sheet
+
+    out = DESIGN / "sprites_sheet.png"
+    render_sheet().save(out)
+    print(f"wrote {out}")
 
 
 def cmd_test(args):
@@ -150,6 +163,7 @@ def main(argv=None):
         sp = sub.add_parser(f"demo-{name}", help=f"fixture-driven {name} channel, no network")
         common(sp)
         sp.set_defaults(fn=cmd_demo, channel=name)
+    sub.add_parser("sprites", help="render every aircraft sprite to design/sprites_sheet.png").set_defaults(fn=cmd_sprites)
     sp = sub.add_parser("probe")
     sp.add_argument("-n", type=int, default=3)
     sp.add_argument("--routes", nargs="+", metavar="CALLSIGN",
