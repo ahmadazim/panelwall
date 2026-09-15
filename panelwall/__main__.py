@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from pathlib import Path
 
 from .config import CONFIG
 
@@ -34,19 +35,61 @@ def cmd_run(args):
     Scheduler([FlightsChannel()], _sink(args), args.fps).run(args.seconds)
 
 
-def cmd_demo(args):
-    from .channels import FlightsChannel
-    from .data.adsb import parse_aircraft
-    from .scheduler import Scheduler
-    from pathlib import Path
+FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
 
-    fx = json.loads((Path(__file__).resolve().parent.parent / "fixtures" / "bos_point.json").read_text())
-    loc = CONFIG.location
-    acs = [parse_aircraft(a, loc.lat, loc.lon) for a in fx["ac"]]
+
+def fixture_aircraft(around=None):
+    """Aircraft from fixtures/bos_point.json, re-centred on `around` (lat, lon) if given.
+
+    The fixture is Boston traffic; when the configured location is elsewhere the
+    positions are shifted so the radar scope still shows them in range.
+    """
+    from .data.adsb import parse_aircraft
+
+    fx = json.loads((FIXTURES / "bos_point.json").read_text())
+    lat0, lon0 = 42.3601, -71.0589
+    lat, lon = around or (lat0, lon0)
+    raw = []
+    for a in fx["ac"]:
+        a = dict(a)
+        a["lat"], a["lon"] = a["lat"] - lat0 + lat, a["lon"] - lon0 + lon
+        raw.append(a)
+    acs = [parse_aircraft(a, lat, lon) for a in raw]
     for a, route in zip(acs, fx.get("_routes", [])):
         a.origin, a.destination = route
     acs.sort(key=lambda a: a.distance_nm or 1e9)
-    Scheduler([FlightsChannel(static=acs)], _sink(args), args.fps).run(args.seconds)
+    return acs
+
+
+def fixture_feed(n: int | None = None):
+    """A static AircraftFeed with the fixture traffic (first n aircraft if given)."""
+    from .data.feed import AircraftFeed
+
+    loc = CONFIG.location
+    acs = fixture_aircraft((loc.lat, loc.lon))
+    return AircraftFeed(static=acs if n is None else acs[:n])
+
+
+def fixture_channel(name: str):
+    """Build one channel driven by fixture data (no network)."""
+    from . import channels as ch
+
+    if name == "flights":
+        return ch.FlightsChannel(feed=fixture_feed())
+    if name == "radar":
+        return ch.RadarChannel(feed=fixture_feed())
+    if name == "testpattern":
+        return ch.TestPatternChannel()
+    raise ValueError(f"no fixture demo for {name!r}")
+
+
+DEMO_CHANNELS = ["flights", "radar", "testpattern"]
+
+
+def cmd_demo(args):
+    from .scheduler import Scheduler
+
+    Scheduler([fixture_channel(args.channel)], _sink(args), args.fps).run(args.seconds)
 
 
 def cmd_test(args):
@@ -96,10 +139,17 @@ def main(argv=None):
         sp.add_argument("--png", default="sim.png", help="simulator output path when no window")
         sp.add_argument("--no-window", action="store_true", help="simulator: force PNG output")
 
-    for name, fn in (("run", cmd_run), ("demo", cmd_demo), ("test", cmd_test)):
+    for name, fn in (("run", cmd_run), ("test", cmd_test)):
         sp = sub.add_parser(name)
         common(sp)
         sp.set_defaults(fn=fn)
+    sp = sub.add_parser("demo", help="fixture-driven flights channel (alias of demo-flights)")
+    common(sp)
+    sp.set_defaults(fn=cmd_demo, channel="flights")
+    for name in DEMO_CHANNELS:
+        sp = sub.add_parser(f"demo-{name}", help=f"fixture-driven {name} channel, no network")
+        common(sp)
+        sp.set_defaults(fn=cmd_demo, channel=name)
     sp = sub.add_parser("probe")
     sp.add_argument("-n", type=int, default=3)
     sp.add_argument("--routes", nargs="+", metavar="CALLSIGN",
