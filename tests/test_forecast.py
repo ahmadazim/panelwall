@@ -93,3 +93,18 @@ def test_extreme_values_render():
     hot["_now"] = "2026-09-15T23:40:00"
     for view in ("week", "hourly"):
         ForecastChannel(feed=ForecastFeed(static=hot), view=view).render(Frame())
+
+
+def test_http_400_reports_open_meteo_reason(monkeypatch):
+    import io
+    import urllib.error
+    import urllib.request
+    from panelwall.data.openmeteo import OpenMeteoClient
+
+    def boom(req, timeout=None):
+        raise urllib.error.HTTPError(req.full_url, 400, "Bad Request", {}, io.BytesIO(
+            b'{"error":true,"reason":"Latitude must be in range of -90 to 90. Given: 140.0."}'))
+    monkeypatch.setattr(urllib.request, "urlopen", boom)
+    c = OpenMeteoClient()
+    assert c.fetch(140.0, 0.0) is None
+    assert c.last_error.startswith("HTTP 400 open-meteo: Latitude must be in range")

@@ -440,7 +440,7 @@ function render() {
   }
   $('status').innerHTML = s.channels.map(c => `
     <div class="row"><div><div class="name">${c.name}</div>
-      <div class="meta">${Object.entries(c.status).filter(([k]) => !['last_error','updated_at'].includes(k)).map(([k,v]) => `${k} ${v}`).join(' · ') || ''}</div>
+      <div class="meta">${Object.entries(c.status).filter(([k, v]) => !['last_error','updated_at','route_error'].includes(k) && v !== null).map(([k,v]) => `${k} ${v}`).join(' · ') || ''}${c.status.route_error ? ' · <span class="meta">routes unavailable (' + c.status.route_error + ')</span>' : ''}</div>
       <div class="meta">${c.status.last_error ? '<span class="err">' + c.status.last_error + '</span>' : (c.status.paused ? 'paused (not on screen) · ' : '') + 'last fetch ' + ago(c.status.updated_at)}</div></div></div>`).join('')
     + `<div class="row"><div class="meta">settings: ${s.settings_path}${s.settings_error ? ' <span class="err">' + s.settings_error + '</span>' : ''} · ${s.frames} frames</div></div>`;
 }

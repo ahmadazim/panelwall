@@ -497,6 +497,15 @@ Verified vs. unverified for the earlier channels:
 - Silhouette's first "detail" trigger only fired for an aircraft that was brand-new AND already
   the closest — impossible at a 50 nm radius, so the card never showed. Design priority rules
   against realistic data (20 aircraft at 50 nm), not the fixture's 1–6.
+- Dropped `import threading` from the feed modules while refactoring; every test passed because tests only
+  build STATIC feeds, and `run` crashed on startup. `tests/test_polling.py::test_live_feeds_start_and_stop_without_network`
+  now constructs every live feed with a no-network client.
+- Demand-driven feeds still made one request each at startup: the poll thread starts in the feed constructor,
+  before the channel registers or the scheduler's first frame, so `wanted()` saw no users. Channels now start
+  `active=False` and every poll loop begins with a 2 s `_startup_grace()`. Verify with `/api/state`:
+  idle feeds must show `paused: true` and NO `updated_at`.
+- The FlightWall card cycled "nearest 5" regardless of who was flying, so N-numbers crowded out the airlines
+  Ahmad wants to see. Cycle order is now known airline > unknown airline-style callsign > private.
 - Open-Meteo integers (precipitation %) came through a float-cast helper and rendered "45.0%". Cast per field.
 - A last-resort `[:13]` slice on status strings chopped "@TOR" to "@TO". Shorten by dropping parts, never slice.
 - Silkscreen (SMALL) drawn at `y` lights rows `y+4..y+8`, not `y..y+4`. Lay out with that offset

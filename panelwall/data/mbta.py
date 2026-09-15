@@ -23,6 +23,7 @@ Everything network-facing is wrapped; a dead API yields None and sets
 from __future__ import annotations
 
 import json
+import threading
 import time
 import urllib.error
 import urllib.parse
@@ -224,6 +225,7 @@ class MbtaFeed(DemandPoller):
             self.predictions = parse_predictions(preds_doc)
 
     def _poll_loop(self):
+        self._startup_grace()
         self._wait_wanted()
         while not self._stop.is_set():
             t = time.time()

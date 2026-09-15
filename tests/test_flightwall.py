@@ -4,7 +4,7 @@ from pathlib import Path
 from panelwall import fonts
 from panelwall.__main__ import fixture_aircraft
 from panelwall.channels.flightwall import (FlightWallChannel, card_rows, right_column, fmt_alt, fmt_spd, fmt_trk,
-                                           fmt_vr, logo_for, X_TEXT, X_RIGHT, LABEL_GAP, COL_GAP)
+                                           fmt_vr, logo_for, carrier_rank, cycle_candidates, X_TEXT, X_RIGHT, LABEL_GAP, COL_GAP)
 from panelwall.config import CONFIG
 from panelwall.data.feed import AircraftFeed
 from panelwall.framebuffer import Frame, W
@@ -73,18 +73,44 @@ def test_longest_strings_fit_or_clip_cleanly():
     assert f.to_array()[37:45, 100:].max() == 0 and f.to_array()[37:45, :100].max() > 0
 
 
+def test_commercial_flights_cycle_before_private():
+    feed = _feed("c")                                          # 7 aircraft: 6 airline callsigns + N741CG
+    acs = feed.aircraft
+    private = _by_callsign(feed, "N741CG")
+    assert carrier_rank(private) == 2
+    assert carrier_rank(_by_callsign(feed, "JBU1287")) == 0
+    unknown = parse_like = None
+    picked = cycle_candidates(acs, 5)
+    assert private not in picked                                # 6 commercial flights fill the five slots
+    assert [carrier_rank(a) for a in picked] == [0] * 5
+    dists = [a.distance_nm for a in picked]
+    assert dists == sorted(dists)                               # nearest first within the group
+    # with only 2 commercial flights the private one comes LAST
+    few = [private, _by_callsign(feed, "JBU1287"), _by_callsign(feed, "EIN138")]
+    assert [a.callsign.strip() for a in cycle_candidates(few, 5)][-1] == "N741CG"
+    # an airline-style callsign we don't know ranks between known carriers and private
+    from panelwall.data.adsb import Aircraft
+    odd = Aircraft("zz", "EJA123", "N1EJ", "C68A", 20000, False, 400, 90, 0, 42.4, -71.0, 0.5)
+    assert carrier_rank(odd) == 1
+    assert [carrier_rank(a) for a in cycle_candidates(few + [odd], 5)] == [0, 0, 1, 2]
+    # the ranking is what the channel cycles
+    ch = FlightWallChannel(feed=feed)
+    ch.tick(0.05)
+    assert private.hex not in ch.order and len(ch.order) == 5
+
+
 def test_cycle_order_is_stable_and_keeps_the_current_aircraft():
     feed = _feed("c")
     ch = FlightWallChannel(feed=feed)
     ch.tick(0.05)
-    assert len(ch.order) == 5 and ch.order == [a.hex for a in feed.aircraft[:5]]
+    assert len(ch.order) == 5 and ch.order == [a.hex for a in cycle_candidates(feed.aircraft, 5)]
     first = ch.order[0]
     ch.tick(CONFIG.flightwall.cycle_seconds)                   # advance one card
     assert ch.index == 1
     showing = ch.order[1]
     acs = list(feed.aircraft)
-    acs[0], acs[3] = acs[3], acs[0]                            # distances reshuffled within the nearest 5:
-    feed.aircraft = acs                                        # same set -> order and index untouched
+    acs[0], acs[1] = acs[1], acs[0]                            # list reshuffled, same set of candidates:
+    feed.aircraft = acs                                        # -> order and index untouched
     ch.tick(0.05)
     assert ch.order[0] == first and ch.index == 1 and ch.current().hex == showing
     feed.aircraft = [a for a in feed.aircraft if a.hex != first]   # the set changes: the shown card keeps its slot

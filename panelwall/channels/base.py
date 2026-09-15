@@ -13,7 +13,8 @@ class Channel:
     """
 
     name = "channel"
-    active = True   # set each frame by the scheduler: can this channel currently be shown? Feeds pause otherwise.
+    active = False  # set each frame by the scheduler: can this channel currently be shown? Feeds pause otherwise.
+                    # False until the first frame, so a feed never spends a request before the scheduler has spoken.
 
     def tick(self, dt: float) -> None:
         pass

@@ -185,6 +185,9 @@ def test_settings_persist_and_reload(tmp_path):
         st.set_mode("auto")
         st.set_brightness(100)
         st.set_location(42.36, -71.06, 8)
+        st.set_location(lat=140.0)                        # a typo on the phone: clamped, never sent to the APIs
+        assert st.lat == 90.0
+        st.set_location(lat=42.36)
         st.set_quiet({"start": "22:00", "end": "06:30", "level": 20})
         st2 = Settings(p)
         assert st2.cycle == ["flights", "mbta"] and st2.brightness == 100

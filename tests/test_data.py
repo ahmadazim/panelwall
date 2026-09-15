@@ -94,3 +94,16 @@ def test_routes_are_throttled_and_cached(monkeypatch):
     seen.clear()
     c._attach_routes(acs)
     assert len(seen) == 1 and acs[4].route == "BOS>LAX"                    # the last one fills in
+
+
+def test_route_lookup_failure_is_not_a_channel_error(monkeypatch):
+    from panelwall.data import adsb
+    c = adsb.AdsbClient(routes_base="https://routes.example")
+
+    def slow(url, timeout, body=None):
+        raise TimeoutError("The read operation timed out")
+    monkeypatch.setattr(adsb, "_request", slow)
+    a = adsb.parse_aircraft({"hex": "h1", "flight": "JBU100 ", "lat": 42.4, "lon": -71.0, "alt_baro": 5000}, 42.36, -71.06)
+    c._attach_routes([a])
+    assert c.last_error is None and c.route_error.startswith("routes: TimeoutError")
+    assert a.route == ""

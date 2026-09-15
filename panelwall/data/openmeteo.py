@@ -18,6 +18,7 @@ naive datetimes and compared with a naive local 'now'.
 from __future__ import annotations
 
 import json
+import threading
 import time
 import urllib.error
 import urllib.parse
@@ -182,7 +183,14 @@ class OpenMeteoClient:
                 wait = self.backoff.note(retry_after_seconds(e.headers))
                 self.last_error = f"HTTP 429 rate limited by Open-Meteo; retrying in {int(wait)} s"
             else:
-                self.last_error = f"HTTP {e.code} open-meteo"
+                # Open-Meteo explains 400s as {"error": true, "reason": "..."} - show that, it names the bad parameter
+                reason = ""
+                try:
+                    body = json.loads(e.read().decode("utf-8", "replace"))
+                    reason = str(body.get("reason") or "")[:80]
+                except Exception:
+                    pass
+                self.last_error = f"HTTP {e.code} open-meteo" + (f": {reason}" if reason else "")
         except Exception as e:
             self.last_error = f"{type(e).__name__}: {e}"
         return None
@@ -229,6 +237,7 @@ class ForecastFeed(DemandPoller):
         self.forecast = fc
 
     def _poll_loop(self):
+        self._startup_grace()
         self._wait_wanted()
         while not self._stop.is_set():
             loc = CONFIG.location

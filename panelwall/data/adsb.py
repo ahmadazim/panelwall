@@ -205,7 +205,8 @@ class AdsbClient:
         self.timeout = timeout or CONFIG.data.http_timeout
         # callsign -> (fetched_at, (origin, dest, origin_pos, dest_pos))
         self._routes: dict[str, tuple[float, tuple]] = {}
-        self.last_error: str | None = None
+        self.last_error: str | None = None       # the aircraft fetch itself
+        self.route_error: str | None = None      # adsbdb lookups: cosmetic (routes show '---'), never blocks the card
         self.backoff_until = 0.0           # epoch; the feed sleeps until then after a 429
         self._backoff = BACKOFF_MIN
 
@@ -266,16 +267,17 @@ class AdsbClient:
                 _, text = self.route_raw(cs)
                 route = parse_adsbdb_route(json.loads(text) if text.strip() else {})
                 self._routes[cs] = (now, route)
+                self.route_error = None
             except ApiError as e:
                 if e.status == 404:                                   # unknown callsign: remember for hours
                     self._routes[cs] = (now - ttl + NEGATIVE_ROUTE_TTL, ("", "", None, None))
                 else:
-                    self.last_error = f"routes {e}"
+                    self.route_error = f"routes: {e}"
                     self._routes[cs] = (now - ttl + 120, ("", "", None, None))
                     budget = 0                                        # stop hammering a failing service
                 route = self._routes[cs][1]
             except Exception as e:
-                self.last_error = f"routes {type(e).__name__}: {e}"
+                self.route_error = f"routes: {type(e).__name__}: {e}"
                 self._routes[cs] = (now - ttl + 120, ("", "", None, None))
                 budget = 0
                 route = self._routes[cs][1]

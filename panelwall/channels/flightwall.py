@@ -22,9 +22,12 @@ None known: row 4 shows the registration, row 5 blank.
 message we have never seen photographed, so the corner stays dark).
 No aircraft: "..." centred, or stacked clocks (CONFIG.flightwall.no_flights = "clock").
 
-Data: the shared AircraftFeed (nearest first). The cycle order is kept stable while the
-set of nearby aircraft is unchanged; when it changes the current aircraft keeps its slot
-if it is still there. Swaps are instant with one black frame between cards.
+Data: the shared AircraftFeed. Cycle order: known airlines first (Delta, American, ...),
+then other airline-style callsigns, then private / N-number aircraft, each group nearest
+first - so a private plane only shows when there are fewer than MAX_FLIGHTS commercial
+flights, and after them. The order is kept stable while the set of nearby aircraft is
+unchanged; when it changes the current aircraft keeps its slot if it is still there.
+Swaps are instant with one black frame between cards.
 
 priority(): 10 with aircraft, 2 otherwise (stays up in dots/clock mode unless something
 better is on).
@@ -42,7 +45,7 @@ from .. import fonts
 from ..config import CONFIG
 from ..data.adsb import Aircraft
 from ..data.aircraft_types import type_long_name
-from ..data.airlines import airline_full_name, short_flight
+from ..data.airlines import AIRLINES, airline_full_name, short_flight
 from ..data.airports import display_name
 from ..data.feed import AircraftFeed
 from ..framebuffer import Frame, W, H, WHITE
@@ -87,6 +90,20 @@ def fmt_vr(fpm: int | None, units: str = "imperial") -> str:
         v = int(round(fpm * 0.018288))          # ft/min -> km/h, the way the product photo shows it
         return f"{v:+d}kph"
     return f"{fpm:+d}ft/m"
+
+
+def carrier_rank(a: Aircraft) -> int:
+    """0 = known airline (in data/airlines), 1 = airline-style callsign we don't know, 2 = private/other."""
+    cs = a.callsign.upper()
+    if len(cs) >= 4 and cs[:3].isalpha() and cs[3:4].isdigit():
+        return 0 if cs[:3] in AIRLINES else 1
+    return 2
+
+
+def cycle_candidates(aircraft: list[Aircraft], n: int) -> list[Aircraft]:
+    """The n aircraft to cycle: commercial first, then private; nearest first within each group."""
+    ranked = sorted(aircraft, key=lambda a: (carrier_rank(a), a.distance_nm if a.distance_nm is not None else 1e9))
+    return ranked[:n]
 
 
 def logo_for(a: Aircraft) -> Image.Image | None:
@@ -164,7 +181,7 @@ class FlightWallChannel(Channel):
 
     # ---- cycling -----------------------------------------------------------------
     def _sync_order(self) -> None:
-        nearest = [a.hex for a in self.aircraft[: self.cfg.max_flights]]
+        nearest = [a.hex for a in cycle_candidates(self.aircraft, self.cfg.max_flights)]
         if set(nearest) == set(self.order):
             return                           # same aircraft: keep the order and the index
         current = self.order[self.index] if self.order and self.index < len(self.order) else None

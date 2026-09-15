@@ -19,6 +19,7 @@ Parsing is per-event defensive: a malformed event is skipped, never the whole re
 from __future__ import annotations
 
 import json
+import threading
 import time
 import urllib.error
 import urllib.request
@@ -317,6 +318,7 @@ class SportsFeed(DemandPoller):
 
     def _poll_loop(self):
         cfg = CONFIG.sports
+        self._startup_grace()
         self._wait_wanted()
         while not self._stop.is_set():
             today = datetime.now().astimezone().date()

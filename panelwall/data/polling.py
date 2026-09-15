@@ -66,8 +66,15 @@ class DemandPoller:
             self.users.append(channel)
 
     def wanted(self) -> bool:
-        """True when no channel is registered (demos, tests) or any registered one is active."""
-        return not self.users or any(getattr(u, "active", True) for u in self.users)
+        """True when no channel is registered (demos, tests) or any registered one is active.
+        Channels start inactive, so a live feed makes no request until the scheduler's first frame."""
+        return not self.users or any(getattr(u, "active", False) for u in self.users)
+
+    def _startup_grace(self) -> None:
+        """The poll thread starts inside the feed's constructor, before any channel has registered
+        and before the scheduler's first frame. Without this pause the feed would see 'no users'
+        and spend one request on a panel nobody is looking at."""
+        self._stop.wait(PAUSE_CHECK)
 
     def _wait_wanted(self) -> None:
         """Block while nobody needs this feed. Returns as soon as someone does (or on stop)."""
@@ -77,6 +84,13 @@ class DemandPoller:
         self.paused = False
 
     def _sleep_or_pause(self, seconds: float) -> None:
-        """Wait `seconds`, waking early only to stop; then block further while unwanted."""
-        self._stop.wait(seconds)
+        """Wait `seconds` in PAUSE_CHECK slices (so `paused` is accurate within 2 s), then block
+        further while nobody needs this feed."""
+        deadline = time.time() + seconds
+        while not self._stop.is_set():
+            remaining = deadline - time.time()
+            if remaining <= 0:
+                break
+            self._stop.wait(min(PAUSE_CHECK, remaining))
+            self.paused = not self.wanted()
         self._wait_wanted()

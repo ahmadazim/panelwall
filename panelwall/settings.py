@@ -167,9 +167,9 @@ class Settings:
 
     def _set_location_unlocked(self, lat, lon, radius_nm) -> None:
         if lat is not None:
-            self.lat = float(lat)
+            self.lat = max(-90.0, min(90.0, float(lat)))
         if lon is not None:
-            self.lon = float(lon)
+            self.lon = max(-180.0, min(180.0, float(lon)))
         if radius_nm is not None:
             self.radius_nm = max(1.0, float(radius_nm))
         CONFIG.location.lat, CONFIG.location.lon, CONFIG.location.radius_nm = self.lat, self.lon, self.radius_nm

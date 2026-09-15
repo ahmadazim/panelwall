@@ -18,6 +18,7 @@ demos use.
 
 from __future__ import annotations
 
+import threading
 import time
 
 from ..config import CONFIG
@@ -48,6 +49,7 @@ class AircraftFeed(DemandPoller):
         return CONFIG.location.radius_nm
 
     def _poll_loop(self):
+        self._startup_grace()
         self._wait_wanted()                          # don't spend a request on a panel nobody is looking at
         while not self._stop.is_set():
             loc = CONFIG.location  # re-read each time: the control server may move it
@@ -60,7 +62,7 @@ class AircraftFeed(DemandPoller):
 
     def status(self) -> dict:
         return {"updated_at": self.updated_at or None, "last_error": self.last_error, "count": len(self.aircraft),
-                "paused": self.paused}
+                "paused": self.paused, "route_error": self.client.route_error}
 
     def close(self):
         self._stop.set()
