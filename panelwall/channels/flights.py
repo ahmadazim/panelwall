@@ -13,13 +13,12 @@ snapshot, so a slow or dead API can never stall the frame loop.
 from __future__ import annotations
 
 import math
-import threading
-import time
 from datetime import datetime
 
 from .. import fonts
 from ..config import CONFIG
 from ..data.adsb import AdsbClient, Aircraft
+from ..data.feed import AircraftFeed
 from ..framebuffer import Frame, W, AMBER, WHITE, GREY, DIM, GREEN, RED, CYAN
 from .base import Channel
 
@@ -40,30 +39,29 @@ X_VR = 250
 class FlightsChannel(Channel):
     name = "flights"
 
-    def __init__(self, client: AdsbClient | None = None, poll_seconds: float | None = None, static: list[Aircraft] | None = None):
-        self.client = client or AdsbClient()
-        self.poll = poll_seconds or CONFIG.data.poll_seconds
-        self.aircraft: list[Aircraft] = [a for a in (static or []) if not a.on_ground]
-        self.updated_at = time.time() if static else 0.0
+    def __init__(self, client: AdsbClient | None = None, poll_seconds: float | None = None,
+                 static: list[Aircraft] | None = None, feed: AircraftFeed | None = None):
+        # Data comes from a shared AircraftFeed (one poller for all aircraft channels).
+        # Passing client/static builds a private feed - kept for the old call sites.
+        self.feed = feed or AircraftFeed(client=client, poll_seconds=poll_seconds, static=static)
+        self._owns_feed = feed is None
         self.t = 0.0
-        self._stop = threading.Event()
-        self._thread = None
-        if static is None:
-            self._thread = threading.Thread(target=self._poll_loop, daemon=True, name="adsb-poll")
-            self._thread.start()
 
     # ---- data --------------------------------------------------------------
-    def _poll_loop(self):
-        loc = CONFIG.location
-        while not self._stop.is_set():
-            acs = self.client.nearby(loc.lat, loc.lon, loc.radius_nm)
-            if acs or self.client.last_error is None:
-                self.aircraft = [a for a in acs if not a.on_ground]
-                self.updated_at = time.time()
-            self._stop.wait(self.poll)
+    @property
+    def client(self) -> AdsbClient:
+        return self.feed.client
+
+    @property
+    def aircraft(self) -> list[Aircraft]:
+        return self.feed.aircraft
+
+    def status(self) -> dict:
+        return self.feed.status()
 
     def close(self):
-        self._stop.set()
+        if self._owns_feed:
+            self.feed.close()
 
     # ---- scheduling ----------------------------------------------------------
     def tick(self, dt: float) -> None:

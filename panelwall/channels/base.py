@@ -23,5 +23,9 @@ class Channel:
     def render(self, frame: Frame) -> None:
         raise NotImplementedError
 
+    def status(self) -> dict:
+        """For the control server: {'updated_at': epoch|None, 'last_error': str|None, ...}."""
+        return {}
+
     def close(self) -> None:
         pass
