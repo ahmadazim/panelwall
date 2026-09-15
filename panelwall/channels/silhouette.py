@@ -10,8 +10,10 @@ Layout (256x64):
             y 37-59 three SMALL rows: ALT / SPD / phase   |   HDG / REG / type
 
 priority(): 20 when exactly one aircraft is in range (the list views are
-pointless for a single aircraft), 25 for DETAIL_SECONDS after a new closest
-aircraft appears ("detail mode": the scheduler holds it), else 0.
+pointless for a single aircraft), 25 for DETAIL_SECONDS whenever a DIFFERENT
+aircraft becomes the closest ("detail mode"), at most once per DETAIL_COOLDOWN
+and never twice for the same aircraft, else 0. With a 50 nm radius and 20
+aircraft the solo case never happens - detail mode is how this card gets seen.
 """
 
 from __future__ import annotations
@@ -32,6 +34,7 @@ X0 = 108           # right column
 XR = W - 4
 SPRITE_X, SPRITE_Y = 2, 12
 DETAIL_SECONDS = 8.0
+DETAIL_COOLDOWN = 45.0        # min gap between two detail cards
 DETAIL_PRIORITY = 25
 SOLO_PRIORITY = 20
 
@@ -52,9 +55,9 @@ class SilhouetteChannel(Channel):
         self.feed = feed or AircraftFeed(static=static)
         self._owns_feed = feed is None
         self.t = 0.0
-        self._seen: set[str] = set()
+        self._detailed: dict[str, float] = {}       # hex -> t when its card was shown
         self._closest_hex: str | None = None
-        self._detail_until = -1.0
+        self._detail_until = -DETAIL_COOLDOWN       # so the first card is not blocked by the cooldown
 
     @property
     def aircraft(self) -> list[Aircraft]:
@@ -73,13 +76,15 @@ class SilhouetteChannel(Channel):
     def tick(self, dt: float) -> None:
         self.t += dt
         acs = self.aircraft
-        now_hex = {a.hex for a in acs}
         closest = acs[0].hex if acs else None
-        if closest is not None and closest != self._closest_hex and closest not in self._seen:
-            # a genuinely new aircraft became the closest -> show its card for a while
+        if closest is not None and closest not in self._detailed and self.t - self._detail_until >= DETAIL_COOLDOWN:
+            # an aircraft we haven't featured yet is the closest -> show its card for a while
             self._detail_until = self.t + DETAIL_SECONDS
+            self._detailed[closest] = self.t
         self._closest_hex = closest
-        self._seen = now_hex
+        if len(self._detailed) > 200:   # forget aircraft that left long ago
+            cutoff = self.t - 3600
+            self._detailed = {h: t for h, t in self._detailed.items() if t > cutoff}
 
     def detail_active(self) -> bool:
         return bool(self.aircraft) and self.t < self._detail_until
@@ -130,7 +135,10 @@ class SilhouetteChannel(Channel):
         lx0, lx1, ly = X0 + 52, XR - 52, 21
         frame.draw.line([(lx0, ly), (lx1, ly)], fill=GREY)
         frame.draw.polygon([(lx1, ly), (lx1 - 3, ly - 3), (lx1 - 3, ly + 3)], fill=GREY)
-        frac = route_progress(a.origin, a.destination, a.lat, a.lon) if a.origin and a.destination else None
+        frac = None
+        if a.origin and a.destination:
+            pos = a.extra.get("route_pos")           # airport coordinates from adsbdb, when it gave them
+            frac = route_progress(a.origin, a.destination, a.lat, a.lon, pos)
         if frac is None:
             frac = 0.5
         dx = int(round(lx0 + 2 + frac * (lx1 - 6 - lx0 - 2)))

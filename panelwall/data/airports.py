@@ -63,10 +63,15 @@ def great_circle_nm(lat1: float, lon1: float, lat2: float, lon2: float) -> float
     return 2 * r * math.asin(math.sqrt(a))
 
 
-def route_progress(origin: str, dest: str, lat: float | None, lon: float | None) -> float | None:
+def route_progress(origin: str, dest: str, lat: float | None, lon: float | None,
+                   positions: tuple | None = None) -> float | None:
     """Fraction (0..1) of the origin->dest great-circle already flown, judged by
-    where the aircraft is now. None if either airport is unknown or no position."""
-    o, d = AIRPORTS.get(origin.upper()), AIRPORTS.get(dest.upper())
+    where the aircraft is now. `positions` = ((lat, lon), (lat, lon)) from the route
+    API wins over the table. None if either airport is unknown or no position."""
+    if positions and positions[0] and positions[1]:
+        o, d = positions
+    else:
+        o, d = AIRPORTS.get(origin.upper()), AIRPORTS.get(dest.upper())
     if o is None or d is None or lat is None or lon is None:
         return None
     flown = great_circle_nm(o[0], o[1], lat, lon)

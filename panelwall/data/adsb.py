@@ -2,7 +2,15 @@
 
 Endpoints (adsb.lol; airplanes.live has the same /v2/point shape):
   GET  {base}/v2/point/{lat}/{lon}/{radius_nm}      -> {"ac": [...], "now": ..., ...}
-  POST {base}/api/0/routeset  {"planes":[{"callsign","lat","lng"}]} -> [{callsign, airport_codes, _airport_codes_iata, plausible, ...}]
+  GET  {routes_base}/v0/callsign/{callsign}         -> adsbdb: {"response": {"flightroute": {origin: {iata_code,
+                                                       latitude, longitude}, destination: {...}}}}; 404 = unknown
+
+adsb.lol's own POST /api/0/routeset was verified DEAD on 15 Sep 2026 (HTTP 201, empty
+body, even for airline callsigns) - routes now come from api.adsbdb.com, which was
+verified live the same night. `parse_route` (routeset shape) is kept for reference.
+
+Rate limits: adsb.lol's are "dynamic based on load" and it answers 429 when unhappy.
+AdsbClient honours Retry-After and otherwise backs off 15 s -> 5 min; the feed waits.
 
 Per-aircraft fields we use (readsb naming):
   hex, flight (callsign), r (registration), t (type designator), desc,
@@ -90,13 +98,14 @@ def _haversine_nm(lat1, lon1, lat2, lon2) -> float:
 class ApiError(Exception):
     """HTTP error with the response body attached, so probe can show what the server said."""
 
-    def __init__(self, status: int, body: str):
-        super().__init__(f"HTTP {status}: {body[:200]!r}")
-        self.status, self.body = status, body
+    def __init__(self, status: int, body: str, retry_after: float | None = None):
+        short = " ".join(body.split())[:120]          # nginx's 429 page is mostly whitespace/HTML
+        super().__init__(f"HTTP {status}" + (f": {short!r}" if short else ""))
+        self.status, self.body, self.retry_after = status, body, retry_after
 
 
 def _request(url: str, timeout: float, body: dict | None = None) -> tuple[int, str]:
-    headers = {"User-Agent": "panelwall/0.1", "Accept": "application/json"}
+    headers = {"User-Agent": "panelwall/0.1 (github.com/ahmadazim/panelwall)", "Accept": "application/json"}
     data = None
     if body is not None:
         data = json.dumps(body).encode()
@@ -106,7 +115,12 @@ def _request(url: str, timeout: float, body: dict | None = None) -> tuple[int, s
         with urllib.request.urlopen(req, timeout=timeout) as r:
             return r.status, r.read().decode("utf-8", "replace")
     except urllib.error.HTTPError as e:
-        raise ApiError(e.code, e.read().decode("utf-8", "replace")) from None
+        ra = e.headers.get("Retry-After") if e.headers else None
+        try:
+            ra = float(ra) if ra else None
+        except ValueError:
+            ra = None
+        raise ApiError(e.code, e.read().decode("utf-8", "replace"), ra) from None
 
 
 def _get_json(url: str, timeout: float):
@@ -146,8 +160,27 @@ def parse_aircraft(raw: dict, here_lat: float, here_lon: float) -> Aircraft:
     )
 
 
+def parse_adsbdb_route(doc: dict) -> tuple[str, str, tuple | None, tuple | None]:
+    """adsbdb /v0/callsign reply -> (origin_iata, dest_iata, (lat, lon) | None, (lat, lon) | None).
+    Unknown callsign (their 404 body is {"response": "unknown callsign"}) -> ('', '', None, None)."""
+    r = doc.get("response") if isinstance(doc, dict) else None
+    fr = r.get("flightroute") if isinstance(r, dict) else None
+    if not isinstance(fr, dict):
+        return "", "", None, None
+    o, d = fr.get("origin") or {}, fr.get("destination") or {}
+
+    def _pos(a):
+        lat, lon = a.get("latitude"), a.get("longitude")
+        return (float(lat), float(lon)) if isinstance(lat, (int, float)) and isinstance(lon, (int, float)) else None
+
+    oi, di = (o.get("iata_code") or "").upper(), (d.get("iata_code") or "").upper()
+    if not oi or not di:
+        return "", "", None, None
+    return oi, di, _pos(o), _pos(d)
+
+
 def parse_route(entry: dict) -> tuple[str, str]:
-    """routeset entry -> (origin_iata, dest_iata) or ('', '')."""
+    """(legacy adsb.lol routeset shape, endpoint is dead) entry -> (origin_iata, dest_iata) or ('', '')."""
     if not entry or entry.get("plausible") is False:
         return "", ""
     codes = entry.get("_airport_codes_iata") or ""
@@ -161,24 +194,45 @@ def parse_route(entry: dict) -> tuple[str, str]:
     return "", ""
 
 
+BACKOFF_MIN, BACKOFF_MAX = 15.0, 300.0
+NEGATIVE_ROUTE_TTL = 6 * 3600.0     # "unknown callsign" (private N-numbers): don't re-ask for hours
+
+
 class AdsbClient:
-    def __init__(self, base: str | None = None, timeout: float | None = None):
+    def __init__(self, base: str | None = None, timeout: float | None = None, routes_base: str | None = None):
         self.base = (base or CONFIG.data.adsb_base).rstrip("/")
+        self.routes_base = (CONFIG.data.routes_base if routes_base is None else routes_base).rstrip("/")
         self.timeout = timeout or CONFIG.data.http_timeout
-        self._routes: dict[str, tuple[float, tuple[str, str]]] = {}
+        # callsign -> (fetched_at, (origin, dest, origin_pos, dest_pos))
+        self._routes: dict[str, tuple[float, tuple]] = {}
         self.last_error: str | None = None
+        self.backoff_until = 0.0           # epoch; the feed sleeps until then after a 429
+        self._backoff = BACKOFF_MIN
 
     def fetch_raw(self, lat: float, lon: float, radius_nm: float) -> dict:
         return _get_json(f"{self.base}/v2/point/{lat:.4f}/{lon:.4f}/{int(radius_nm)}", self.timeout)
 
-    def routeset_raw(self, planes: list[dict]) -> tuple[int, str]:
-        """Debug helper: raw (status, body) from routeset. planes = [{callsign, lat, lng}, ...]"""
-        return _request(f"{self.base}/api/0/routeset", self.timeout, {"planes": planes})
+    def route_raw(self, callsign: str) -> tuple[int, str]:
+        """Debug helper: raw (status, body) from the route lookup for one callsign."""
+        return _request(f"{self.routes_base}/v0/callsign/{callsign.strip()}", self.timeout)
+
+    def _note_rate_limit(self, e: ApiError) -> None:
+        wait = e.retry_after if e.retry_after else self._backoff
+        self._backoff = min(BACKOFF_MAX, self._backoff * 2)
+        self.backoff_until = time.time() + wait
+        self.last_error = f"HTTP 429 rate limited by {self.base}; retrying in {int(wait)} s"
 
     def nearby(self, lat: float, lon: float, radius_nm: float) -> list[Aircraft]:
         try:
             raw = self.fetch_raw(lat, lon, radius_nm)
             self.last_error = None
+            self._backoff = BACKOFF_MIN
+        except ApiError as e:
+            if e.status == 429:
+                self._note_rate_limit(e)
+            else:
+                self.last_error = f"{type(e).__name__}: {e}"
+            return []
         except Exception as e:  # network down, API down, bad JSON - keep rendering
             self.last_error = f"{type(e).__name__}: {e}"
             return []
@@ -190,29 +244,45 @@ class AdsbClient:
         return acs
 
     def _attach_routes(self, acs: list[Aircraft]) -> None:
+        """Fill origin/destination from the cache; look up at most `route_lookups_per_poll`
+        uncached airline callsigns per call (closest first) so a busy sky trickles in."""
+        if not self.routes_base:
+            return
         now = time.time()
         ttl = CONFIG.data.route_cache_seconds
-        need = []
+        budget = CONFIG.data.route_lookups_per_poll
         for a in acs:
-            if not a.callsign:
+            cs = a.callsign
+            if not cs or not cs[:3].isalpha() or not cs[3:4].isdigit():   # airline-style only; N-numbers have no route
                 continue
-            hit = self._routes.get(a.callsign)
+            hit = self._routes.get(cs)
             if hit and now - hit[0] < ttl:
-                a.origin, a.destination = hit[1]
-            else:
-                need.append(a)
-        if not need:
-            return
-        body = {"planes": [{"callsign": a.callsign, "lat": a.lat, "lng": a.lon} for a in need]}
-        try:
-            resp = _post_json(f"{self.base}/api/0/routeset", body, self.timeout)
-        except Exception as e:
-            self.last_error = f"routeset {type(e).__name__}: {e}"
-            for a in need:  # negative-cache briefly so we don't hammer the API
-                self._routes[a.callsign] = (now - ttl + 60, ("", ""))
-            return
-        by_cs = {e.get("callsign", "").strip(): e for e in (resp or []) if isinstance(e, dict)}
-        for a in need:
-            route = parse_route(by_cs.get(a.callsign, {}))
-            self._routes[a.callsign] = (now, route)
-            a.origin, a.destination = route
+                self._apply_route(a, hit[1])
+                continue
+            if budget <= 0:
+                continue
+            budget -= 1
+            try:
+                _, text = self.route_raw(cs)
+                route = parse_adsbdb_route(json.loads(text) if text.strip() else {})
+                self._routes[cs] = (now, route)
+            except ApiError as e:
+                if e.status == 404:                                   # unknown callsign: remember for hours
+                    self._routes[cs] = (now - ttl + NEGATIVE_ROUTE_TTL, ("", "", None, None))
+                else:
+                    self.last_error = f"routes {e}"
+                    self._routes[cs] = (now - ttl + 120, ("", "", None, None))
+                    budget = 0                                        # stop hammering a failing service
+                route = self._routes[cs][1]
+            except Exception as e:
+                self.last_error = f"routes {type(e).__name__}: {e}"
+                self._routes[cs] = (now - ttl + 120, ("", "", None, None))
+                budget = 0
+                route = self._routes[cs][1]
+            self._apply_route(a, route)
+
+    @staticmethod
+    def _apply_route(a: Aircraft, route: tuple) -> None:
+        a.origin, a.destination = route[0], route[1]
+        if len(route) >= 4 and route[2] and route[3]:
+            a.extra["route_pos"] = (route[2], route[3])

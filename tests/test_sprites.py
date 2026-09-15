@@ -2,7 +2,7 @@ import numpy as np
 
 from panelwall import sprites
 from panelwall.data.airports import route_progress, great_circle_nm
-from panelwall.channels.silhouette import SilhouetteChannel, bearing_text, SOLO_PRIORITY, DETAIL_PRIORITY, DETAIL_SECONDS
+from panelwall.channels.silhouette import SilhouetteChannel, bearing_text, SOLO_PRIORITY, DETAIL_PRIORITY, DETAIL_SECONDS, DETAIL_COOLDOWN
 from panelwall.data.feed import AircraftFeed
 from panelwall.data.adsb import parse_aircraft
 from panelwall.framebuffer import Frame
@@ -87,6 +87,16 @@ def test_silhouette_priority_and_detail_mode():
     feed.aircraft = feed.aircraft + [parse_aircraft(RAW2, 42.36, -71.06)]
     ch.tick(0.05)
     assert ch.priority() == 0                                          # two aircraft, same closest -> hide
+    feed.aircraft = list(reversed(feed.aircraft))                      # a DIFFERENT aircraft is now closest...
+    ch.tick(0.05)
+    assert ch.priority() == 0                                          # ...but the 45 s cooldown hasn't passed
+    ch.tick(DETAIL_COOLDOWN)
+    ch.tick(0.05)
+    assert ch.priority() == DETAIL_PRIORITY                            # now it gets its card
+    ch.tick(DETAIL_SECONDS + 1)
+    feed.aircraft = list(reversed(feed.aircraft))                      # back to the first one: already shown
+    ch.tick(DETAIL_COOLDOWN + 1)
+    assert ch.priority() == 0
     feed.aircraft = []
     ch.tick(0.05)
     assert ch.priority() == 0

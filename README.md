@@ -21,7 +21,7 @@ web         the control server (standard library http.server, no build step)
 |---|---|---|
 | `flights` | FlightWall-style list of up to 5 aircraft overhead | 10 with aircraft, else 1 |
 | `radar` | 64×64 radar scope (rings, sweep, altitude-colored blips) + list of 4 | 10 with aircraft, else 1 |
-| `silhouette` | the closest aircraft as a hero card: sprite in airline colors, ORIGIN → DEST with progress dot, alt/spd/phase | 20 when exactly one aircraft is in range; 25 for 8 s when a new closest aircraft appears; else 0 |
+| `silhouette` | the closest aircraft as a hero card: sprite in airline colors, ORIGIN → DEST with progress dot, alt/spd/phase | 20 when exactly one aircraft is in range; 25 for 8 s whenever a not-yet-shown aircraft becomes the closest (at most every 45 s); else 0 |
 | `mbta` | Red Line strip with live trains and next arrivals at Harvard | 5 (idle content) |
 | `testpattern` | panel numbers 1–8, RGB bars, origin marker | bring-up only (`test`) |
 
@@ -56,7 +56,9 @@ All optional. The app runs with none of them set.
 |---|---|---|
 | `PW_LAT`, `PW_LON` | Doylestown PA (edit `config.py` for Boston) | where the display is |
 | `PW_RADIUS_NM` | `50` | how far around you to look (8 is right for an apartment near BOS) |
-| `PW_ADSB_BASE` | `https://api.adsb.lol` | readsb-style API; `https://api.airplanes.live` also works (no routes) |
+| `PW_ADSB_BASE` | `https://api.adsb.lol` | readsb-style aircraft API; `https://api.airplanes.live` has the same shape |
+| `PW_POLL_SECONDS` | `10` | aircraft poll interval. adsb.lol sent 429s at 5 s; the client backs off automatically on 429 |
+| `PW_ROUTES_BASE` | `https://api.adsbdb.com` | origin/destination lookups per callsign (3 per poll, cached 1 h). Set to `""` to disable |
 | `PW_IFACE` | `eth0` | interface cabled to the Colorlight |
 | `PW_SETTINGS` | `~/.panelwall/settings.json` | where phone-UI settings persist |
 | `MBTA_API_KEY` | unset | **optional.** Free key from api-v3.mbta.com raises the rate limit from 20 to 1000 req/min; we use 8/min. Nothing is disabled without it. |

@@ -181,8 +181,8 @@ panelwall/
                        fixture_channel(name) builds any channel from fixtures/ (used by demos, sheet, tests)
   config.py            DisplayConfig(256x64, fps 20, brightness 0xBF)
                        LocationConfig(lat, lon, radius_nm) — env PW_LAT / PW_LON / PW_RADIUS_NM
-                       ColorlightConfig(iface='eth0')  DataConfig(adsb_base, poll 5 s, route cache 1 h)
-                       MbtaConfig(route Red, home place-harsq, branch Braintree, MBTA_API_KEY optional, poll 15 s)
+                       ColorlightConfig(iface='eth0')  DataConfig(adsb_base, poll 10 s, routes_base adsbdb,
+                       3 route lookups/poll, route cache 1 h)   MbtaConfig(route Red, home place-harsq, branch Braintree, MBTA_API_KEY optional, poll 15 s)
   settings.py          Settings: what the phone UI changes (enabled channels, brightness, quiet hours,
                        location, forced channel). Persists to ~/.panelwall/settings.json (PW_SETTINGS);
                        loaded at startup and pushed into CONFIG.location. Web thread writes, scheduler reads.
@@ -205,8 +205,9 @@ panelwall/
     radar.py           RadarChannel — 64x64 scope left (rings 1/3-2/3-full, sweep 4 s, blips colored by
                        altitude <3000 amber <10000 green else cyan), list of 4 right. prio 10 / 1
     silhouette.py      SilhouetteChannel — closest aircraft hero card: sprite, airline+flight, ORIGIN -o-> DEST
-                       (dot = great-circle fraction flown, data/airports.py), alt/spd/phase, hdg/reg/type.
-                       prio 20 when exactly 1 aircraft; 25 for 8 s when a NEW closest appears ("detail"); else 0
+                       (dot = great-circle fraction flown; adsbdb airport coords, else data/airports.py),
+                       alt/spd/phase, hdg/reg/type. prio 20 when exactly 1 aircraft; 25 for 8 s ("detail")
+                       whenever a not-yet-featured aircraft is the closest, at most every 45 s; else 0
     mbta.py            MbtaChannel — Red Line strip (stations spaced evenly, labels alternate above/below,
                        home amber, trains as arrows N above / S below the line) + 2 arrival rows. prio 5
     testpattern.py     panel numbers 1–8 + RGB bars + origin marker + moving dot; for bring-up
@@ -215,7 +216,8 @@ panelwall/
     simulator.py       pygame window (Mac) or PNG every 10 frames; prints its mode at startup; led_image()
     colorlight.py      ColorlightSink + pure packet builders (protocol in §5)
   data/
-    adsb.py            AdsbClient (adsb.lol), Aircraft dataclass, parse_aircraft, parse_route
+    adsb.py            AdsbClient (adsb.lol /v2/point + adsbdb routes, 429 backoff), Aircraft, parse_aircraft,
+                       parse_adsbdb_route (parse_route = dead routeset shape, kept for reference)
     feed.py            AircraftFeed — ONE background poller shared by flights/radar/silhouette (never poll twice)
     mbta.py            MbtaClient + pure parsers (parse_stops/vehicles/predictions, select_branch, upcoming),
                        MbtaFeed poller (stops hourly, vehicles+predictions every 15 s), ABBREV table
@@ -228,7 +230,7 @@ fixtures/mbta_red.json   trimmed LIVE capture of the MBTA V3 API (stops, vehicle
 design/                led_mockups.py + led_layout_ideas.png (the 6 mockups; A, D, F deliberately unbuilt)
                        channels_sheet.png (`sheet`), sprites_sheet.png (`sprites`) — regenerate, don't hand-edit
 tests/                 test_colorlight (bytes), test_data, test_radar, test_sprites, test_mbta, test_scheduler,
-                       test_web (real HTTP against a ControlServer on port 0) — 47 tests, all pass
+                       test_web (real HTTP against a ControlServer on port 0) — 50 tests, all pass
 ```
 
 Run `python -m pytest -q`.
@@ -288,14 +290,23 @@ returns `{"ac":[...]}` with readsb fields exactly as parsed: `hex, flight, r, t,
 (int or "ground"), gs, track, baro_rate, lat, lon, seen, dst, dir, category, ...`.
 `probe` output parsed correctly (a C172 at 5.7 nm). Poll every 5 s.
 
-**UNVERIFIED — open issue:** `POST {base}/api/0/routeset` with
-`{"planes":[{"callsign":"JBU1287","lat":..,"lng":..}]}` is expected to return a list of
-`{callsign, airport_codes:"KBOS-KLAX", _airport_codes_iata:"BOS-LAX", plausible, ...}`.
-The one live attempt (a private N-number) returned HTTP 200 with an **empty body** →
-JSONDecodeError. Code now treats an empty body as `[]`. **Next step:** run
-`python -m panelwall probe --routes AAL2570 JBU1287` (use callsigns currently airborne) and
-read the raw status/body it prints; adjust `parse_route()` in `data/adsb.py` if the shape
-differs. Until then the ROUTE column shows `---`. Nothing else depends on it.
+**RESOLVED 15 Sep (verified live from the Mac):** adsb.lol's `POST /api/0/routeset` is
+**dead** — HTTP 201 with an empty body for every callsign tried, including live airline
+flights (AAL774, UAL755, BAW23T). Routes now come from **adsbdb**:
+`GET https://api.adsbdb.com/v0/callsign/{callsign}` →
+`{"response":{"flightroute":{"origin":{"iata_code","latitude","longitude"},"destination":{...}}}}`,
+404 `{"response":"unknown callsign"}` for private N-numbers. Verified: AAL774 → ORD-LGA,
+UAL755 → IAD-BOS, BAW23T → ATL-LHR. `parse_adsbdb_route()` in `data/adsb.py`; airport
+coordinates from the reply drive the silhouette's progress dot. Politeness: at most 3
+lookups per poll (closest first), 1 h cache, 6 h negative cache, N-numbers never asked.
+`PW_ROUTES_BASE=""` disables lookups.
+
+**Rate limiting (hit on 15 Sep):** adsb.lol returned `429 Too Many Requests` (nginx) after
+roughly ten minutes at a 5 s poll. Its README says limits are "dynamic based on load".
+Poll is now 10 s (`PW_POLL_SECONDS`); on 429 the client honours `Retry-After` or backs off
+15 s → 30 → 60 → … 5 min, keeps the last good aircraft list, and reports
+"HTTP 429 rate limited … retrying in N s" in the phone UI. Never run two `run` instances
+against the same IP.
 
 Alternative point API with the same shape if adsb.lol misbehaves: `https://api.airplanes.live/v2/point/...`
 (set `PW_ADSB_BASE`). It has no routeset.
@@ -349,9 +360,7 @@ Radar, Silhouette (+ sprites), MBTA channels; rotation scheduler with hold/wipe/
 phone control server; `sheet` / `sprites` review renders. Departures, Now Playing, Ambient
 remain unbuilt by design — their mockups in `design/` are untouched.
 
-1. Ahmad to run `probe --routes <airline callsigns>` on the Mac and paste the raw reply → fix
-   `parse_route` if needed. (Still open. Until then ROUTE shows `---` and the silhouette's
-   progress dot sits centred with `---` for origin/dest.)
+1. ~~routeset~~ Done: routes come from adsbdb (§6). `probe --routes AAL774` shows the raw reply.
 2. Verify `netplan-eth0` autoconnect is off on the Pi.
 3. Get the code onto the Pi (`scp -r` or git); `python3 -m panelwall probe` there to confirm the
    Pi reaches adsb.lol AND `curl -s 'https://api-v3.mbta.com/stops?filter\[route\]=Red' | head -c 300`
@@ -367,6 +376,8 @@ remain unbuilt by design — their mockups in `design/` are untouched.
    coordinates + radius 8 from the phone UI; then design iteration.
 
 Verified vs. unverified for the new channels:
+- **VERIFIED live from the Mac, 15 Sep 00:15 EDT:** a 26 s `run` at 50 nm: 17 aircraft, no 429 at the
+  10 s poll, routes resolving via adsbdb (ORD>LGA etc. visible in the flights list).
 - **VERIFIED live from the Mac, 14 Sep 23:29 EDT:** all four MBTA endpoints return the shapes in
   `data/mbta.py`'s docstring; `/stops?filter[route]=Red` returns 22 parent stations in route order
   with both branches after JFK/UMass (fixture is a trimmed capture). A 9 s live `run` showed 6
@@ -391,6 +402,11 @@ Verified vs. unverified for the new channels:
 - A 1-px separator line adjacent to glyph bottoms reads as a bug on an LED grid. Use spacing.
 - Column collisions: 10-char type + 5-digit altitude. Column positions in `flights.py` are
   tuned; if you add text, re-render with `demo-<name> --no-window` and **look at the PNG**.
+- Polled adsb.lol every 5 s plus a routeset POST per poll → 429 within minutes. Free APIs
+  need backoff from day one; the phone UI's per-channel `last_error` is where you'll see it.
+- Silhouette's first "detail" trigger only fired for an aircraft that was brand-new AND already
+  the closest — impossible at a 50 nm radius, so the card never showed. Design priority rules
+  against realistic data (20 aircraft at 50 nm), not the fixture's 1–6.
 - Silkscreen (SMALL) drawn at `y` lights rows `y+4..y+8`, not `y..y+4`. Lay out with that offset
   or things collide 4 px lower than you planned (bit me on the MBTA strip; station labels clipped
   at the display edges too — clamp x).

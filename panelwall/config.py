@@ -37,7 +37,9 @@ class ColorlightConfig:
 @dataclass
 class DataConfig:
     adsb_base: str = _env("PW_ADSB_BASE", "https://api.adsb.lol")
-    poll_seconds: float = 5.0            # how often to re-query aircraft positions
+    poll_seconds: float = _env("PW_POLL_SECONDS", 10.0)   # adsb.lol 429s when polled harder; FlightWall refreshes ~30 s
+    routes_base: str = _env("PW_ROUTES_BASE", "https://api.adsbdb.com")   # "" disables route lookups
+    route_lookups_per_poll: int = 3      # be polite to adsbdb: a busy sky fills in over a few polls
     route_cache_seconds: float = 3600.0  # origin/destination rarely changes mid-flight
     http_timeout: float = 6.0
 

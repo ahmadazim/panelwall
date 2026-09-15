@@ -210,13 +210,15 @@ def cmd_probe(args):
     c = AdsbClient()
     loc = CONFIG.location
     if args.routes:
-        planes = [{"callsign": cs, "lat": loc.lat, "lng": loc.lon} for cs in args.routes]
-        print("POST", c.base + "/api/0/routeset", json.dumps({"planes": planes}))
-        try:
-            status, body = c.routeset_raw(planes)
-            print(f"HTTP {status}, {len(body)} bytes:\n{body[:3000]}")
-        except ApiError as e:
-            print(e)
+        from .data.adsb import parse_adsbdb_route
+        for cs in args.routes:
+            print("GET", f"{c.routes_base}/v0/callsign/{cs}")
+            try:
+                status, body = c.route_raw(cs)
+                print(f"HTTP {status}, {len(body)} bytes: {body[:600]}")
+                print("  parsed:", parse_adsbdb_route(json.loads(body)))
+            except ApiError as e:
+                print(" ", e)
         return
     raw = c.fetch_raw(loc.lat, loc.lon, loc.radius_nm)
     acs = raw.get("ac", [])
@@ -265,7 +267,7 @@ def main(argv=None):
     sp = sub.add_parser("probe")
     sp.add_argument("-n", type=int, default=3)
     sp.add_argument("--routes", nargs="+", metavar="CALLSIGN",
-                    help="skip the aircraft query; POST these callsigns to routeset and print the raw reply")
+                    help="skip the aircraft query; look these callsigns up on the route API and print the raw reply")
     sp.set_defaults(fn=cmd_probe)
 
     args = p.parse_args(argv)

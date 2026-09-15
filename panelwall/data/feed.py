@@ -54,7 +54,8 @@ class AircraftFeed:
             if acs or self.client.last_error is None:
                 self.aircraft = [a for a in acs if not a.on_ground]
                 self.updated_at = time.time()
-            self._stop.wait(self.poll)
+            # after a 429 the client asks us to wait longer than the normal poll
+            self._stop.wait(max(self.poll, self.client.backoff_until - time.time()))
 
     def status(self) -> dict:
         return {"updated_at": self.updated_at or None, "last_error": self.last_error, "count": len(self.aircraft)}
