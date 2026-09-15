@@ -1,0 +1,4 @@
+numpy>=1.24
+pillow>=10.0
+pygame>=2.5 ; sys_platform == "darwin"
+pytest>=7
