@@ -192,8 +192,10 @@ panelwall/
   framebuffer.py       Frame = PIL RGB 256x64 + drawing helpers; _TextCache (see perf note)
   fonts.py             SMALL = Silkscreen 8px (5px caps, ~6px advance, ~42 chars/line; NOTE: drawn at y it
                        lights rows y+4..y+8)   MEDIUM = Press Start 2P 8px (8x8)   LARGE = Press Start 2P 16px
-                       FW = Adafruit GFX classic 5x7 bitmap font (glcd5x7.pil, 6 px advance, lowercase, slashed 0;
-                       built by tools/build_fw_font.py from glcdfont.c, BSD). Drawn at y it lights rows y..y+7.
+                       FW = X11 misc-fixed 6x10 bitmap font (6x10.pil, 6 px advance, 7 px caps, lowercase; built by
+                       tools/build_fw_font.py from 6x10.bdf, public domain, colon/period patched to 1-px dots).
+                       Drawn at y it lights rows y+1..y+7 (descenders to y+9). Replaced the GFX 5x7 on 15 Sep
+                       after a side-by-side with the fw2 photo: 6x10 has the pointed A / hooked t of the real one.
   scheduler.py         each frame: tick all channels, pick, render, 300 ms wipe on switch, sink.show().
                        pick: forced (API) > manual mode: the pinned channel, full stop > auto mode: round-robin
                        over Settings.cycle for dwell_seconds each, skipping priority<=0; if alerts on, a channel
@@ -255,7 +257,7 @@ panelwall/
     openmeteo.py       Open-Meteo (keyless): parse_forecast, wmo(code) -> (glyph, word), compass, ForecastFeed
                        (15 min; alert_until when current code changes into precipitation). Timestamps are LOCAL
                        naive datetimes in CONFIG.forecast.timezone
-assets/fonts/          PressStart2P.ttf, Silkscreen.ttf (OFL); glcd5x7.pil/.pbm + glcdfont.c + LICENSE-glcdfont.txt (BSD)
+assets/fonts/          PressStart2P.ttf, Silkscreen.ttf (OFL); 6x10.bdf + 6x10.pil/.pbm (X11 misc-fixed, public domain)
 assets/logos/          14 x 28x28 RGBA pixel-art airline marks (tools/build_logos.py; personal-use approximations)
 assets/data/airports.csv  OurAirports trim (public domain)
 tools/                 build_fw_font.py, build_logos.py — regenerate the font / logos; never hand-edit the outputs
@@ -279,13 +281,14 @@ Run `python -m pytest -q`.
 
 ```
 x 2-29  rows 0-27  logo (assets/logos/<ICAO>.png; 'private' for N-numbers, 'generic' otherwise)
-x 34    y=1   Southwest Airlines          (or 'WN 1187' with title=flight)      Alt: 2,700ft   <- values right-
+x 34    y=2   Southwest Airlines          (or 'WN 1187' with title=flight)      Alt: 2,700ft   <- values right-
 x 34    y=13  OAK-SEA                     (flight number if the route is unknown) Spd: 413kts      aligned at 254,
-x 34    y=25  Boeing 737-700                                                     Trk: 300deg      label 6 px left
-x 0     y=37  Oakland Intl                (or 'Arriving from X' / 'Departing to X' / registration)  Vr: +640ft/m
-x 0     y=49  Seattle-Tacoma Intl         (full width)                                          +2 more (grey)
+x 34    y=24  Boeing 737-700                                                     Trk: 300deg      label 6 px left
+x 0     y=35  Oakland Intl                (or 'Arriving from X' / 'Departing to X' / registration)  Vr: +640ft/m
+x 0     y=46  Seattle-Tacoma Intl         (full width; rows 56-63 stay dark like the photo)
 ```
-Font `fonts.FW` (Adafruit GFX 5x7, 6 px advance, true lowercase). Left text is hard-clipped
+Font `fonts.FW` (X11 6x10, 6 px advance, true lowercase); 11 px row pitch. No "+N more" text (the
+real one's over-five message has never been photographed; the corner stays dark). Left text is hard-clipped
 4 px before the right column (no ellipsis). Cycle: nearest 5, 5 s each, order stable while the
 set is unchanged, one black frame per swap. Config: `FlightWallConfig` (title, cycle_seconds,
 units, no_flights dots|clock, clocks, home_airport). Fixtures `flightwall_{a,b,c,d}.json`.

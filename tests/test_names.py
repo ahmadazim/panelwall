@@ -52,4 +52,4 @@ def test_fw_font_widths():
     assert fonts.width("Seattle-Tacoma Intl", fonts.FW) == 114 <= 256
     assert fonts.width("Dallas-Fort Worth Intl", fonts.FW) == 132 <= 256
     assert fonts.width("Detroit Metropolitan Wayne County", fonts.FW) == 198 <= 256
-    assert fonts.FW.getbbox("Southwest Airlines")[3] == 8                    # 8 px cell, 7 px caps + descender row
+    assert fonts.FW.getbbox("Southwest Airlines")[3] == 10                   # 10 px cell, 7 px caps in rows 1-7

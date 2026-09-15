@@ -107,7 +107,7 @@ def test_render_all_cases():
         arr = f.to_array()
         assert arr.max() > 0
         if case == "c":
-            assert len(ch.aircraft) == 7 and arr[49:57, 200:].max() > 0     # '+2 more'
+            assert len(ch.aircraft) == 7 and len(ch.order) == 5           # cycles the nearest five, no extra text
         if case == "d":
             assert ch.priority() == 2
     ch = FlightWallChannel(feed=_feed("a"))
@@ -134,6 +134,6 @@ def test_clock_mode(monkeypatch):
     f = Frame()
     ch.render(f)
     arr = f.to_array()
-    assert arr.max() > 0 and arr[:8].max() == 0 and arr[56:].max() == 0   # three stacked rows, vertically centred
+    assert arr.max() > 0 and arr[:12].max() == 0 and arr[52:].max() == 0   # three stacked rows, vertically centred
     monkeypatch.setattr(ch.cfg, "clocks", [("BAD", "Nowhere/Nowhere")])
     ch.render(Frame())                                         # bad tz must not raise

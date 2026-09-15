@@ -215,6 +215,18 @@ def cmd_sheet(args):
     print(f"wrote {out}  {sheet.size[0]}x{sheet.size[1]}")
 
 
+def cmd_logos(args):
+    """Regenerate assets/logos/*.png and render them at 6x to design/logos_sheet.png."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("build_logos", Path(__file__).resolve().parent.parent / "tools" / "build_logos.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    mod.build()
+    out = DESIGN / "logos_sheet.png"
+    mod.sheet(6).save(out)
+    print(f"wrote {len(mod.LOGOS)} logos to {mod.OUT} and {out}")
+
+
 def cmd_sprites(args):
     from .sprites import render_sheet
 
@@ -335,6 +347,7 @@ def main(argv=None):
                             help="a: 3 flights with routes, b: private no route, c: 7 flights (+2 more), d: empty sky")
         sp.set_defaults(fn=cmd_demo, channel=name)
     sub.add_parser("sheet", help="render every channel's fixture demo to design/channels_sheet.png").set_defaults(fn=cmd_sheet)
+    sub.add_parser("logos", help="regenerate the airline logo tiles and design/logos_sheet.png (6x)").set_defaults(fn=cmd_logos)
     sub.add_parser("sprites", help="render every aircraft sprite to design/sprites_sheet.png").set_defaults(fn=cmd_sprites)
     sp = sub.add_parser("probe-sports", help="raw ESPN scoreboard JSON for the tracked leagues")
     sp.add_argument("-n", type=int, default=600, help="bytes of raw JSON to print per league")

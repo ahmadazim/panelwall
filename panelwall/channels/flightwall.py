@@ -2,14 +2,15 @@
 
 One aircraft at a time, cycling through the nearest MAX_FLIGHTS every
 `cycle_seconds` (5 s default, like the app's "Flight Display Speed"). Layout,
-tuned against the product photos (256x64, fonts.FW = 5x7 glyphs, 6 px advance):
+tuned against the product photos (256x64, fonts.FW = X11 6x10: 7 px caps in rows
+1-7 of the cell, 6 px advance; 11 px row pitch leaves a dark margin under row 5):
 
     x 2-29   rows 0-27   airline logo (assets/logos/<ICAO>.png), 'private' for N-numbers
-    x 34     row 1 (y 1)  airline full name        -- or the flight number (title="flight")
+    x 34     row 1 (y 2)  airline full name        -- or the flight number (title="flight")
     x 34     row 2 (y 13) route  "OAK-SEA"
-    x 34     row 3 (y 25) aircraft long name       "Boeing 737-700"
-    x 0      row 4 (y 37) origin airport name      "Oakland Intl"            (full width)
-    x 0      row 5 (y 49) destination name         "Seattle-Tacoma Intl"
+    x 34     row 3 (y 24) aircraft long name       "Boeing 737-700"
+    x 0      row 4 (y 35) origin airport name      "Oakland Intl"            (full width)
+    x 0      row 5 (y 46) destination name         "Seattle-Tacoma Intl"
     right column, rows 1-4, VALUES right-aligned at x=254, label 6 px left of the value:
              "Alt: 2,700ft"  "Spd: 413kts"  "Trk: 300deg"  "Vr: +640ft/m"
     All white. Long left-hand text is hard-clipped where the right column starts (no ellipsis),
@@ -17,7 +18,8 @@ tuned against the product photos (256x64, fonts.FW = 5x7 glyphs, 6 px advance):
 
 Only one airport known: row 4 "Arriving from X" / "Departing to X", row 5 blank.
 None known: row 4 shows the registration, row 5 blank.
-> MAX_FLIGHTS in range: "+N more" in dim grey, bottom-right.
+> MAX_FLIGHTS in range: the nearest five cycle; nothing extra is drawn (the real one shows a
+message we have never seen photographed, so the corner stays dark).
 No aircraft: "..." centred, or stacked clocks (CONFIG.flightwall.no_flights = "clock").
 
 Data: the shared AircraftFeed (nearest first). The cycle order is kept stable while the
@@ -43,11 +45,11 @@ from ..data.aircraft_types import type_long_name
 from ..data.airlines import airline_full_name, short_flight
 from ..data.airports import display_name
 from ..data.feed import AircraftFeed
-from ..framebuffer import Frame, W, H, WHITE, GREY
+from ..framebuffer import Frame, W, H, WHITE
 from .base import Channel
 
 LOGO_DIR = Path(__file__).resolve().parent.parent.parent / "assets" / "logos"
-ROWS = (1, 13, 25, 37, 49)
+ROWS = (2, 13, 24, 35, 46)          # 11 px pitch
 LOGO_X, LOGO_Y = 2, 0
 X_TEXT = 34
 X_RIGHT = 254
@@ -200,9 +202,6 @@ class FlightWallChannel(Channel):
             self._since = self.t if self._shown_hex is None else self._since
             self._shown_hex = a.hex
         self._render_card(frame, a)
-        extra = len(self.aircraft) - self.cfg.max_flights
-        if extra > 0:
-            frame.text_right(X_RIGHT, ROWS[4], f"+{extra} more", fonts.FW, GREY)
 
     def _render_card(self, frame: Frame, a: Aircraft) -> None:
         f = fonts.FW
@@ -228,8 +227,8 @@ class FlightWallChannel(Channel):
         cfg = self.cfg
         if cfg.no_flights == "clock" and cfg.clocks:
             clocks = list(cfg.clocks)[:3]
-            pitch = 12
-            y0 = (H - pitch * len(clocks)) // 2 + 2
+            pitch = 11
+            y0 = (H - pitch * len(clocks)) // 2
             for i, (label, tz) in enumerate(clocks):
                 try:
                     now = datetime.now(ZoneInfo(tz))
@@ -244,4 +243,4 @@ class FlightWallChannel(Channel):
                     s = s.lstrip("0") + now.strftime(" %p")
                 frame.text_center(W // 2, y0 + i * pitch, f"{label} {s}", fonts.FW, WHITE)
         else:
-            frame.text_center(W // 2, 28, "...", fonts.FW, WHITE)
+            frame.text_center(W // 2, 27, "...", fonts.FW, WHITE)
