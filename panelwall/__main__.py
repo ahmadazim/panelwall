@@ -28,7 +28,7 @@ def _sink(args):
     return make_sink("sim", png_path=args.png, window=None if not args.no_window else False)
 
 
-DEFAULT_CHANNELS = ["flights", "radar", "silhouette", "mbta", "sports"]
+DEFAULT_CHANNELS = ["flights", "radar", "silhouette", "mbta", "sports", "forecast"]
 AIRCRAFT_CHANNELS = {"flights", "radar", "silhouette"}
 
 
@@ -52,6 +52,8 @@ def build_channels(names: list[str]):
             out.append(ch.MbtaChannel())
         elif name == "sports":
             out.append(ch.SportsChannel())
+        elif name == "forecast":
+            out.append(ch.ForecastChannel())
         elif name == "testpattern":
             out.append(ch.TestPatternChannel())
         else:
@@ -125,7 +127,7 @@ def fixture_feed(n: int | None = None):
     return AircraftFeed(static=acs if n is None else acs[:n])
 
 
-def fixture_channel(name: str):
+def fixture_channel(name: str, **kw):
     """Build one channel driven by fixture data (no network)."""
     from . import channels as ch
 
@@ -141,28 +143,32 @@ def fixture_channel(name: str):
     if name == "sports":
         from .data.espn import SportsFeed
         return ch.SportsChannel(feed=SportsFeed(static=json.loads((FIXTURES / "espn_scoreboards.json").read_text())))
+    if name == "forecast":
+        from .data.openmeteo import ForecastFeed
+        return ch.ForecastChannel(feed=ForecastFeed(static=json.loads((FIXTURES / "openmeteo.json").read_text())), view=kw.get("view"))
     if name == "testpattern":
         return ch.TestPatternChannel()
     raise ValueError(f"no fixture demo for {name!r}")
 
 
-DEMO_CHANNELS = ["flights", "radar", "silhouette", "mbta", "sports", "testpattern"]
+DEMO_CHANNELS = ["flights", "radar", "silhouette", "mbta", "sports", "forecast", "testpattern"]
 
 
 def cmd_demo(args):
     from .scheduler import Scheduler
 
-    Scheduler([fixture_channel(args.channel)], _sink(args), args.fps).run(args.seconds)
+    kw = {"view": args.view} if getattr(args, "view", None) else {}
+    Scheduler([fixture_channel(args.channel, **kw)], _sink(args), args.fps).run(args.seconds)
 
 
 DESIGN = Path(__file__).resolve().parent.parent / "design"
 
 
-def render_channel_frame(name: str, warm_seconds: float = 1.3):
+def render_channel_frame(name: str, warm_seconds: float = 1.3, **kw):
     """One representative frame of a fixture channel (numpy HxWx3)."""
     from .framebuffer import Frame
 
-    ch = fixture_channel(name)
+    ch = fixture_channel(name, **kw)
     for _ in range(int(warm_seconds / 0.05)):   # let sweeps/animations move off their zero state
         ch.tick(0.05)
     f = Frame()
@@ -178,8 +184,13 @@ def cmd_sheet(args):
 
     scale, pad, label_h = 4, 16, 26
     font = ImageFont.truetype(fonts.SMALL.path, 16)
-    names = DEMO_CHANNELS
-    tiles = [(n, led_image(render_channel_frame(n), scale)) for n in names]
+    tiles = []
+    for n in DEMO_CHANNELS:
+        if n == "forecast":
+            for v in ("week", "hourly"):
+                tiles.append((f"forecast ({v})", led_image(render_channel_frame(n, view=v), scale)))
+        else:
+            tiles.append((n, led_image(render_channel_frame(n), scale)))
     tw, th = tiles[0][1].size
     sheet = Image.new("RGB", (tw + 2 * pad, len(tiles) * (th + label_h + pad) + pad), (20, 20, 22))
     d = ImageDraw.Draw(sheet)
@@ -228,6 +239,26 @@ def cmd_probe_sports(args):
         print(f"  {len(raw)} bytes, {len(doc.get('events', []))} events. Raw head:\n  {raw[:args.n]}")
         for g in parse_scoreboard(doc, lg):
             print(f"  {g.start:%m-%d %H:%MZ} {g.state:4} {g.away.abbreviation:>4} {g.away.score!s:>3} @ {g.home.abbreviation:<4} {g.home.score!s:>3}  {g.short_detail!r}  {g.situation or ''}")
+
+
+def cmd_probe_forecast(args):
+    """Print the Open-Meteo URL and the raw JSON head, then the parsed summary."""
+    from .data.openmeteo import OpenMeteoClient, parse_forecast, wmo, compass
+
+    c = OpenMeteoClient()
+    loc = CONFIG.location
+    print("GET", c.url(loc.lat, loc.lon))
+    doc = c.fetch(loc.lat, loc.lon)
+    if doc is None:
+        print(" ", c.last_error)
+        return
+    raw = json.dumps(doc)
+    print(f"  {len(raw)} bytes. Raw head:\n  {raw[:args.n]}")
+    fc = parse_forecast(doc)
+    print(f"\n  now {fc.time}: {fc.temp}F feels {fc.feels}F hum {fc.humidity}% code {fc.code} {wmo(fc.code)} wind {fc.wind_kn}kn {compass(fc.wind_dir)} uv {fc.uv}")
+    for d in fc.daily:
+        print(f"  {d.date:%a %m-%d} code {d.code:>2} {wmo(d.code)[1]:14} hi {d.hi} lo {d.lo} precip {d.precip}% rise {d.sunrise:%H:%M} set {d.sunset:%H:%M}")
+    print(f"  hourly: {len(fc.hourly)} entries from {fc.hourly[0].time if fc.hourly else None}")
 
 
 def cmd_probe(args):
@@ -287,12 +318,17 @@ def main(argv=None):
     for name in DEMO_CHANNELS:
         sp = sub.add_parser(f"demo-{name}", help=f"fixture-driven {name} channel, no network")
         common(sp)
+        if name == "forecast":
+            sp.add_argument("--view", choices=["week", "hourly"], default=None, help="pin one view (default: alternate)")
         sp.set_defaults(fn=cmd_demo, channel=name)
     sub.add_parser("sheet", help="render every channel's fixture demo to design/channels_sheet.png").set_defaults(fn=cmd_sheet)
     sub.add_parser("sprites", help="render every aircraft sprite to design/sprites_sheet.png").set_defaults(fn=cmd_sprites)
     sp = sub.add_parser("probe-sports", help="raw ESPN scoreboard JSON for the tracked leagues")
     sp.add_argument("-n", type=int, default=600, help="bytes of raw JSON to print per league")
     sp.set_defaults(fn=cmd_probe_sports)
+    sp = sub.add_parser("probe-forecast", help="raw Open-Meteo JSON for CONFIG.location")
+    sp.add_argument("-n", type=int, default=600, help="bytes of raw JSON to print")
+    sp.set_defaults(fn=cmd_probe_forecast)
     sp = sub.add_parser("probe")
     sp.add_argument("-n", type=int, default=3)
     sp.add_argument("--routes", nargs="+", metavar="CALLSIGN",

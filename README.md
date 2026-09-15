@@ -6,10 +6,11 @@ a radar scope, a hero card for the closest aircraft, and the MBTA Red Line. Cont
 from your phone.
 
 ```
-channels/   render a 256x64 frame            flights, radar, silhouette, mbta, testpattern
+channels/   render a 256x64 frame            flights, radar, silhouette, mbta, sports, forecast, testpattern
 scheduler   picks a channel (priority + rotation + hold), wipes between them, quiet hours
 sinks/      show the frame: SimulatorSink (Mac/PNG) or ColorlightSink (raw Ethernet)
-data/       shared ADS-B feed, MBTA client, airline / aircraft-type / airport lookups
+data/       shared ADS-B feed, MBTA / ESPN / Open-Meteo clients, airline / aircraft-type / airport lookups
+glyphs      weather glyphs (sun cloud partly rain snow storm fog) + team badge, shared with design/mockups2.py
 sprites     procedural side-profile aircraft sprites, ~130 ICAO types
 settings    what the phone UI can change; persisted to ~/.panelwall/settings.json
 web         the control server (standard library http.server, no build step)
@@ -23,6 +24,8 @@ web         the control server (standard library http.server, no build step)
 | `radar` | 64×64 radar scope (rings, sweep, altitude-colored blips) + list of 4 | 10 with aircraft, else 1 |
 | `silhouette` | the closest aircraft as a hero card: sprite in airline colors, ORIGIN → DEST with progress dot, alt/spd/phase | 20 when exactly one aircraft is in range; 25 for 8 s whenever a not-yet-shown aircraft becomes the closest (at most every 45 s); else 0 |
 | `mbta` | Red Line strip with live trains and next arrivals at Harvard | 5 (idle content) |
+| `sports` | "BOSTON TONIGHT": featured game card (live > next > last final) + one row per other tracked team, from ESPN's public scoreboard JSON (unofficial, keyless) | 25 for 15 s after a tracked team scores, 12 live, 4 game today, else 0 |
+| `forecast` | Open-Meteo (keyless): WEEK view (7 days, glyphs, hi/lo, precip %) and HOURLY view (next 12 h temperature line) alternating every 20 s | 3, or 8 for 60 s when the current weather turns to precipitation |
 | `testpattern` | panel numbers 1–8, RGB bars, origin marker | bring-up only (`test`) |
 
 Scheduler rules: a channel forced from the phone wins; a strictly higher priority preempts
@@ -35,7 +38,9 @@ every 20 s; priority 0 hides a channel at once. Switches are a 300 ms bottom-up 
 python3 -m venv .venv && source .venv/bin/activate      # NOT the conda `tf` env
 pip install -r requirements.txt                          # numpy, pillow, pygame, pytest
 python -m panelwall demo-flights                         # fixture data, live pygame window
-python -m panelwall demo-radar | demo-silhouette | demo-mbta
+python -m panelwall demo-radar | demo-silhouette | demo-mbta | demo-sports
+python -m panelwall demo-forecast --view week|hourly     # omit --view to alternate
+python -m panelwall probe-sports | probe-forecast        # raw JSON from ESPN / Open-Meteo
 python -m panelwall run                                  # live data + control UI on :8080
 python -m panelwall run --channels flights,mbta          # load only some channels
 python -m panelwall sheet                                # all channels -> design/channels_sheet.png
@@ -66,6 +71,13 @@ All optional. The app runs with none of them set.
 | `PW_MBTA_STOP` | `place-harsq` (Harvard) | home station, a parent-station id |
 | `PW_MBTA_BRANCH` | `Braintree` | `Braintree` or `Ashmont`; the Red Line forks after JFK/UMass |
 | `PW_MBTA_BASE` | `https://api-v3.mbta.com` | |
+| `PW_TEAMS` | `mlb:BOS:SOX,nfl:NE:PATS,nba:BOS:CELTS,nhl:BOS:B'S` | tracked teams as `league:ESPN-abbreviation:label`; labels <= 5 chars fit next to any status |
+| `PW_CITY` | `BOSTON` | header of the sports channel |
+| `PW_TZ` | `America/New_York` | Open-Meteo timezone (its timestamps are local to this) |
+
+Both the sports and forecast sources are keyless. ESPN's scoreboard JSON is **unofficial**:
+undocumented, stable for years, but it could change or disappear without notice. Parsing
+is per-event defensive, so a shape change degrades to "NO GAMES" rather than a crash.
 
 Values saved from the phone UI (location, radius, brightness, quiet hours, enabled
 channels) override these at startup.

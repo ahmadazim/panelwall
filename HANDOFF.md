@@ -199,8 +199,18 @@ panelwall/
   web.py               ControlServer: GET / (inline mobile UI, iOS home-screen installable), /api/state,
                        /preview.png (led_image 3x, <=1/s), /manifest.webmanifest, /icon.png;
                        POST /api/channels, /api/show, /api/brightness, /api/location. Port 80 -> 8080.
+  glyphs.py            shared pixel art: draw_glyph(d, sun|cloud|partly|rain|snow|storm|fog, x, y, scale 1|2) 12x10,
+                       team_mark(d, x, y, color, alt) 8x8 two-tone badge, hex_color(). Used by channels AND design/mockups2.py
   channels/
     base.py            Channel: tick(dt), priority() (<=0 = don't show), render(frame), status(), close()
+    sports.py          SportsChannel — "BOSTON TONIGHT": featured game card left (live > next > last final; badges,
+                       LARGE scores right-aligned at x=92, MLB bases+outs / NFL down&distance+possession) + one row per
+                       other tracked team right (label + <=13-char status). prio 25 (15 s after a score) / 12 live /
+                       4 game today / 0
+    forecast.py        ForecastChannel — WEEK (7 x 36 px columns: day, glyph, hi, lo, precip% if >=20) and HOURLY
+                       (LARGE temp + glyph, FEELS/UV/HUM, SET/RISE; 12 x 15 px hour columns from x=70 with a
+                       temperature polyline) alternating every 20 s on its own timer. prio 3 / 8 for 60 s when the
+                       current weather_code turns to precipitation
     flights.py         FlightsChannel — the FlightWall replica (layout below). prio 10 / 1
     radar.py           RadarChannel — 64x64 scope left (rings 1/3-2/3-full, sweep 4 s, blips colored by
                        altitude <3000 amber <10000 green else cyan), list of 4 right. prio 10 / 1
@@ -224,13 +234,26 @@ panelwall/
     airlines.py        ICAO operator → (IATA, name): JBU→(B6, JETBLUE). ~60 carriers
     aircraft_types.py  ICAO type → ≤10-char name: A21N→A321NEO. ~170 types incl. GA
     airports.py        IATA → (lat, lon) for ~150 airports; route_progress() for the silhouette dot
+    espn.py            ESPN public scoreboard (UNOFFICIAL, keyless): EspnClient (scoreboard?dates=yesterday-+7d),
+                       parse_scoreboard (per-event defensive), format_status (<=13 chars), live_detail, pick_game,
+                       SportsFeed (30 s while live else 5 min; score-change -> event_until). NOTE: the MLB week window
+                       is ~1.9 MB of JSON per poll - fine in the background thread, don't shorten the interval.
+    openmeteo.py       Open-Meteo (keyless): parse_forecast, wmo(code) -> (glyph, word), compass, ForecastFeed
+                       (15 min; alert_until when current code changes into precipitation). Timestamps are LOCAL
+                       naive datetimes in CONFIG.forecast.timezone
 assets/fonts/          PressStart2P.ttf, Silkscreen.ttf (OFL)
 fixtures/bos_point.json  hand-built readsb-shaped Boston traffic + `_routes` sidecar (test only)
 fixtures/mbta_red.json   trimmed LIVE capture of the MBTA V3 API (stops, vehicles+included, predictions), 14 Sep
-design/                led_mockups.py + led_layout_ideas.png (the 6 mockups; A, D, F deliberately unbuilt)
+fixtures/espn_scoreboards.json  trimmed LIVE ESPN capture, 15 Sep, 4 leagues; ONE substitution (MIA->BOS on the live
+                         MLB game so the fixture has a live Boston card) - see its _comment
+fixtures/openmeteo.json  unmodified LIVE Open-Meteo capture, 15 Sep 00:15, Doylestown
+design/                led_mockups.py + led_layout_ideas.png (round 1: A, D, F deliberately unbuilt)
+                       mockups2.py -> round2/round2_sheet.png (round 2: 1, 5, 6 built and rendered THROUGH the channels;
+                       2 ticker, 3/4 Spotify deferred as static sketches). The original round-2 mockup file Ahmad
+                       referred to was never in the repo; layouts were built from his written spec (15 Sep)
                        channels_sheet.png (`sheet`), sprites_sheet.png (`sprites`) — regenerate, don't hand-edit
 tests/                 test_colorlight (bytes), test_data, test_radar, test_sprites, test_mbta, test_scheduler,
-                       test_web (real HTTP against a ControlServer on port 0) — 50 tests, all pass
+                       test_web (real HTTP against a ControlServer on port 0), test_sports, test_forecast — 65 tests, all pass
 ```
 
 Run `python -m pytest -q`.
@@ -375,7 +398,18 @@ remain unbuilt by design — their mockups in `design/` are untouched.
 8. After it works: systemd service (`run --sink colorlight`, Restart=always); set the Boston
    coordinates + radius 8 from the phone UI; then design iteration.
 
-Verified vs. unverified for the new channels:
+Added 15 Sep 00:15–01:00: SportsChannel and ForecastChannel (+ glyphs.py, design/mockups2.py, probe-sports,
+probe-forecast, demo-forecast --view). `run` now loads flights, radar, silhouette, mbta, sports, forecast.
+- **VERIFIED live:** ESPN scoreboard for mlb/nfl/nba/nhl (shapes in data/espn.py docstring; date ranges via
+  `?dates=YYYYMMDD-YYYYMMDD` work; an EMPTY User-Agent gets 403, any non-empty one is fine; one transient 403
+  was seen and is handled as a soft error). Open-Meteo reply shape (fixture is unmodified). `probe-sports` and
+  `probe-forecast` both ran clean.
+- **UNVERIFIED:** a live Boston game on the real display (none was in progress; the live card path is exercised
+  by the relabeled fixture event and by synthetic Game objects in tests); NFL `possession` field mapping
+  (documented as a team id; no live NFL game to confirm); the forecast "rain starting" priority spike against
+  real weather; how the ~1.9 MB MLB poll behaves on the Pi's Wi-Fi.
+
+Verified vs. unverified for the earlier channels:
 - **VERIFIED live from the Mac, 15 Sep 00:15 EDT:** a 26 s `run` at 50 nm: 17 aircraft, no 429 at the
   10 s poll, routes resolving via adsbdb (ORD>LGA etc. visible in the flights list).
 - **VERIFIED live from the Mac, 14 Sep 23:29 EDT:** all four MBTA endpoints return the shapes in
@@ -407,6 +441,8 @@ Verified vs. unverified for the new channels:
 - Silhouette's first "detail" trigger only fired for an aircraft that was brand-new AND already
   the closest — impossible at a 50 nm radius, so the card never showed. Design priority rules
   against realistic data (20 aircraft at 50 nm), not the fixture's 1–6.
+- Open-Meteo integers (precipitation %) came through a float-cast helper and rendered "45.0%". Cast per field.
+- A last-resort `[:13]` slice on status strings chopped "@TOR" to "@TO". Shorten by dropping parts, never slice.
 - Silkscreen (SMALL) drawn at `y` lights rows `y+4..y+8`, not `y..y+4`. Lay out with that offset
   or things collide 4 px lower than you planned (bit me on the MBTA strip; station labels clipped
   at the display edges too — clamp x).

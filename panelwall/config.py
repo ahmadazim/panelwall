@@ -76,7 +76,7 @@ class SportsConfig:
     base: str = _env("PW_ESPN_BASE", "https://site.api.espn.com/apis/site/v2/sports")
     city: str = _env("PW_CITY", "BOSTON")
     teams: list = field(default_factory=lambda: _teams([
-        ("mlb", "BOS", "SOX"), ("nfl", "NE", "PATS"), ("nba", "BOS", "CELTICS"), ("nhl", "BOS", "BRUINS")]))
+        ("mlb", "BOS", "SOX"), ("nfl", "NE", "PATS"), ("nba", "BOS", "CELTS"), ("nhl", "BOS", "B'S")]))
     poll_live_seconds: float = 30.0      # while a tracked game is in progress
     poll_idle_seconds: float = 300.0
     days_ahead: int = 7                  # scoreboard window: yesterday .. today+days_ahead
