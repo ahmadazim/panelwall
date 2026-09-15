@@ -66,6 +66,31 @@ AIRLINES: dict[str, tuple[str, str]] = {
 }
 
 
+# Full display names for the FlightWall card ("Southwest Airlines"). Every code above has one.
+FULL_NAMES: dict[str, str] = {
+    "JBU": "JetBlue Airways", "DAL": "Delta Air Lines", "AAL": "American Airlines", "UAL": "United Airlines",
+    "SWA": "Southwest Airlines", "ASA": "Alaska Airlines", "NKS": "Spirit Airlines", "FFT": "Frontier Airlines",
+    "SCX": "Sun Country Airlines", "CJC": "PSA Airlines", "PDT": "Piedmont Airlines", "RPA": "Republic Airways",
+    "ENY": "Envoy Air", "EDV": "Endeavor Air", "SKW": "SkyWest Airlines", "ASH": "Mesa Airlines", "GJS": "GoJet Airlines",
+    "JIA": "PSA Airlines", "ACA": "Air Canada", "JZA": "Jazz Aviation", "POE": "Porter Airlines", "WJA": "WestJet",
+    "EIN": "Aer Lingus", "BAW": "British Airways", "VIR": "Virgin Atlantic", "DLH": "Lufthansa", "SWR": "Swiss",
+    "AFR": "Air France", "KLM": "KLM", "IBE": "Iberia", "TAP": "TAP Air Portugal", "AZA": "ITA Airways",
+    "ICE": "Icelandair", "SAS": "SAS", "NAX": "Norwegian", "UAE": "Emirates", "QTR": "Qatar Airways",
+    "ETH": "Ethiopian Airlines", "THY": "Turkish Airlines", "ELY": "El Al", "CPA": "Cathay Pacific",
+    "JAL": "Japan Airlines", "HAL": "Hawaiian Airlines", "CMP": "Copa Airlines", "AVA": "Avianca", "LAN": "LATAM",
+    "AMX": "Aeromexico", "CAY": "Cayman Airways", "FDX": "FedEx", "UPS": "UPS", "ATN": "Air Transport Intl",
+    "GTI": "Atlas Air", "KAP": "Cape Air", "TSC": "Air Transat", "BHS": "Bahamasair", "RYR": "Ryanair", "EJU": "easyJet",
+}
+
+
+def airline_full_name(callsign: str | None) -> str:
+    """'SWA1187' -> 'Southwest Airlines'; unknown or private -> ''."""
+    cs = (callsign or "").strip().upper()
+    if len(cs) >= 4 and cs[:3].isalpha() and cs[3:4].isdigit():
+        return FULL_NAMES.get(cs[:3]) or AIRLINES.get(cs[:3], ("", ""))[1].title()
+    return ""
+
+
 def parse_callsign(callsign: str | None) -> tuple[str, str, str]:
     """'JBU1287 ' -> ('B6', 'JETBLUE', '1287'). Unknown -> ('', '', 'JBU1287')."""
     cs = (callsign or "").strip().upper()

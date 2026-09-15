@@ -1,10 +1,101 @@
-"""IATA airport code -> (lat, lon). Used only to place the route progress dot.
+"""Airports: names for the FlightWall card and coordinates for the silhouette's progress dot.
 
-Two decimals is plenty: the dot moves in 1/40ths of a 40 px line. Airports
-missing from this table make the dot sit in the middle - nothing else breaks.
+Names come from assets/data/airports.csv, trimmed from OurAirports
+(https://ourairports.com, public domain): rows with an IATA code and type
+large/medium/small airport; columns iata,name,municipality,iso_country,lat,lon.
+Loaded lazily on first use (~8,800 rows, a few ms).
+
+display_name() mimics the FlightWall's wording, verified against product photos:
+  "Seattle-Tacoma International Airport" -> "Seattle-Tacoma Intl"
+  "Detroit Metropolitan Wayne County Airport" -> "Detroit Metropolitan Wayne County"
+Rule: drop a trailing " Airport", International->Intl, Regional->Rgnl, Municipal->Muni,
+en/em dashes -> "-". A few codes are overridden where OurAirports' current name is
+not what the photos show (OAK was renamed in 2025; DCA/DFW wording).
+
+The small AIRPORTS table below is the pre-CSV fallback and is still consulted
+when the CSV lacks a code.
 """
 
+import csv
 import math
+from dataclasses import dataclass
+from pathlib import Path
+
+_CSV = Path(__file__).resolve().parent.parent.parent / "assets" / "data" / "airports.csv"
+_DB: dict | None = None
+
+# IATA -> display name, where the rule applied to OurAirports' name doesn't match the product photos
+NAME_OVERRIDES: dict[str, str] = {
+    "OAK": "Oakland Intl",                # OurAirports: "Oakland San Francisco Bay Airport" (2025 rename)
+    "DFW": "Dallas-Fort Worth Intl",      # OurAirports: "Dallas Fort Worth International Airport"
+    "DCA": "Reagan National",             # OurAirports: "Ronald Reagan Washington National Airport"
+    "ATL": "Atlanta Hartsfield Intl",
+    "BWI": "Baltimore/Washington Intl",
+    "ORD": "Chicago O'Hare Intl",
+}
+
+
+@dataclass(frozen=True)
+class Airport:
+    iata: str
+    name: str
+    municipality: str
+    country: str
+    lat: float
+    lon: float
+
+
+def _load() -> dict:
+    global _DB
+    if _DB is None:
+        db = {}
+        try:
+            with _CSV.open(newline="", encoding="utf-8") as f:
+                for r in csv.DictReader(f):
+                    try:
+                        db[r["iata"]] = Airport(r["iata"], r["name"], r["municipality"], r["iso_country"],
+                                                float(r["lat"]), float(r["lon"]))
+                    except (KeyError, ValueError):
+                        continue
+        except OSError:
+            pass
+        _DB = db
+    return _DB
+
+
+def lookup(iata: str | None) -> Airport | None:
+    if not iata:
+        return None
+    return _load().get(iata.upper())
+
+
+def shorten_name(name: str) -> str:
+    """Apply the FlightWall wording rule to a full OurAirports name."""
+    n = name.replace("\u2013", "-").replace("\u2014", "-").strip()
+    if n.endswith(" Airport"):
+        n = n[: -len(" Airport")]
+    for long, short in (("International", "Intl"), ("Regional", "Rgnl"), ("Municipal", "Muni")):
+        n = n.replace(long, short)
+    return n.strip()
+
+
+def display_name(iata: str | None) -> str:
+    """'SEA' -> 'Seattle-Tacoma Intl'. Unknown code -> the code itself; empty -> ''."""
+    if not iata:
+        return ""
+    code = iata.upper()
+    if code in NAME_OVERRIDES:
+        return NAME_OVERRIDES[code]
+    a = lookup(code)
+    return shorten_name(a.name) if a else code
+
+
+def coords(iata: str | None) -> tuple[float, float] | None:
+    a = lookup(iata)
+    if a:
+        return a.lat, a.lon
+    return AIRPORTS.get((iata or "").upper())
+
 
 AIRPORTS: dict[str, tuple[float, float]] = {
     # New England / Northeast
@@ -71,7 +162,7 @@ def route_progress(origin: str, dest: str, lat: float | None, lon: float | None,
     if positions and positions[0] and positions[1]:
         o, d = positions
     else:
-        o, d = AIRPORTS.get(origin.upper()), AIRPORTS.get(dest.upper())
+        o, d = coords(origin), coords(dest)
     if o is None or d is None or lat is None or lon is None:
         return None
     flown = great_circle_nm(o[0], o[1], lat, lon)
