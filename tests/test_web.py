@@ -49,6 +49,7 @@ def test_index_manifest_icon(server):
     srv, _, _ = server
     status, ctype, body = _get(srv, "/")
     assert status == 200 and "text/html" in ctype and b"panelwall" in body and b"apple-touch-icon" in body
+    assert b"Auto cycle" in body and b"Pick one panel" in body
     status, ctype, body = _get(srv, "/manifest.webmanifest")
     assert status == 200 and json.loads(body)["display"] == "standalone"
     status, ctype, body = _get(srv, "/icon.png")
@@ -63,7 +64,8 @@ def test_state(server):
     assert status == 200
     assert {c["name"] for c in st["channels"]} == {"flights", "radar", "silhouette", "mbta"}
     assert st["current"] == sched.current_name
-    assert st["enabled"] == ["flights", "radar", "silhouette", "mbta"]
+    assert st["cycle"] == ["flights", "radar", "silhouette", "mbta"] and st["mode"] == "manual"
+    assert st["dwell_seconds"] == 20 and st["alerts"] is True
     assert st["brightness"]["configured"] == settings.brightness and "quiet" in st["brightness"]
     assert st["location"]["radius_nm"] == settings.radius_nm
     assert st["uptime_s"] >= 0 and st["force"] is None
@@ -82,17 +84,37 @@ def test_preview_png(server):
     assert _get(srv, "/preview.png")[2] == body        # cached within a second
 
 
-def test_channels_endpoint(server, tmp_path):
+def test_default_is_manual_and_channel_endpoint_pins(server, tmp_path):
     srv, settings, sched = server
-    status, st = _post(srv, "/api/channels", {"enabled": ["mbta"]})
-    assert status == 200 and st["enabled"] == ["mbta"]
-    assert settings.enabled == ["mbta"]
-    assert json.loads((tmp_path / "settings.json").read_text())["enabled"] == ["mbta"]   # persisted
-    assert sched.pick(1.0).name == "mbta"
-    status, st = _post(srv, "/api/channels", {"enabled": ["nope"]})
-    assert status == 400 and "unknown" in st["error"]
-    status, st = _post(srv, "/api/channels", {"enabled": "mbta"})
-    assert status == 400
+    status, _, body = _get(srv, "/api/state")
+    st = json.loads(body)
+    assert st["mode"] == "manual" and st["channel"] == "flights" and sched.pick(0.0).name == "flights"
+    status, st = _post(srv, "/api/channel", {"channel": "mbta"})
+    assert status == 200 and st["mode"] == "manual" and st["channel"] == "mbta"
+    assert sched.pick(1.0).name == "mbta" and sched.pick(500.0).name == "mbta"
+    assert json.loads((tmp_path / "settings.json").read_text())["channel"] == "mbta"   # persisted
+    assert _post(srv, "/api/channel", {"channel": "nope"})[0] == 400
+
+
+def test_mode_and_cycle_endpoints(server, tmp_path):
+    srv, settings, sched = server
+    status, st = _post(srv, "/api/mode", {"mode": "auto"})
+    assert status == 200 and st["mode"] == "auto"
+    status, st = _post(srv, "/api/cycle", {"channels": ["radar", "mbta"], "dwell_seconds": 12, "alerts": False})
+    assert status == 200 and st["cycle"] == ["radar", "mbta"] and st["dwell_seconds"] == 12 and st["alerts"] is False
+    saved = json.loads((tmp_path / "settings.json").read_text())
+    assert saved["cycle"] == ["radar", "mbta"] and saved["dwell_seconds"] == 12 and saved["mode"] == "auto"
+    assert sched.pick(1.0).name == "radar"
+    status, st = _post(srv, "/api/cycle", {"dwell_seconds": 30})       # partial update keeps the list
+    assert status == 200 and st["cycle"] == ["radar", "mbta"] and st["dwell_seconds"] == 30
+    status, st = _post(srv, "/api/channels", {"enabled": ["mbta"]})     # old name still works
+    assert status == 200 and st["cycle"] == ["mbta"] and st["enabled"] == ["mbta"]
+    assert _post(srv, "/api/channels", {"enabled": ["nope"]})[0] == 400
+    assert _post(srv, "/api/cycle", {"channels": "mbta"})[0] == 400
+    assert _post(srv, "/api/cycle", {"dwell_seconds": "slow"})[0] == 400
+    assert _post(srv, "/api/mode", {"mode": "party"})[0] == 400
+    status, st = _post(srv, "/api/channel", {"channel": "flights"})    # picking a panel leaves auto mode
+    assert st["mode"] == "manual"
 
 
 def test_show_endpoint(server):

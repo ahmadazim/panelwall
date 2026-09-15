@@ -1,15 +1,19 @@
 """Picks a channel each frame and drives the sink at a fixed FPS.
 
-Rotation policy (in order):
-  1. A forced channel (Settings.force_channel, from the phone UI) always wins.
-  2. Disabled channels and channels with priority() <= 0 are never shown; if
-     the current one drops out, switch immediately.
-  3. A channel with STRICTLY higher priority than the current one preempts it
-     right away - unless it was itself on screen within the last `min_hold`
-     seconds. That cooldown is the anti-flap rule: a channel whose priority
-     blinks on/off can't bounce the display more often than every 8 s.
-  4. Among channels tied at the top priority, rotate every `rotate_seconds`.
-  5. Otherwise stay put.
+Two policies, chosen by Settings.mode:
+
+  manual (default)  Settings.channel is pinned. Nothing else is shown, whatever the
+                    channels' priorities say. A temporary forced channel (/api/show)
+                    still wins while it lasts.
+  auto              Round-robin over Settings.cycle (None = all), `dwell_seconds` on
+                    each, skipping channels whose priority() <= 0 (nothing to show).
+                    If Settings.alerts is on, a channel at priority >= ALERT_PRIORITY
+                    (a score, a new closest aircraft) interrupts the cycle for as long
+                    as it stays that high - but never more often than every `min_hold`
+                    seconds (anti-flap), and the interrupted channel's dwell resumes.
+
+Without a Settings object (demos, tests) the scheduler runs the auto policy over
+all its channels with the constructor's rotate_seconds and alerts on.
 
 Transitions are a `wipe_seconds` vertical wipe: the new frame slides up from
 the bottom over the old one. Done here by compositing two numpy arrays, so
@@ -30,6 +34,8 @@ from .channels.base import Channel
 from .framebuffer import Frame
 from .settings import Settings
 from .sinks.base import Sink
+
+ALERT_PRIORITY = 20
 
 
 class Scheduler:
@@ -55,45 +61,48 @@ class Scheduler:
         self._bright_minute = -1
 
     # ---- selection -----------------------------------------------------------
-    def _enabled(self) -> list[Channel]:
+    def _cycle(self) -> list[Channel]:
         s = self.settings
-        return [c for c in self.channels if s is None or s.is_enabled(c.name)]
+        return [c for c in self.channels if s is None or s.in_cycle(c.name)]
 
     def pick(self, now: float) -> Channel | None:
-        cands = self._enabled()
-        if self.settings is not None:
-            forced = self.settings.forced()
-            if forced in self.by_name and self.by_name[forced] in cands:
+        s = self.settings
+        if s is not None:
+            forced = s.forced()
+            if forced in self.by_name:
                 return self.by_name[forced]
+            if s.mode == "manual":
+                return self.by_name.get(s.channel) or (self.channels[0] if self.channels else None)
+        return self._pick_auto(now)
 
-        scored = [(c.priority(), c) for c in cands]
-        positive = [(p, c) for p, c in scored if p > 0]
-        if not positive:
-            return None
-        top = max(p for p, _ in positive)
-        group = [c for p, c in positive if p == top]
-
+    def _pick_auto(self, now: float) -> Channel | None:
+        s = self.settings
+        cycle = self._cycle()
+        dwell = s.dwell_seconds if s is not None else self.rotate_seconds
+        alerts = s.alerts if s is not None else True
         cur = self.current
-        cur_p = next((p for p, c in scored if c is cur), 0) if cur is not None else 0
-        if cur is None or cur_p <= 0 or cur not in cands:
-            return self._first_available(group, now) or group[0]
 
-        if cur in group:
-            if len(group) > 1 and now - self.current_since >= self.rotate_seconds:
-                return group[(group.index(cur) + 1) % len(group)]
+        if alerts:
+            hot = [c for c in cycle if c.priority() >= ALERT_PRIORITY]
+            if cur in hot:
+                return cur
+            for c in hot:
+                left = self.last_shown.get(c.name)
+                if left is None or now - left >= self.min_hold:
+                    return c
+
+        showable = [c for c in cycle if c.priority() > 0]
+        if not showable:
+            return cycle[0] if cycle else None
+        if cur in showable and now - self.current_since < dwell:
             return cur
-
-        if top > cur_p:  # preempt, subject to the anti-flap cooldown
-            cand = self._first_available(group, now)
-            return cand if cand is not None else cur
-        return cur
-
-    def _first_available(self, group: list[Channel], now: float) -> Channel | None:
-        for c in group:
-            left = self.last_shown.get(c.name)
-            if left is None or now - left >= self.min_hold:
-                return c
-        return None
+        if cur in cycle:                       # next showable channel after the current one, in list order
+            i = cycle.index(cur)
+            for k in range(1, len(cycle) + 1):
+                c = cycle[(i + k) % len(cycle)]
+                if c in showable:
+                    return c
+        return showable[0]
 
     # ---- one frame -------------------------------------------------------------
     def step(self, frame: Frame, now: float, dt: float) -> np.ndarray:

@@ -7,8 +7,11 @@ Routes:
   GET  /manifest.webmanifest, /icon.png
   GET  /api/state           JSON: channels + enabled + current, brightness, quiet, location,
                             uptime, per-channel last fetch / last error
-  POST /api/channels        {"enabled": ["flights", ...]}          enable/disable channels
-  POST /api/show            {"channel": "radar", "seconds": 60}     force a channel
+  POST /api/channel         {"channel": "radar"}                     pin one panel (manual mode)
+  POST /api/mode            {"mode": "manual" | "auto"}
+  POST /api/cycle           {"channels": [...], "dwell_seconds": 20, "alerts": true}   auto-cycle setup
+  POST /api/channels        {"enabled": [...]}                       old name for the cycle list
+  POST /api/show            {"channel": "radar", "seconds": 60}     temporary override (API only)
   POST /api/brightness      {"level": 0-255} and/or {"quiet": {"start","end","level"}}
   POST /api/location        {"lat", "lon", "radius_nm"}
   GET  /preview.png         the current frame through sinks.simulator.led_image at 3x,
@@ -128,7 +131,12 @@ class ControlServer:
             "frames": sc.frames,
             "current": sc.current_name,
             "channels": chans,
-            "enabled": [c.name for c in sc.channels if st.is_enabled(c.name)],
+            "mode": snap["mode"],
+            "channel": snap["channel"],
+            "cycle": [c.name for c in sc.channels if st.in_cycle(c.name)],
+            "dwell_seconds": snap["dwell_seconds"],
+            "alerts": snap["alerts"],
+            "enabled": [c.name for c in sc.channels if st.in_cycle(c.name)],
             "brightness": {"configured": snap["brightness"], "effective": snap["effective_brightness"],
                            "quiet": snap["quiet"]},
             "location": {"lat": snap["lat"], "lon": snap["lon"], "radius_nm": snap["radius_nm"]},
@@ -154,14 +162,28 @@ class ControlServer:
     def post(self, path: str, body: dict) -> tuple[int, dict]:
         st = self.settings
         names = {c.name for c in self.scheduler.channels}
-        if path == "/api/channels":
-            en = body.get("enabled")
-            if not isinstance(en, list):
-                return 400, {"error": "expected {'enabled': [names]}"}
-            unknown = [n for n in en if n not in names]
-            if unknown:
-                return 400, {"error": f"unknown channels: {unknown}", "known": sorted(names)}
-            st.set_enabled(en)
+        if path == "/api/channel":
+            ch = body.get("channel")
+            if ch not in names:
+                return 400, {"error": f"unknown channel {ch!r}", "known": sorted(names)}
+            st.select_channel(ch)
+        elif path == "/api/mode":
+            try:
+                st.set_mode(str(body.get("mode")))
+            except ValueError as e:
+                return 400, {"error": str(e)}
+        elif path in ("/api/cycle", "/api/channels"):
+            lst = body.get("channels", body.get("enabled", ...))
+            if lst is not ... and not isinstance(lst, list):
+                return 400, {"error": "expected {'channels': [names]}"}
+            if lst is not ...:
+                unknown = [n for n in lst if n not in names]
+                if unknown:
+                    return 400, {"error": f"unknown channels: {unknown}", "known": sorted(names)}
+            try:
+                st.set_cycle(lst, body.get("dwell_seconds"), body.get("alerts"))
+            except (TypeError, ValueError):
+                return 400, {"error": "dwell_seconds must be a number, alerts a boolean"}
         elif path == "/api/show":
             ch = body.get("channel")
             if ch is None:
@@ -294,6 +316,13 @@ INDEX_HTML = """<!doctype html>
         border-radius:8px; padding:8px; font:inherit; width:100%; }
   label { display:block; font-size:12px; color:var(--dim); margin-bottom:4px; }
   .grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+  .seg { display:flex; gap:6px; }
+  .seg button { flex:1; padding:10px; }
+  .seg button.on { background:var(--amber); color:#000; font-weight:600; }
+  .pick { cursor:pointer; }
+  .pick.on .name { color:var(--amber); }
+  .pick .radio { width:18px; height:18px; border-radius:50%; border:2px solid #555; flex:none; }
+  .pick.on .radio { border-color:var(--amber); background:var(--amber); box-shadow: inset 0 0 0 4px var(--card); }
   .switch { position:relative; width:46px; height:28px; flex:none; }
   .switch input { opacity:0; width:0; height:0; }
   .switch span { position:absolute; inset:0; background:#3a3a42; border-radius:14px; transition:.15s; }
@@ -312,7 +341,22 @@ INDEX_HTML = """<!doctype html>
     <div id="forceinfo" class="meta"></div><button id="release" hidden>Release</button></div>
 </div>
 
-<h2>Channels</h2>
+<h2>Display</h2>
+<div class="card">
+  <div class="seg" id="modeseg">
+    <button data-mode="manual">Pick one panel</button>
+    <button data-mode="auto">Auto cycle</button>
+  </div>
+  <div id="autoopts" hidden>
+    <div class="row"><div>Stay on each panel <span class="meta" id="dwelllabel"></span></div></div>
+    <input type="range" id="dwell" min="5" max="120" step="5">
+    <div class="row"><div>Alerts interrupt the cycle<br><span class="meta">a score, a new closest aircraft</span></div>
+      <label class="switch"><input type="checkbox" id="alerts"><span></span></label></div>
+    <p class="meta" style="margin:8px 0 0">Tick the panels to cycle through. Panels with nothing to show are skipped.</p>
+  </div>
+</div>
+
+<h2 id="chanhead">Panels</h2>
 <div class="card" id="channels"></div>
 
 <h2>Brightness</h2>
@@ -366,15 +410,26 @@ function render() {
   $('uptime').textContent = fmtUptime(s.uptime_s);
   $('current').textContent = s.current || 'nothing';
   const f = s.force;
-  $('forceinfo').textContent = f ? `forced ${f.channel} for ${Math.max(0, Math.round(f.until - Date.now()/1000))}s` : '';
+  $('forceinfo').textContent = f ? `override: ${f.channel} for ${Math.max(0, Math.round(f.until - Date.now()/1000))}s` : '';
   $('release').hidden = !f;
-  const enabled = new Set(s.enabled);
-  $('channels').innerHTML = s.channels.map(c => `
+  const auto = s.mode === 'auto';
+  document.querySelectorAll('#modeseg button').forEach(b => b.classList.toggle('on', b.dataset.mode === s.mode));
+  $('autoopts').hidden = !auto;
+  $('chanhead').textContent = auto ? 'Panels in the cycle' : 'Panels';
+  if (document.activeElement !== $('dwell')) $('dwell').value = s.dwell_seconds;
+  $('dwelllabel').textContent = `${Math.round($('dwell').value)} s`;
+  $('alerts').checked = !!s.alerts;
+  const cyc = new Set(s.cycle);
+  $('channels').innerHTML = s.channels.map(c => auto ? `
     <div class="row">
       <div><div class="name ${c.name === s.current ? 'now' : ''}">${c.name}</div>
-           <div class="meta">priority ${c.priority ?? '-'} · ${c.status.last_error ? '<span class="err">error</span>' : 'data ' + ago(c.status.updated_at)}</div></div>
-      <button data-show="${c.name}">Show 60s</button>
-      <label class="switch"><input type="checkbox" data-toggle="${c.name}" ${enabled.has(c.name) ? 'checked' : ''}><span></span></label>
+           <div class="meta">${c.priority > 0 ? 'has content' : 'nothing to show right now'}${c.status.last_error ? ' · <span class="err">error</span>' : ''}</div></div>
+      <label class="switch"><input type="checkbox" data-cycle="${c.name}" ${cyc.has(c.name) ? 'checked' : ''}><span></span></label>
+    </div>` : `
+    <div class="row pick ${c.name === s.channel ? 'on' : ''}" data-pick="${c.name}">
+      <div><div class="name">${c.name}</div>
+           <div class="meta">${c.status.last_error ? '<span class="err">error</span>' : 'data ' + ago(c.status.updated_at)}</div></div>
+      <div class="radio"></div>
     </div>`).join('');
   if (!dirtyBright) { $('bright').value = s.brightness.configured; }
   $('blabel').textContent = `${Math.round(s.brightness.configured/255*100)}%`;
@@ -390,14 +445,20 @@ function render() {
     + `<div class="row"><div class="meta">settings: ${s.settings_path}${s.settings_error ? ' <span class="err">' + s.settings_error + '</span>' : ''} · ${s.frames} frames</div></div>`;
 }
 
+$('modeseg').addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-mode]'); if (b) api('/api/mode', {mode: b.dataset.mode}).then(() => toast(b.dataset.mode === 'auto' ? 'auto cycle on' : 'showing one panel'));
+});
 $('channels').addEventListener('click', (e) => {
-  const b = e.target.closest('button[data-show]'); if (b) api('/api/show', {channel: b.dataset.show, seconds: 60}).then(() => toast('showing ' + b.dataset.show));
+  const p = e.target.closest('.pick'); if (p) api('/api/channel', {channel: p.dataset.pick}).then(() => toast('showing ' + p.dataset.pick));
 });
 $('channels').addEventListener('change', (e) => {
-  const t = e.target.closest('input[data-toggle]'); if (!t) return;
-  const enabled = [...document.querySelectorAll('input[data-toggle]')].filter(i => i.checked).map(i => i.dataset.toggle);
-  api('/api/channels', {enabled});
+  const t = e.target.closest('input[data-cycle]'); if (!t) return;
+  const channels = [...document.querySelectorAll('input[data-cycle]')].filter(i => i.checked).map(i => i.dataset.cycle);
+  api('/api/cycle', {channels});
 });
+$('dwell').oninput = () => { $('dwelllabel').textContent = `${$('dwell').value} s`; };
+$('dwell').onchange = () => api('/api/cycle', {dwell_seconds: +$('dwell').value}).then(() => toast(`${$('dwell').value} s per panel`));
+$('alerts').onchange = () => api('/api/cycle', {alerts: $('alerts').checked});
 $('release').onclick = () => api('/api/show', {channel: null});
 $('bright').oninput = () => { dirtyBright = true; $('blabel').textContent = `${Math.round($('bright').value/255*100)}%`; };
 $('bright').onchange = () => api('/api/brightness', {level: +$('bright').value}).then(() => { dirtyBright = false; toast('brightness saved'); });

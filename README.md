@@ -28,9 +28,12 @@ web         the control server (standard library http.server, no build step)
 | `forecast` | Open-Meteo (keyless): WEEK view (7 days, glyphs, hi/lo, precip %) and HOURLY view (next 12 h temperature line) alternating every 20 s | 3, or 8 for 60 s when the current weather turns to precipitation |
 | `testpattern` | panel numbers 1–8, RGB bars, origin marker | bring-up only (`test`) |
 
-Scheduler rules: a channel forced from the phone wins; a strictly higher priority preempts
-immediately unless that channel left the screen less than 8 s ago; equal priorities rotate
-every 20 s; priority 0 hides a channel at once. Switches are a 300 ms bottom-up wipe.
+**What shows when.** By default the wall shows **one panel you pick** on the phone (manual
+mode) and stays there. Switch to **Auto cycle** and it round-robins over the panels you tick,
+staying `dwell` seconds on each (default 20) and skipping panels with nothing to show. With
+"Alerts interrupt" on, a panel spiking to priority 20+ (a Boston score, a new closest aircraft)
+cuts in for as long as the spike lasts, never more often than every 8 s. Switches are a
+300 ms bottom-up wipe. The priorities in the table only matter in auto mode.
 
 ## Develop on the Mac (no hardware)
 
@@ -90,15 +93,18 @@ just `http://panelwall.local`.
 
 Open that URL in Safari on your phone (same Wi‑Fi), tap **Share → Add to Home Screen**. It
 installs as a full-screen app with a panelwall icon. The page shows a live preview of the
-display, lets you toggle channels, force one for 60 s, set brightness and quiet hours, and
-move the location/radius, and lists each channel's last data fetch and last error.
+display, lets you pick the one panel to show or set up an auto cycle (which panels, how long
+on each, whether alerts may interrupt), set brightness and quiet hours, move the
+location/radius, and lists each channel's last data fetch and last error.
 
 API, for scripting:
 
 ```
 GET  /api/state                          everything the UI shows
-POST /api/channels   {"enabled": ["flights","mbta"]}
-POST /api/show       {"channel": "radar", "seconds": 60}     ({"channel": null} releases)
+POST /api/channel    {"channel": "radar"}                        pin one panel (manual mode)
+POST /api/mode       {"mode": "manual" | "auto"}
+POST /api/cycle      {"channels": ["flights","mbta"], "dwell_seconds": 20, "alerts": true}   (any subset of keys)
+POST /api/show       {"channel": "radar", "seconds": 60}     temporary override; {"channel": null} releases
 POST /api/brightness {"level": 191}  and/or  {"quiet": {"start":"23:00","end":"07:00","level":64}}
 POST /api/location   {"lat": 42.36, "lon": -71.01, "radius_nm": 8}
 GET  /preview.png                        current frame, LED look, 3x

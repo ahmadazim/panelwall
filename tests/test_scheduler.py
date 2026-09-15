@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 
 import numpy as np
@@ -35,15 +36,17 @@ def _sched(chs, settings=None, **kw):
     return Scheduler(chs, CaptureSink(), fps=20, settings=settings, wipe_seconds=0, **kw)
 
 
-def test_highest_priority_wins_and_zero_hides():
+def test_auto_skips_empty_channels_and_falls_back_to_first():
     a, b = Fake("a", 10, (255, 0, 0)), Fake("b", 5, (0, 255, 0))
     s = _sched([a, b])
-    assert s.pick(0.0) is a
+    assert s.pick(0.0) is a                      # round-robin starts at the first showable
     a.prio = 0
     s.current = a
-    assert s.pick(1.0) is b
+    assert s.pick(1.0) is b                      # a has nothing to show -> skipped
     b.prio = 0
-    assert s.pick(2.0) is None
+    assert s.pick(2.0) is a                      # nothing anywhere -> first panel rather than a blank wall
+    s2 = _sched([])
+    assert s2.pick(0.0) is None
 
 
 def test_equal_priority_rotates_every_rotate_seconds():
@@ -81,21 +84,54 @@ def test_higher_priority_preempts_immediately_but_not_within_hold():
     assert s.current is b                        # cooldown over
 
 
-def test_forced_channel_and_disabled_channels(tmp_path):
+def test_manual_mode_pins_one_channel_whatever_the_priorities(tmp_path):
+    st = Settings(tmp_path / "s.json", autoload=False)
+    a, b, m = Fake("a", 10, 0), Fake("b", 25, 0), Fake("mbta", 0, 0)
+    s = _sched([a, b, m], settings=st)
+    assert st.mode == "manual"
+    assert s.pick(0.0) is a                      # default pin 'flights' isn't loaded -> first channel
+    st.select_channel("mbta")
+    f = Frame()
+    for t in (0.0, 30.0, 300.0):
+        s.step(f, t, 0.05)
+        assert s.current is m                    # priority 0 and b's alert (25) are both ignored
+    st.force_channel("b", 60)                    # API override still wins
+    assert s.pick(301.0) is b
+    st.force_channel(None)
+    assert s.pick(302.0) is m
+
+
+def test_auto_mode_cycle_list_dwell_and_alerts(tmp_path):
     st = Settings(tmp_path / "s.json", autoload=False)
     a, b, m = Fake("a", 10, 0), Fake("b", 10, 0), Fake("mbta", 5, 0)
     s = _sched([a, b, m], settings=st)
-    assert s.pick(0.0) is a
-    st.force_channel("mbta", 60)
-    assert s.pick(0.0) is m
-    st.force_channel(None)
-    st.set_enabled(["b", "mbta"])
-    s.current = None
-    assert s.pick(1.0) is b
-    st.set_enabled(["mbta"])
-    assert s.pick(2.0) is m
-    st.set_enabled([])
-    assert s.pick(3.0) is None
+    st.set_mode("auto")
+    st.set_cycle(["b", "mbta"], dwell_seconds=10)
+    f = Frame()
+    s.step(f, 0.0, 0.05)
+    assert s.current is b                        # a is not in the cycle
+    s.step(f, 9.0, 0.05)
+    assert s.current is b
+    s.step(f, 10.0, 0.05)
+    assert s.current is m                        # dwell of 10 s, not the constructor's 20
+    s.step(f, 20.5, 0.05)
+    assert s.current is b
+    a.prio = 25                                  # alert on a channel OUTSIDE the cycle: ignored
+    s.step(f, 21.0, 0.05)
+    assert s.current is b
+    b.prio = 10
+    m.prio = 25                                  # alert inside the cycle interrupts...
+    s.step(f, 22.0, 0.05)
+    assert s.current is b                        # ...but m left the screen 1.5 s ago: anti-flap holds it 8 s
+    s.step(f, 29.0, 0.05)
+    assert s.current is m
+    st.set_cycle(alerts=False)
+    m.prio = 5
+    b.prio = 25
+    s.step(f, 30.0, 0.05)
+    assert s.current is m                        # alerts off: plain round-robin, m keeps its dwell
+    st.set_cycle([])
+    assert s.pick(24.0) is None
 
 
 def test_wipe_up_blends_bottom_to_top():
@@ -144,12 +180,17 @@ def test_settings_persist_and_reload(tmp_path):
     p = tmp_path / "settings.json"
     try:
         st = Settings(p, autoload=False)
-        st.set_enabled(["flights", "mbta"])
+        st.set_cycle(["flights", "mbta"], dwell_seconds=15, alerts=False)
+        st.select_channel("radar")
+        st.set_mode("auto")
         st.set_brightness(100)
         st.set_location(42.36, -71.06, 8)
         st.set_quiet({"start": "22:00", "end": "06:30", "level": 20})
         st2 = Settings(p)
-        assert st2.enabled == ["flights", "mbta"] and st2.brightness == 100
+        assert st2.cycle == ["flights", "mbta"] and st2.brightness == 100
+        assert st2.mode == "auto" and st2.channel == "radar" and st2.dwell_seconds == 15 and st2.alerts is False
+        p.write_text(json.dumps({"enabled": ["mbta"]}))            # pre-mode settings file still loads
+        assert Settings(p).cycle == ["mbta"]
         assert st2.lat == 42.36 and st2.lon == -71.06 and st2.radius_nm == 8
         assert st2.quiet == {"start": "22:00", "end": "06:30", "level": 20}
         assert CONFIG.location.radius_nm == 8            # pushed through to the shared config

@@ -183,15 +183,18 @@ panelwall/
                        LocationConfig(lat, lon, radius_nm) — env PW_LAT / PW_LON / PW_RADIUS_NM
                        ColorlightConfig(iface='eth0')  DataConfig(adsb_base, poll 10 s, routes_base adsbdb,
                        3 route lookups/poll, route cache 1 h)   MbtaConfig(route Red, home place-harsq, branch Braintree, MBTA_API_KEY optional, poll 15 s)
-  settings.py          Settings: what the phone UI changes (enabled channels, brightness, quiet hours,
-                       location, forced channel). Persists to ~/.panelwall/settings.json (PW_SETTINGS);
-                       loaded at startup and pushed into CONFIG.location. Web thread writes, scheduler reads.
+  settings.py          Settings: mode manual|auto (DEFAULT MANUAL: one pinned `channel`, default flights),
+                       cycle list + dwell_seconds (20) + alerts (auto mode), brightness, quiet hours, location,
+                       temporary forced channel. Persists to ~/.panelwall/settings.json (PW_SETTINGS); loaded at
+                       startup and pushed into CONFIG.location. Web thread writes, scheduler reads.
   framebuffer.py       Frame = PIL RGB 256x64 + drawing helpers; _TextCache (see perf note)
   fonts.py             SMALL = Silkscreen 8px (5px caps, ~6px advance, ~42 chars/line; NOTE: drawn at y it
                        lights rows y+4..y+8)   MEDIUM = Press Start 2P 8px (8x8)   LARGE = Press Start 2P 16px
-  scheduler.py         each frame: tick all channels, pick (forced > higher priority preempts unless it left
-                       the screen <8 s ago > equal priorities rotate every 20 s), render, 300 ms wipe on
-                       switch, sink.show(). Applies Settings.effective_brightness() once a minute.
+  scheduler.py         each frame: tick all channels, pick, render, 300 ms wipe on switch, sink.show().
+                       pick: forced (API) > manual mode: the pinned channel, full stop > auto mode: round-robin
+                       over Settings.cycle for dwell_seconds each, skipping priority<=0; if alerts on, a channel
+                       at priority>=20 (ALERT_PRIORITY) in the cycle interrupts, anti-flap 8 s. Channel
+                       priorities therefore only matter in auto mode. Brightness once a minute.
                        `latest` (last frame) and `current_name` are read by the web server.
   sprites.py           procedural side-profile aircraft sprites: SpriteParams(length, height, engines,
                        engine_pos wing|tail|nose, prop, tail conventional|t_tail, winglets, high_wing, kind)
@@ -410,6 +413,9 @@ probe-forecast, demo-forecast --view). `run` now loads flights, radar, silhouett
   real weather; how the ~1.9 MB MLB poll behaves on the Pi's Wi-Fi.
 
 Verified vs. unverified for the earlier channels:
+- **Changed 15 Sep ~01:00 (Ahmad's request):** the wall no longer cycles by default. Manual mode pins the
+  panel picked on the phone; Auto cycle is opt-in with a tickable panel list, a dwell slider (5–120 s) and
+  an "alerts interrupt" toggle. Old settings files with `enabled` still load (it becomes `cycle`).
 - **VERIFIED live from the Mac, 15 Sep 00:15 EDT:** a 26 s `run` at 50 nm: 17 aircraft, no 429 at the
   10 s poll, routes resolving via adsbdb (ORD>LGA etc. visible in the flights list).
 - **VERIFIED live from the Mac, 14 Sep 23:29 EDT:** all four MBTA endpoints return the shapes in
