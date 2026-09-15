@@ -28,7 +28,7 @@ def _sink(args):
     return make_sink("sim", png_path=args.png, window=None if not args.no_window else False)
 
 
-DEFAULT_CHANNELS = ["flights", "radar", "silhouette", "mbta"]
+DEFAULT_CHANNELS = ["flights", "radar", "silhouette", "mbta", "sports"]
 AIRCRAFT_CHANNELS = {"flights", "radar", "silhouette"}
 
 
@@ -50,6 +50,8 @@ def build_channels(names: list[str]):
             out.append(ch.SilhouetteChannel(feed=feed))
         elif name == "mbta":
             out.append(ch.MbtaChannel())
+        elif name == "sports":
+            out.append(ch.SportsChannel())
         elif name == "testpattern":
             out.append(ch.TestPatternChannel())
         else:
@@ -136,12 +138,15 @@ def fixture_channel(name: str):
     if name == "mbta":
         from .data.mbta import MbtaFeed
         return ch.MbtaChannel(feed=MbtaFeed(static=json.loads((FIXTURES / "mbta_red.json").read_text())))
+    if name == "sports":
+        from .data.espn import SportsFeed
+        return ch.SportsChannel(feed=SportsFeed(static=json.loads((FIXTURES / "espn_scoreboards.json").read_text())))
     if name == "testpattern":
         return ch.TestPatternChannel()
     raise ValueError(f"no fixture demo for {name!r}")
 
 
-DEMO_CHANNELS = ["flights", "radar", "silhouette", "mbta", "testpattern"]
+DEMO_CHANNELS = ["flights", "radar", "silhouette", "mbta", "sports", "testpattern"]
 
 
 def cmd_demo(args):
@@ -204,6 +209,27 @@ def cmd_test(args):
     Scheduler([TestPatternChannel()], _sink(args), args.fps).run(args.seconds)
 
 
+def cmd_probe_sports(args):
+    """Print the ESPN scoreboard URL and raw JSON (head) for each tracked league."""
+    from datetime import datetime, timedelta
+    from .data.espn import EspnClient, parse_scoreboard
+
+    c = EspnClient()
+    today = datetime.now().astimezone().date()
+    start, end = datetime.combine(today - timedelta(days=1), datetime.min.time()), datetime.combine(today + timedelta(days=CONFIG.sports.days_ahead), datetime.min.time())
+    leagues = sorted({t[0] for t in CONFIG.sports.teams})
+    for lg in leagues:
+        print("GET", c.url(lg, start, end))
+        doc = c.scoreboard(lg, start, end)
+        if doc is None:
+            print("  ", c.last_error)
+            continue
+        raw = json.dumps(doc)
+        print(f"  {len(raw)} bytes, {len(doc.get('events', []))} events. Raw head:\n  {raw[:args.n]}")
+        for g in parse_scoreboard(doc, lg):
+            print(f"  {g.start:%m-%d %H:%MZ} {g.state:4} {g.away.abbreviation:>4} {g.away.score!s:>3} @ {g.home.abbreviation:<4} {g.home.score!s:>3}  {g.short_detail!r}  {g.situation or ''}")
+
+
 def cmd_probe(args):
     from .data.adsb import AdsbClient, ApiError
 
@@ -264,6 +290,9 @@ def main(argv=None):
         sp.set_defaults(fn=cmd_demo, channel=name)
     sub.add_parser("sheet", help="render every channel's fixture demo to design/channels_sheet.png").set_defaults(fn=cmd_sheet)
     sub.add_parser("sprites", help="render every aircraft sprite to design/sprites_sheet.png").set_defaults(fn=cmd_sprites)
+    sp = sub.add_parser("probe-sports", help="raw ESPN scoreboard JSON for the tracked leagues")
+    sp.add_argument("-n", type=int, default=600, help="bytes of raw JSON to print per league")
+    sp.set_defaults(fn=cmd_probe_sports)
     sp = sub.add_parser("probe")
     sp.add_argument("-n", type=int, default=3)
     sp.add_argument("--routes", nargs="+", metavar="CALLSIGN",

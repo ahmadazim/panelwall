@@ -56,6 +56,40 @@ class MbtaConfig:
     poll_seconds: float = 15.0
 
 
+def _teams(default):
+    """PW_TEAMS='mlb:BOS:SOX,nfl:NE:PATS' -> [(league, abbreviation, label), ...]"""
+    v = os.environ.get("PW_TEAMS")
+    if not v:
+        return default
+    out = []
+    for item in v.split(","):
+        parts = item.strip().split(":")
+        if len(parts) >= 2:
+            out.append((parts[0].lower(), parts[1].upper(), (parts[2] if len(parts) > 2 else parts[1]).upper()))
+    return out or default
+
+
+@dataclass
+class SportsConfig:
+    # ESPN's public scoreboard JSON (undocumented, keyless, long-stable). Tracked teams:
+    # (league, ESPN abbreviation, <=6-char label for the display). Any city works.
+    base: str = _env("PW_ESPN_BASE", "https://site.api.espn.com/apis/site/v2/sports")
+    city: str = _env("PW_CITY", "BOSTON")
+    teams: list = field(default_factory=lambda: _teams([
+        ("mlb", "BOS", "SOX"), ("nfl", "NE", "PATS"), ("nba", "BOS", "CELTICS"), ("nhl", "BOS", "BRUINS")]))
+    poll_live_seconds: float = 30.0      # while a tracked game is in progress
+    poll_idle_seconds: float = 300.0
+    days_ahead: int = 7                  # scoreboard window: yesterday .. today+days_ahead
+
+
+@dataclass
+class ForecastConfig:
+    base: str = _env("PW_METEO_BASE", "https://api.open-meteo.com")
+    timezone: str = _env("PW_TZ", "America/New_York")
+    poll_seconds: float = 900.0
+    view_seconds: float = 20.0           # WEEK <-> HOURLY alternation
+
+
 @dataclass
 class Config:
     display: DisplayConfig = field(default_factory=DisplayConfig)
@@ -63,6 +97,8 @@ class Config:
     colorlight: ColorlightConfig = field(default_factory=ColorlightConfig)
     data: DataConfig = field(default_factory=DataConfig)
     mbta: MbtaConfig = field(default_factory=MbtaConfig)
+    sports: SportsConfig = field(default_factory=SportsConfig)
+    forecast: ForecastConfig = field(default_factory=ForecastConfig)
 
 
 CONFIG = Config()
