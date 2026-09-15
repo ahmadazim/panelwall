@@ -32,9 +32,11 @@ He works from a **MacBook Pro** (zsh; has miniconda with a `tf` env that is NOT 
 A **wall-mounted LED matrix display** for his apartment living room in **Boston** (he lives
 near Logan / BOS). Initial goal: **replicate TheFlightWall "Widescreen"**
 (https://theflightwall.com/products/flightwall-widescreen-flight-tracking-led-display) —
-a 1280 × 320 mm display that lists aircraft currently overhead: airline, flight number, route,
-aircraft type, altitude, speed, heading, vertical rate; up to 5 flights at once; refreshes
-every ~30 s. He wants to *learn to build hardware* by cloning it; later he may diverge
+a 1280 × 320 mm display that shows **one aircraft at a time as a card** (logo, airline, route,
+aircraft type, origin/destination airport names, Alt/Spd/Trk/Vr) and cycles through up to 5
+nearby aircraft every 5 s; data refreshes every ~10 s; "..." or clocks when the sky is empty.
+(Earlier drafts of this file described it as a list; the product photos show a single card.
+`channels/flightwall.py` is the replica; `channels/flights.py` is our own list view.) He wants to *learn to build hardware* by cloning it; later he may diverge
 (ideas explored: Logan departures board, aircraft silhouette sprites, radar scope, Spotify
 now-playing, MBTA Red Line, tide/weather ambient). **For now: FlightWall replica only.**
 Not for sale; personal project.
@@ -190,6 +192,8 @@ panelwall/
   framebuffer.py       Frame = PIL RGB 256x64 + drawing helpers; _TextCache (see perf note)
   fonts.py             SMALL = Silkscreen 8px (5px caps, ~6px advance, ~42 chars/line; NOTE: drawn at y it
                        lights rows y+4..y+8)   MEDIUM = Press Start 2P 8px (8x8)   LARGE = Press Start 2P 16px
+                       FW = Adafruit GFX classic 5x7 bitmap font (glcd5x7.pil, 6 px advance, lowercase, slashed 0;
+                       built by tools/build_fw_font.py from glcdfont.c, BSD). Drawn at y it lights rows y..y+7.
   scheduler.py         each frame: tick all channels, pick, render, 300 ms wipe on switch, sink.show().
                        pick: forced (API) > manual mode: the pinned channel, full stop > auto mode: round-robin
                        over Settings.cycle for dwell_seconds each, skipping priority<=0; if alerts on, a channel
@@ -214,7 +218,8 @@ panelwall/
                        (LARGE temp + glyph, FEELS/UV/HUM, SET/RISE; 12 x 15 px hour columns from x=70 with a
                        temperature polyline) alternating every 20 s on its own timer. prio 3 / 8 for 60 s when the
                        current weather_code turns to precipitation
-    flights.py         FlightsChannel — the FlightWall replica (layout below). prio 10 / 1
+    flightwall.py      FlightWallChannel — THE REPLICA and the default channel (layout below). prio 10 / 2
+    flights.py         FlightsChannel — our own list view of up to 5 aircraft (layout below). prio 10 / 1
     radar.py           RadarChannel — 64x64 scope left (rings 1/3-2/3-full, sweep 4 s, blips colored by
                        altitude <3000 amber <10000 green else cyan), list of 4 right. prio 10 / 1
     silhouette.py      SilhouetteChannel — closest aircraft hero card: sprite, airline+flight, ORIGIN -o-> DEST
@@ -234,9 +239,13 @@ panelwall/
     feed.py            AircraftFeed — ONE background poller shared by flights/radar/silhouette (never poll twice)
     mbta.py            MbtaClient + pure parsers (parse_stops/vehicles/predictions, select_branch, upcoming),
                        MbtaFeed poller (stops hourly, vehicles+predictions every 15 s), ABBREV table
-    airlines.py        ICAO operator → (IATA, name): JBU→(B6, JETBLUE). ~60 carriers
-    aircraft_types.py  ICAO type → ≤10-char name: A21N→A321NEO. ~170 types incl. GA
-    airports.py        IATA → (lat, lon) for ~150 airports; route_progress() for the silhouette dot
+    airlines.py        ICAO operator → (IATA, name): JBU→(B6, JETBLUE). ~60 carriers; FULL_NAMES ("Southwest
+                       Airlines") + airline_full_name(callsign) for the card
+    aircraft_types.py  ICAO type → ≤10-char name: A21N→A321NEO. ~170 types incl. GA; LONG_TYPES ("Boeing 737-700")
+                       + type_long_name() for the card
+    airports.py        OurAirports-backed (assets/data/airports.csv, 8,802 IATA airports): lookup(), coords(),
+                       display_name() with the FlightWall wording rule + NAME_OVERRIDES (OAK/DFW/DCA/...);
+                       route_progress() for the silhouette dot. The old ~150-entry table is the fallback.
     espn.py            ESPN public scoreboard (UNOFFICIAL, keyless): EspnClient (scoreboard?dates=yesterday-+7d),
                        parse_scoreboard (per-event defensive), format_status (<=13 chars), live_detail, pick_game,
                        SportsFeed (30 s while live else 5 min; score-change -> event_until). NOTE: the MLB week window
@@ -244,7 +253,10 @@ panelwall/
     openmeteo.py       Open-Meteo (keyless): parse_forecast, wmo(code) -> (glyph, word), compass, ForecastFeed
                        (15 min; alert_until when current code changes into precipitation). Timestamps are LOCAL
                        naive datetimes in CONFIG.forecast.timezone
-assets/fonts/          PressStart2P.ttf, Silkscreen.ttf (OFL)
+assets/fonts/          PressStart2P.ttf, Silkscreen.ttf (OFL); glcd5x7.pil/.pbm + glcdfont.c + LICENSE-glcdfont.txt (BSD)
+assets/logos/          14 x 28x28 RGBA pixel-art airline marks (tools/build_logos.py; personal-use approximations)
+assets/data/airports.csv  OurAirports trim (public domain)
+tools/                 build_fw_font.py, build_logos.py — regenerate the font / logos; never hand-edit the outputs
 fixtures/bos_point.json  hand-built readsb-shaped Boston traffic + `_routes` sidecar (test only)
 fixtures/mbta_red.json   trimmed LIVE capture of the MBTA V3 API (stops, vehicles+included, predictions), 14 Sep
 fixtures/espn_scoreboards.json  trimmed LIVE ESPN capture, 15 Sep, 4 leagues; ONE substitution (MIA->BOS on the live
@@ -261,7 +273,22 @@ tests/                 test_colorlight (bytes), test_data, test_radar, test_spri
 
 Run `python -m pytest -q`.
 
-### FlightsChannel layout (256 × 64)
+### FlightWallChannel layout (256 × 64) — tuned against the product photos
+
+```
+x 2-29  rows 0-27  logo (assets/logos/<ICAO>.png; 'private' for N-numbers, 'generic' otherwise)
+x 34    y=1   Southwest Airlines          (or 'WN 1187' with title=flight)      Alt: 2,700ft   <- values right-
+x 34    y=13  OAK-SEA                     (flight number if the route is unknown) Spd: 413kts      aligned at 254,
+x 34    y=25  Boeing 737-700                                                     Trk: 300deg      label 6 px left
+x 0     y=37  Oakland Intl                (or 'Arriving from X' / 'Departing to X' / registration)  Vr: +640ft/m
+x 0     y=49  Seattle-Tacoma Intl         (full width)                                          +2 more (grey)
+```
+Font `fonts.FW` (Adafruit GFX 5x7, 6 px advance, true lowercase). Left text is hard-clipped
+4 px before the right column (no ellipsis). Cycle: nearest 5, 5 s each, order stable while the
+set is unchanged, one black frame per swap. Config: `FlightWallConfig` (title, cycle_seconds,
+units, no_flights dots|clock, clocks, home_airport). Fixtures `flightwall_{a,b,c,d}.json`.
+
+### FlightsChannel layout (256 × 64) — the list view
 
 ```
 y=1   OVERHEAD  n AIRCRAFT                                        HH:MM   (colon blinks 1 Hz)
@@ -411,6 +438,16 @@ probe-forecast, demo-forecast --view). `run` now loads flights, radar, silhouett
   by the relabeled fixture event and by synthetic Game objects in tests); NFL `possession` field mapping
   (documented as a team id; no live NFL game to confirm); the forecast "rain starting" priority spike against
   real weather; how the ~1.9 MB MLB poll behaves on the Pi's Wi-Fi.
+
+Added 15 Sep ~01:40: **FlightWallChannel**, the actual replica, now the default channel and default pin.
+- **VERIFIED:** font identity against the product photos (glyph shapes, slashed zero, 6 px advance, string
+  widths - "Southwest Airlines" 108 px, "Seattle-Tacoma Intl" 114 px, "Dallas-Fort Worth Intl" 132 px, all fit);
+  airport display names for the 10 examples from the photos; a 14 s live `run` with the card cycling real
+  aircraft and adsbdb routes. The earlier HANDOFF §6 routeset issue does not apply any more (adsbdb).
+- **UNVERIFIED / known differences from the real product:** logos are approximations (README); the real
+  device's exact cycle timing, the "more than 5 flights" message wording ('+N more' is ours), whether the real
+  one clips or scrolls long airport names (we clip, matching the FAQ's description), metric Vr unit (photo shows
+  kph; app also offers m/s), clock-mode layout (built from the FAQ text, not a photo).
 
 Verified vs. unverified for the earlier channels:
 - **Changed 15 Sep ~01:00 (Ahmad's request):** the wall no longer cycles by default. Manual mode pins the
