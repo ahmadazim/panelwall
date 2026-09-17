@@ -28,7 +28,7 @@ def _sink(args):
     return make_sink("sim", png_path=args.png, window=None if not args.no_window else False)
 
 
-DEFAULT_CHANNELS = ["flightwall", "flights", "radar", "silhouette", "mbta", "sports", "forecast"]
+DEFAULT_CHANNELS = ["flightwall", "flights", "radar", "silhouette", "mbta", "sports", "forecast", "prayers"]
 AIRCRAFT_CHANNELS = {"flightwall", "flights", "radar", "silhouette"}
 
 
@@ -56,6 +56,8 @@ def build_channels(names: list[str]):
             out.append(ch.SportsChannel())
         elif name == "forecast":
             out.append(ch.ForecastChannel())
+        elif name == "prayers":
+            out.append(ch.PrayersChannel())
         elif name == "testpattern":
             out.append(ch.TestPatternChannel())
         else:
@@ -148,6 +150,10 @@ def fixture_channel(name: str, **kw):
     if name == "sports":
         from .data.espn import SportsFeed
         return ch.SportsChannel(feed=SportsFeed(static=json.loads((FIXTURES / "espn_scoreboards.json").read_text())))
+    if name == "prayers":
+        from datetime import datetime
+        return ch.PrayersChannel(static_html=(FIXTURES / "fiveprayers.html").read_text(),
+                                 now=datetime.fromisoformat("2026-09-17T15:40:00-04:00"))
     if name == "forecast":
         from .data.openmeteo import ForecastFeed
         return ch.ForecastChannel(feed=ForecastFeed(static=json.loads((FIXTURES / "openmeteo.json").read_text())), view=kw.get("view"))
@@ -156,7 +162,7 @@ def fixture_channel(name: str, **kw):
     raise ValueError(f"no fixture demo for {name!r}")
 
 
-DEMO_CHANNELS = ["flightwall", "flights", "radar", "silhouette", "mbta", "sports", "forecast", "testpattern"]
+DEMO_CHANNELS = ["flightwall", "flights", "radar", "silhouette", "mbta", "sports", "forecast", "prayers", "testpattern"]
 
 
 def cmd_demo(args):
@@ -283,6 +289,30 @@ def cmd_probe_forecast(args):
     print(f"  hourly: {len(fc.hourly)} entries from {fc.hourly[0].time if fc.hourly else None}")
 
 
+def cmd_probe_prayers(args):
+    """Fetch the fiveprayers.org page, show what we parsed from it and today's computed times."""
+    from datetime import date, timedelta
+    from zoneinfo import ZoneInfo
+    from .data.prayers import PrayersClient, parse_page, day_times
+
+    c = PrayersClient()
+    print("GET", c.url)
+    html = c.fetch_html()
+    if html is None:
+        print(" ", c.last_error)
+        return
+    cfg = parse_page(html)
+    print(f"  {len(html)} bytes. title={cfg.title!r} location={cfg.location!r} method={cfg.method} clclt={cfg.clclt}")
+    print(f"  lat/lon {cfg.lat:.4f},{cfg.lon:.4f} elev {cfg.elev:g}  fajr {cfg.fajr_angle:g} deg  isha {cfg.isha_angle:g} deg / {cfg.isha_minutes:g} min  asr factor {cfg.asr_factor:g}")
+    print(f"  iqama offsets (fajr,dhuhr,asr,maghrib,isha,jumuah) {cfg.iqama_offsets}; fixed iqama {cfg.fixed_iqama}; jumuah {cfg.jumuah}")
+    tz = ZoneInfo(CONFIG.prayers.timezone)
+    for d in (date.today(), date.today() + timedelta(days=1)):
+        pd = day_times(cfg, d, tz)
+        print(f"  {d}: " + "  ".join(f"{n} {t:%-I:%M%p}" for n, t in pd.athan.items())
+              + "  | iqama " + "  ".join(f"{n} {t:%-I:%M%p}" for n, t in pd.iqama.items())
+              + (f"  | jumuah {pd.jumuah:%-I:%M%p}" if pd.jumuah else ""))
+
+
 def cmd_probe(args):
     from .data.adsb import AdsbClient, ApiError
 
@@ -352,6 +382,7 @@ def main(argv=None):
     sp = sub.add_parser("probe-sports", help="raw ESPN scoreboard JSON for the tracked leagues")
     sp.add_argument("-n", type=int, default=600, help="bytes of raw JSON to print per league")
     sp.set_defaults(fn=cmd_probe_sports)
+    sub.add_parser("probe-prayers", help="fetch the fiveprayers.org page and print the parsed config + times").set_defaults(fn=cmd_probe_prayers)
     sp = sub.add_parser("probe-forecast", help="raw Open-Meteo JSON for CONFIG.location")
     sp.add_argument("-n", type=int, default=600, help="bytes of raw JSON to print")
     sp.set_defaults(fn=cmd_probe_forecast)

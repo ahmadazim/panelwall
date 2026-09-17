@@ -218,6 +218,9 @@ panelwall/
                        LARGE scores right-aligned at x=92, MLB bases+outs / NFL down&distance+possession) + one row per
                        other tracked team right (label + <=13-char status). prio 25 (15 s after a score) / 12 live /
                        4 game today / 0
+    prayers.py         PrayersChannel — athan/iqama table (5 rows, 9 px pitch, athan right@104, iqama right@160,
+                       next prayer amber, past grey) + right block "NEXT ATHAN IN / ASR / 0:45:12" + sunrise/Jumu'ah.
+                       prio 20 in a window around each athan/iqama (alert), else 4
     forecast.py        ForecastChannel — WEEK (7 x 36 px columns: day, glyph, hi, lo, precip% if >=20) and HOURLY
                        (LARGE temp + glyph, FEELS/UV/HUM, SET/RISE; 12 x 15 px hour columns from x=70 with a
                        temperature polyline) alternating every 20 s on its own timer. prio 3 / 8 for 60 s when the
@@ -254,6 +257,10 @@ panelwall/
                        parse_scoreboard (per-event defensive), format_status (<=13 chars), live_detail, pick_game,
                        SportsFeed (30 s while live else 5 min; score-change -> event_until). NOTE: the MLB week window
                        is ~1.9 MB of JSON per poll - fine in the background thread, don't shorten the interval.
+    prayers.py         fiveprayers.org display page scraper + a line-for-line port of its ptScript_calcs.js
+                       (parse_page: #parms/#fat/fixed iqama tds; compute_athan_hours/board_time; day_times; next_event;
+                       PrayersFeed polls the PAGE every 6 h, computes times per day). VERIFIED against the original
+                       JS run in node for 2026-09-17, 12-21, 06-21: identical strings. CLCLT=0 path is unverified.
     openmeteo.py       Open-Meteo (keyless): parse_forecast, wmo(code) -> (glyph, word), compass, ForecastFeed
                        (15 min; alert_until when current code changes into precipitation). Timestamps are LOCAL
                        naive datetimes in CONFIG.forecast.timezone
@@ -266,6 +273,9 @@ fixtures/mbta_red.json   trimmed LIVE capture of the MBTA V3 API (stops, vehicle
 fixtures/espn_scoreboards.json  trimmed LIVE ESPN capture, 15 Sep, 4 leagues; ONE substitution (MIA->BOS on the live
                          MLB game so the fixture has a live Boston card) - see its _comment
 fixtures/openmeteo.json  unmodified LIVE Open-Meteo capture, 15 Sep 00:15, Doylestown
+fixtures/fiveprayers.html  unmodified LIVE capture of Ahmad's fiveprayers.org display page (id=ahmadazim), 17 Sep.
+                         NOTE its iqama times for Fajr/Dhuhr/Asr (5:00/12:00/3:00) are the account's placeholder
+                         defaults - set real ones in the fiveprayers admin and the display picks them up within 6 h
 design/                led_mockups.py + led_layout_ideas.png (round 1: A, D, F deliberately unbuilt)
                        mockups2.py -> round2/round2_sheet.png (round 2: 1, 5, 6 built and rendered THROUGH the channels;
                        2 ticker, 3/4 Spotify deferred as static sketches). The original round-2 mockup file Ahmad
@@ -461,6 +471,13 @@ Added 15 Sep ~01:40: **FlightWallChannel**, the actual replica, now the default 
   device's exact cycle timing, the "more than 5 flights" message wording ('+N more' is ours), whether the real
   one clips or scrolls long airport names (we clip, matching the FAQ's description), metric Vr unit (photo shows
   kph; app also offers m/s), clock-mode layout (built from the FAQ text, not a photo).
+
+Added 17 Sep: **PrayersChannel** (Ahmad: "prayer times and iqama times ... there is no API so you will need
+to pull from the html"). The page's athan cells are placeholders; its JS computes the real times client-side
+from #parms (lat, lon, elev, fajr/isha angles, asr factor) and #fat (CLCLT, iqama offsets). Ported the maths
+exactly (incl. floor/ceil rounding) and verified against node running the original script. Iqama = athan +
+offset when the offset > 0, else the fixed td value; Jumu'ah = td#fdp unless offset[5] != 0.
+- **UNVERIFIED:** CLCLT=0 pages (server-supplied future athan rows); the alert-window behaviour on the real wall.
 
 Verified vs. unverified for the earlier channels:
 - **Changed 15 Sep ~01:00 (Ahmad's request):** the wall no longer cycles by default. Manual mode pins the

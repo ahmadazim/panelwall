@@ -6,7 +6,7 @@ a radar scope, a hero card for the closest aircraft, and the MBTA Red Line. Cont
 from your phone.
 
 ```
-channels/   render a 256x64 frame            flights, radar, silhouette, mbta, sports, forecast, testpattern
+channels/   render a 256x64 frame            flightwall, flights, radar, silhouette, mbta, sports, forecast, prayers, testpattern
 scheduler   picks a channel (priority + rotation + hold), wipes between them, quiet hours
 sinks/      show the frame: SimulatorSink (Mac/PNG) or ColorlightSink (raw Ethernet)
 data/       shared ADS-B feed, MBTA / ESPN / Open-Meteo clients, airline / aircraft-type / airport lookups
@@ -26,6 +26,7 @@ web         the control server (standard library http.server, no build step)
 | `silhouette` | the closest aircraft as a hero card: sprite in airline colors, ORIGIN → DEST with progress dot, alt/spd/phase | 20 when exactly one aircraft is in range; 25 for 8 s whenever a not-yet-shown aircraft becomes the closest (at most every 45 s); else 0 |
 | `mbta` | Red Line strip with live trains and next arrivals at Harvard | 5 (idle content) |
 | `sports` | "BOSTON TONIGHT": featured game card (live > next > last final) + one row per other tracked team, from ESPN's public scoreboard JSON (unofficial, keyless) | 25 for 15 s after a tracked team scores, 12 live, 4 game today, else 0 |
+| `prayers` | today's athan and iqama times from your fiveprayers.org display page, next-prayer countdown, sunrise and Jumu'ah | 20 from 10 min before to 3 min after each athan / iqama, else 4 |
 | `forecast` | Open-Meteo (keyless): WEEK view (7 days, glyphs, hi/lo, precip %) and HOURLY view (next 12 h temperature line) alternating every 20 s | 3, or 8 for 60 s when the current weather turns to precipitation |
 | `testpattern` | panel numbers 1–8, RGB bars, origin marker | bring-up only (`test`) |
 
@@ -101,7 +102,8 @@ All optional. The app runs with none of them set.
 | `PW_MBTA_BASE` | `https://api-v3.mbta.com` | |
 | `PW_TEAMS` | `mlb:BOS:SOX,nfl:NE:PATS,nba:BOS:CELTS,nhl:BOS:B'S` | tracked teams as `league:ESPN-abbreviation:label`; labels <= 5 chars fit next to any status |
 | `PW_CITY` | `BOSTON` | header of the sports channel |
-| `PW_TZ` | `America/New_York` | Open-Meteo timezone (its timestamps are local to this) |
+| `PW_TZ` | `America/New_York` | timezone for Open-Meteo timestamps and prayer-time calculation |
+| `PW_PRAYERS_URL` | your fiveprayers.org display page | the page has no API: it is fetched every 6 h for its parameters and fixed iqama times, and the athan times are computed locally with the same algorithm its JavaScript uses (verified against it) |
 
 Both the sports and forecast sources are keyless. ESPN's scoreboard JSON is **unofficial**:
 undocumented, stable for years, but it could change or disappear without notice. Parsing

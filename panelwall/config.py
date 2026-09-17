@@ -91,6 +91,17 @@ class ForecastConfig:
 
 
 @dataclass
+class PrayersConfig:
+    """Prayer + iqama times from a fiveprayers.org display page (no API: the page is scraped for
+    its parameters and fixed iqama times, and the athan times are computed the way its JS does)."""
+    url: str = _env("PW_PRAYERS_URL", "https://fiveprayers.org/display/index.php?id=ahmadazim")
+    poll_seconds: float = 6 * 3600.0      # the page only changes when the admin edits settings
+    timezone: str = _env("PW_TZ", "America/New_York")
+    alert_before_min: int = 10            # priority spike window around each athan / iqama
+    alert_after_min: int = 3
+
+
+@dataclass
 class FlightWallConfig:
     """The FlightWall Widescreen replica card (channels/flightwall.py)."""
     title: str = _env("PW_FW_TITLE", "airline")           # airline | flight   (row 1: 'Southwest Airlines' or 'WN 1187')
@@ -114,6 +125,7 @@ class Config:
     sports: SportsConfig = field(default_factory=SportsConfig)
     forecast: ForecastConfig = field(default_factory=ForecastConfig)
     flightwall: FlightWallConfig = field(default_factory=FlightWallConfig)
+    prayers: PrayersConfig = field(default_factory=PrayersConfig)
 
 
 CONFIG = Config()
