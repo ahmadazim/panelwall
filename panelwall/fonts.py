@@ -8,6 +8,7 @@ FW     = X11 misc-fixed 6x10 (6x10.pil, built by tools/build_fw_font.py from 6x1
          Matches the FlightWall's typeface (compared against the product photos). 42 chars across.
 """
 
+import unicodedata
 from pathlib import Path
 
 from PIL import ImageFont
@@ -20,5 +21,23 @@ LARGE = ImageFont.truetype(str(_ASSETS / "PressStart2P.ttf"), 16)
 FW = ImageFont.load(str(_ASSETS / "6x10.pil"))          # bitmap font: getbbox/getlength work like the TTFs
 
 
+_SPECIAL = str.maketrans({"ß": "ss", "æ": "ae", "Æ": "AE", "ø": "o", "Ø": "O", "œ": "oe", "Œ": "OE", "ð": "d", "Ð": "D",
+                          "þ": "th", "Þ": "Th", "ł": "l", "Ł": "L", "đ": "d", "Đ": "D", "ı": "i", "İ": "I",
+                          "\u2013": "-", "\u2014": "-", "\u2018": "'", "\u2019": "'", "\u201c": '"', "\u201d": '"',
+                          "\u00a0": " "})
+
+
+def safe_text(s: str, font=None) -> str:
+    """Make `s` drawable by `font`. Bitmap (.pil) fonts only know Latin-1 and Pillow raises
+    UnicodeEncodeError on anything else (an 'İstanbul' airport name crashed the frame loop on
+    the Pi). Accents are stripped (NFKD), a few letters transliterated, anything left that the
+    font cannot encode becomes '?'. TrueType fonts are left alone."""
+    if not isinstance(font, ImageFont.ImageFont):
+        return s
+    s = s.translate(_SPECIAL)
+    s = "".join(c for c in unicodedata.normalize("NFKD", s) if not unicodedata.combining(c))
+    return "".join(c if ord(c) < 256 else "?" for c in s)
+
+
 def width(s: str, font=SMALL) -> int:
-    return int(font.getlength(s))
+    return int(font.getlength(safe_text(s, font)))

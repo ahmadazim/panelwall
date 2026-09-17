@@ -40,6 +40,7 @@ class _TextCache:
         self._d: dict[tuple, Image.Image] = {}
 
     def get(self, s: str, font, fill) -> Image.Image:
+        s = fonts.safe_text(s, font)          # bitmap fonts are Latin-1 only; never let a name crash the loop
         key = (s, id(font), fill)
         tile = self._d.get(key)
         if tile is None:

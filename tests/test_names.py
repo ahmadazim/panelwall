@@ -53,3 +53,17 @@ def test_fw_font_widths():
     assert fonts.width("Dallas-Fort Worth Intl", fonts.FW) == 132 <= 256
     assert fonts.width("Detroit Metropolitan Wayne County", fonts.FW) == 198 <= 256
     assert fonts.FW.getbbox("Southwest Airlines")[3] == 10                   # 10 px cell, 7 px caps in rows 1-7
+
+
+def test_bitmap_font_survives_non_latin1_text():
+    from panelwall.fonts import safe_text
+    from panelwall.framebuffer import Frame
+    assert safe_text("\u0130stanbul Airport", fonts.FW) == "Istanbul Airport"        # the crash on the Pi
+    assert safe_text("S\u00e3o Paulo-Guarulhos", fonts.FW) == "Sao Paulo-Guarulhos"
+    assert safe_text("Z\u00fcrich  \u00d8rsted  \u0141\u00f3d\u017a", fonts.FW) == "Zurich  Orsted  Lodz"
+    assert safe_text("\u6771\u4eac", fonts.FW) == "??"
+    assert safe_text("\u0130stanbul", fonts.MEDIUM) == "\u0130stanbul"                # TrueType: untouched
+    f = Frame()
+    for s in ("\u0130stanbul Airport", "\u6771\u4eac\u56fd\u969b\u7a7a\u6e2f", "Z\u00fcrich"):
+        f.text(0, 2, s, fonts.FW)                                                     # must not raise
+        assert fonts.width(s, fonts.FW) > 0
