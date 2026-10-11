@@ -2,7 +2,7 @@ import time
 
 import numpy as np
 
-from panelwall.channels.meadow import MeadowChannel, cat_sprite, kuromi_sprite, WORLD_W, CAT_X
+from panelwall.channels.meadow import MeadowChannel, cat_sprite, kuromi_sprite, WORLD_W, CAT_X, CAT_W, CAT_H, KUROMI_W, KUROMI_H
 from panelwall.framebuffer import Frame, W, H
 
 
@@ -13,12 +13,12 @@ def _run(ch, seconds, dt=0.05):
 
 def test_sprites_build_and_differ_per_step():
     walks = [np.asarray(cat_sprite("walk", s)) for s in range(4)]
-    assert all(w.shape == (26, 44, 4) for w in walks)
+    assert all(w.shape == (CAT_H, CAT_W, 4) for w in walks)
     assert (walks[0] != walks[1]).any() and (walks[0] == walks[2]).all()           # 4-step cycle, 0 == 2
     sit, back = np.asarray(cat_sprite("sit", 0)), np.asarray(cat_sprite("sit", 0, True))
     assert (sit != back).any()
     k = [np.asarray(kuromi_sprite(s)) for s in range(4)]
-    assert k[0].shape == (24, 22, 4) and (k[0] != k[1]).any()
+    assert k[0].shape == (KUROMI_H, KUROMI_W, 4) and (k[0] != k[1]).any()
     # brand check: Kuromi is mostly black and white with some pink; the cat is mostly orange
     kp = k[0][k[0][:, :, 3] > 0][:, :3]
     assert (kp.max(axis=1) < 40).mean() > 0.3 and ((kp[:, 0] > 200) & (kp[:, 1] < 150)).any()
@@ -64,5 +64,5 @@ def test_render_is_cheap_and_fills_the_frame():
         ch.render(f)
     assert (time.perf_counter() - t0) / 50 < 0.01                                      # < 10 ms/frame
     # the cat is where the scene says it is: orange pixels around CAT_X on the ground
-    patch = arr[H - 26:H, CAT_X:CAT_X + 44]
-    assert ((patch[:, :, 0] > 180) & (patch[:, :, 2] < 80)).sum() > 100
+    patch = arr[H - CAT_H:H, CAT_X:CAT_X + CAT_W]
+    assert ((patch[:, :, 0] > 180) & (patch[:, :, 2] < 80)).sum() > 200

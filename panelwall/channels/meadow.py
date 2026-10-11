@@ -3,7 +3,8 @@
 Scene (256x64), back to front:
   sky gradient + sun, three drifting clouds (slow parallax), two layers of rolling hills
   (pre-rendered 512 px wide, scrolled with wrap), a flowered grass strip (y 44-63) with
-  ~60 swaying blades, two butterflies on sine paths, the cat, and Kuromi.
+  ~90 swaying blades, two butterflies on sine paths, the cat (60x36) and Kuromi (32x34).
+  The palette is muted on purpose: the LEDs are bright, and the characters should pop.
 
 The world scrolls while the cat walks (the cat stays near x=96); the layers wrap, so it
 loops forever. A small state machine gives the cat a life: walk, stop and sit, tail
@@ -27,19 +28,19 @@ from PIL import Image, ImageDraw
 from ..framebuffer import Frame, W, H
 from .base import Channel
 
-# ---- palette -------------------------------------------------------------------------------------
-SKY_TOP, SKY_BOTTOM = (28, 70, 160), (120, 185, 235)
-SUN = (255, 225, 120)
-CLOUD = (240, 244, 250)
-HILL_FAR, HILL_NEAR = (62, 130, 70), (46, 110, 52)
-GRASS, GRASS_DARK, GRASS_LIGHT = (52, 140, 48), (36, 105, 36), (96, 190, 70)
-FLOWERS = ((255, 90, 120), (255, 220, 60), (240, 240, 255), (200, 120, 255))
-ORANGE, ORANGE_DARK, CREAM = (235, 140, 40), (190, 95, 20), (250, 235, 205)
-BLACK, WHITE, PINK, GREEN_EYE = (18, 18, 22), (245, 245, 250), (240, 110, 170), (90, 200, 90)
+# ---- palette (deliberately muted: the wall is bright, and the characters should carry the scene) ----
+SKY_TOP, SKY_BOTTOM = (16, 40, 95), (70, 108, 140)
+SUN = (205, 180, 95)
+CLOUD = (165, 170, 178)
+HILL_FAR, HILL_NEAR = (38, 82, 44), (28, 68, 32)
+GRASS, GRASS_DARK, GRASS_LIGHT = (32, 88, 30), (22, 62, 22), (58, 118, 44)
+FLOWERS = ((190, 70, 95), (195, 165, 45), (175, 175, 190), (145, 90, 190))
+ORANGE, ORANGE_DARK, CREAM = (225, 130, 35), (175, 85, 18), (225, 210, 180)
+BLACK, WHITE, PINK, GREEN_EYE = (14, 14, 18), (215, 215, 222), (220, 95, 155), (80, 180, 80)
 
 WORLD_W = 512                     # hills/ground tile width; scroll wraps here
 HORIZON = 44
-CAT_X = 96
+CAT_X = 110
 WALK_SPEED = 14.0                 # px/s world scroll while walking
 
 
@@ -116,93 +117,101 @@ def blades() -> list[tuple[int, int, int, float]]:
     return [(rnd.randrange(WORLD_W), rnd.randrange(HORIZON + 2, H), rnd.randrange(3, 7), rnd.random() * math.tau) for _ in range(90)]
 
 
-# ---- sprites -------------------------------------------------------------------------------------
+# ---- sprites (hand-placed at 60x36 / 32x34 so edges stay crisp) ------------------------------------
+CAT_W, CAT_H = 60, 36
+KUROMI_W, KUROMI_H = 32, 34
+
+
+def _cat_head(d: ImageDraw.ImageDraw, cx: int, hy: int, look_back: bool) -> None:
+    """17x16 head with ears, facing right; mirrored features when looking back over the shoulder."""
+    flip = -1 if look_back else 1
+    d.ellipse([cx, hy + 2, cx + 16, hy + 16], fill=ORANGE)
+    d.polygon([(cx + 1, hy + 5), (cx + 2, hy - 2), (cx + 7, hy + 3)], fill=ORANGE)          # ears
+    d.polygon([(cx + 9, hy + 3), (cx + 14, hy - 2), (cx + 15, hy + 5)], fill=ORANGE)
+    d.polygon([(cx + 2, hy + 4), (cx + 3, hy), (cx + 5, hy + 3)], fill=PINK)                 # inner ears
+    d.polygon([(cx + 11, hy + 3), (cx + 13, hy), (cx + 14, hy + 4)], fill=PINK)
+    for sx in (cx + 5, cx + 8, cx + 11):                                                     # forehead 'M'
+        d.line([(sx, hy + 3), (sx, hy + 6)], fill=ORANGE_DARK)
+    ex = cx + (11 if flip > 0 else 3)
+    d.rectangle([ex - 1, hy + 7, ex + 1, hy + 9], fill=GREEN_EYE)                            # eye
+    d.rectangle([ex, hy + 7, ex, hy + 9], fill=BLACK)
+    nx = cx + (16 if flip > 0 else 0)
+    d.rectangle([nx - 1, hy + 11, nx, hy + 11], fill=PINK)                                   # nose
+    d.line([(nx, hy + 12), (nx - 2 * flip, hy + 13)], fill=ORANGE_DARK)                      # mouth
+    for i, wy in enumerate((hy + 10, hy + 12, hy + 14)):                                      # whiskers
+        d.line([(nx + 1 * flip, wy), (nx + 7 * flip, wy + (i - 1) * 2)], fill=CREAM)
+
+
 @lru_cache(maxsize=16)
 def cat_sprite(pose: str, step: int = 0, look_back: bool = False) -> Image.Image:
-    """Orange tabby, side view facing right, in a 44x26 box. pose: walk | sit. step 0-3 for the walk cycle."""
-    im = Image.new("RGBA", (44, 26), (0, 0, 0, 0))
+    """Orange tabby, side view facing right, in a 60x36 box. pose: walk | sit. step 0-3 for the walk cycle."""
+    im = Image.new("RGBA", (CAT_W, CAT_H), (0, 0, 0, 0))
     d = ImageDraw.Draw(im)
-    gy = 25                                                 # ground line (bottom row)
+    gy = CAT_H - 1
     if pose == "walk":
-        # legs: two pairs alternating; step 0..3 -> phase
         ph = (0, 1, 0, -1)[step % 4]
-        for lx, back in ((11, True), (15, True), (26, False), (30, False)):
-            dx = ph * (2 if back else -2) * (1 if lx in (11, 26) else -1)
-            d.rectangle([lx + dx, 17, lx + dx + 2, gy], fill=ORANGE)
-            d.rectangle([lx + dx, gy - 1, lx + dx + 2, gy], fill=CREAM)      # paws
-        d.rounded_rectangle([8, 9, 34, 19], radius=5, fill=ORANGE)            # body
-        d.rectangle([14, 16, 30, 19], fill=CREAM)                             # belly
-        for sx in (14, 19, 24):                                               # tabby stripes
-            d.line([(sx, 9), (sx + 1, 13)], fill=ORANGE_DARK)
-        # tail: up and curled, with a little sway per step
-        tail = [(8, 12), (4, 8), (3, 4 + (step % 2)), (6, 2)]
-        d.line(tail, fill=ORANGE, width=2)
-        d.point((6, 2), fill=ORANGE_DARK)
-        hx = 30                                                               # head at the front
-        hy = 5
-    else:                                                                     # sit
-        d.polygon([(10, 25), (12, 10), (30, 10), (34, 25)], fill=ORANGE)       # haunches/back
-        d.rounded_rectangle([12, 8, 32, 20], radius=5, fill=ORANGE)
-        d.rectangle([18, 15, 30, 24], fill=CREAM)                             # chest
-        d.rectangle([21, 19, 23, gy], fill=ORANGE)                            # front legs
-        d.rectangle([27, 19, 29, gy], fill=ORANGE)
-        d.rectangle([21, gy - 1, 23, gy], fill=CREAM)
-        d.rectangle([27, gy - 1, 29, gy], fill=CREAM)
-        for sx in (16, 21, 26):
-            d.line([(sx, 8), (sx + 1, 12)], fill=ORANGE_DARK)
-        d.line([(12, 22), (6, 24), (3, 20 - 2 * (step % 2))], fill=ORANGE, width=2)   # tail along the ground, flicking
-        hx, hy = 30, 2
-    # head (shared): 12x11 with ears, facing right (or back-left when looking back)
-    flip = -1 if look_back else 1
-    cx = hx + (0 if not look_back else -8)
-    d.ellipse([cx - 1, hy, cx + 11, hy + 10], fill=ORANGE)
-    d.polygon([(cx, hy + 2), (cx + 1, hy - 3), (cx + 4, hy + 1)], fill=ORANGE)         # ears
-    d.polygon([(cx + 7, hy + 1), (cx + 10, hy - 3), (cx + 11, hy + 2)], fill=ORANGE)
-    d.point([(cx + 1, hy - 1), (cx + 9, hy - 1)], fill=PINK)
-    d.line([(cx + 3, hy + 1), (cx + 3, hy + 3)], fill=ORANGE_DARK)                     # forehead 'M'
-    d.line([(cx + 7, hy + 1), (cx + 7, hy + 3)], fill=ORANGE_DARK)
-    ex = cx + (7 if flip > 0 else 3)
-    d.rectangle([ex - 1, hy + 4, ex, hy + 5], fill=GREEN_EYE)                          # eye
-    d.point((ex, hy + 4), fill=BLACK)
-    nx = cx + (11 if flip > 0 else -1)
-    d.point((nx, hy + 7), fill=PINK)                                                   # nose
-    d.line([(nx, hy + 8), (nx - 2 * flip, hy + 9)], fill=ORANGE_DARK)                  # mouth
-    for wy in (hy + 6, hy + 8):                                                        # whiskers
-        d.line([(nx + 1 * flip, wy), (nx + 5 * flip, wy - (1 if wy == hy + 6 else -1))], fill=CREAM)
+        for lx, back, sign in ((13, True, 1), (20, True, -1), (34, False, -1), (41, False, 1)):
+            dx = ph * 3 * sign
+            d.rectangle([lx + dx, 24, lx + dx + 3, gy], fill=ORANGE)
+            d.rectangle([lx + dx, gy - 2, lx + dx + 3, gy], fill=CREAM)                     # paws
+        d.rounded_rectangle([10, 12, 48, 27], radius=7, fill=ORANGE)                        # body
+        d.rectangle([18, 22, 42, 27], fill=CREAM)                                           # belly
+        for sx in (18, 24, 30, 36):                                                         # tabby stripes
+            d.line([(sx, 12), (sx + 2, 18)], fill=ORANGE_DARK, width=2)
+        tail = [(11, 18), (5, 12), (3, 6 + (step % 2)), (8, 1)]                              # tail up, swaying
+        d.line(tail, fill=ORANGE, width=3)
+        d.rectangle([7, 1, 9, 3], fill=ORANGE_DARK)
+        _cat_head(d, 41, 3, False)
+    else:
+        d.polygon([(12, gy), (15, 16), (42, 16), (48, gy)], fill=ORANGE)                     # haunches / back
+        d.rounded_rectangle([15, 12, 46, 30], radius=7, fill=ORANGE)
+        d.rectangle([31, 21, 41, 29], fill=CREAM)                                           # chest bib
+        for lx in (29, 40):                                                                 # front legs, orange, paws cream
+            d.rectangle([lx, 26, lx + 3, gy], fill=ORANGE)
+            d.rectangle([lx, gy - 2, lx + 3, gy], fill=CREAM)
+        d.rectangle([33, 30, 39, gy], fill=ORANGE_DARK)                                     # shadow between the legs
+        for sx in (20, 26, 32):
+            d.line([(sx, 12), (sx + 2, 18)], fill=ORANGE_DARK, width=2)
+        d.line([(14, 32), (7, 34), (3, 28 - 3 * (step % 2))], fill=ORANGE, width=3)         # tail along the ground
+        _cat_head(d, 41 - (11 if look_back else 0), 0, look_back)
     return im
 
 
 @lru_cache(maxsize=4)
 def kuromi_sprite(step: int = 0) -> Image.Image:
-    """Kuromi: black jester hood with long ears, pink skull on the front, white face, devil tail. 22x24."""
-    im = Image.new("RGBA", (22, 24), (0, 0, 0, 0))
+    """Kuromi: black jester hood with long ears, pink skull, white face, devil tail. 32x34, feet on the bottom row."""
+    im = Image.new("RGBA", (KUROMI_W, KUROMI_H), (0, 0, 0, 0))
     d = ImageDraw.Draw(im)
-    # ears: long, hanging either side of the hood, tips swing with the hop
     sw = (0, 1, 0, -1)[step % 4]
-    d.polygon([(7, 2), (0, 9 + sw), (0, 13 + sw), (3, 13 + sw), (9, 5)], fill=BLACK)      # left ear, out and down
-    d.polygon([(14, 2), (21, 9 - sw), (21, 13 - sw), (18, 13 - sw), (12, 5)], fill=BLACK)  # right ear
-    d.point([(1, 12 + sw), (20, 12 - sw)], fill=PINK)                                       # ear tips
+    # ears: out and down from the hood, tips swinging with the hop
+    # ears rise from the hood, flare out, then droop; tips swing with the hop
+    d.polygon([(11, 6), (6, 0), (1, 3), (0, 12 + sw), (4, 17 + sw), (7, 12 + sw), (13, 9)], fill=BLACK)
+    d.polygon([(20, 6), (25, 0), (30, 3), (31, 12 - sw), (27, 17 - sw), (24, 12 - sw), (18, 9)], fill=BLACK)
+    d.rectangle([2, 14 + sw, 3, 15 + sw], fill=PINK)                                        # ear tips
+    d.rectangle([28, 14 - sw, 29, 15 - sw], fill=PINK)
     # hood
-    d.ellipse([4, 0, 17, 13], fill=BLACK)
-    d.rectangle([4, 7, 17, 11], fill=BLACK)
+    d.ellipse([6, 0, 25, 19], fill=BLACK)
+    d.rectangle([6, 10, 25, 16], fill=BLACK)
     # pink skull on the hood
-    d.ellipse([8, 2, 13, 6], fill=PINK)
-    d.rectangle([9, 6, 12, 7], fill=PINK)
-    d.point([(9, 4), (12, 4)], fill=BLACK)
+    d.ellipse([11, 2, 20, 9], fill=PINK)
+    d.rectangle([13, 9, 18, 10], fill=PINK)
+    d.rectangle([13, 5, 14, 6], fill=BLACK)
+    d.rectangle([17, 5, 18, 6], fill=BLACK)
     # face
-    d.ellipse([5, 8, 16, 17], fill=WHITE)
-    d.ellipse([7, 11, 9, 14], fill=BLACK)                                 # eyes
-    d.ellipse([12, 11, 14, 14], fill=BLACK)
-    d.point([(8, 12), (13, 12)], fill=WHITE)
-    d.line([(9, 16), (12, 16)], fill=BLACK)                               # mischievous grin
-    d.point((9, 16), fill=PINK)
+    d.ellipse([8, 11, 23, 25], fill=WHITE)
+    d.ellipse([10, 15, 13, 19], fill=BLACK)                                                 # eyes
+    d.ellipse([18, 15, 21, 19], fill=BLACK)
+    d.point([(11, 16), (19, 16)], fill=WHITE)
+    d.line([(13, 22), (18, 22)], fill=BLACK)                                                # mischievous grin
+    d.point((13, 22), fill=PINK)
+    d.point((18, 22), fill=PINK)
     # body + feet
-    d.rounded_rectangle([7, 17, 14, 21], radius=2, fill=WHITE)
-    d.rectangle([7, 22, 9, 23], fill=BLACK)
-    d.rectangle([12, 22, 14, 23], fill=BLACK)
+    d.rounded_rectangle([10, 24, 21, 30], radius=3, fill=WHITE)
+    d.rectangle([10, 31, 13, 33], fill=BLACK)
+    d.rectangle([18, 31, 21, 33], fill=BLACK)
     # devil tail
-    d.line([(14, 20), (18, 19), (20, 21)], fill=BLACK)
-    d.polygon([(19, 20), (21, 19), (21, 22)], fill=PINK)
+    d.line([(21, 28), (26, 26), (29, 29)], fill=BLACK, width=2)
+    d.polygon([(27, 28), (31, 26), (31, 31)], fill=PINK)
     return im
 
 
@@ -232,7 +241,7 @@ class MeadowChannel(Channel):
         self.state = "walk"
         self.state_until = 6.0
         self.look_back = False
-        self.kuromi_gap = 34.0          # how far behind the cat Kuromi is
+        self.kuromi_gap = 48.0          # how far behind the cat Kuromi is
         self._frames = 0
 
     def priority(self) -> int:
@@ -250,9 +259,9 @@ class MeadowChannel(Channel):
         if self.state == "walk":
             self.scroll = (self.scroll + WALK_SPEED * dt) % WORLD_W
             # Kuromi lags, then catches up a little while the cat walks
-            self.kuromi_gap = min(40.0, self.kuromi_gap + 1.5 * dt)
+            self.kuromi_gap = min(56.0, self.kuromi_gap + 1.5 * dt)
         else:
-            self.kuromi_gap = max(26.0, self.kuromi_gap - 4.0 * dt)   # she catches up when the cat sits
+            self.kuromi_gap = max(38.0, self.kuromi_gap - 5.0 * dt)   # she catches up when the cat sits
 
     def _next_state(self) -> None:
         r = self.rnd
@@ -291,15 +300,15 @@ class MeadowChannel(Channel):
             spr = butterfly_sprite(int(self.t * 10 + i) % 2 == 0)
             img.paste(spr, (int(bxf), int(byf)), spr)
         # Kuromi hops behind the cat
-        hop = abs(math.sin(self.t * 5.0)) * 3 if self.state == "walk" else 0
+        hop = abs(math.sin(self.t * 5.0)) * 4 if self.state == "walk" else 0
         ks = kuromi_sprite(int(self.t * 6) % 4 if self.state == "walk" else 0)
-        img.paste(ks, (int(CAT_X - self.kuromi_gap), H - 24 - int(hop)), ks)
+        img.paste(ks, (int(CAT_X - self.kuromi_gap), H - KUROMI_H - int(hop)), ks)
         # the cat
         if self.state == "walk":
             cs = cat_sprite("walk", int(self.t * 6) % 4)
         else:
             cs = cat_sprite("sit", int(self.t * 2) % 2, self.look_back)
-        img.paste(cs, (CAT_X, H - 26), cs)
+        img.paste(cs, (CAT_X, H - CAT_H), cs)
         self._frames += 1
 
     @staticmethod
