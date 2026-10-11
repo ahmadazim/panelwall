@@ -221,6 +221,10 @@ panelwall/
     prayers.py         PrayersChannel — athan/iqama table (5 rows, 9 px pitch, athan right@104, iqama right@160,
                        next prayer amber, past grey) + right block "NEXT ATHAN IN / ASR / 0:45:12" + sunrise/Jumu'ah.
                        prio 20 in a window around each athan/iqama (alert), else 4
+    meadow.py          MeadowChannel — no network: looping parallax meadow (sky, clouds, 2 hill layers pre-rendered
+                       512 px wide, flowered ground, 90 swaying blades, butterflies) with a procedural orange tabby
+                       (4-step walk, sit, tail flick, look back) and Kuromi hopping behind. Seeded -> deterministic.
+                       0.1 ms/frame. prio 2. Pick it from the phone UI (Ahmad's "dynamic screensaver", 11 Oct)
     forecast.py        ForecastChannel — WEEK (7 x 36 px columns: day, glyph, hi, lo, precip% if >=20) and HOURLY
                        (LARGE temp + glyph, FEELS/UV/HUM, SET/RISE; 12 x 15 px hour columns from x=70 with a
                        temperature polyline) alternating every 20 s on its own timer. prio 3 / 8 for 60 s when the

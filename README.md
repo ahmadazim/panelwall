@@ -6,7 +6,7 @@ a radar scope, a hero card for the closest aircraft, and the MBTA Red Line. Cont
 from your phone.
 
 ```
-channels/   render a 256x64 frame            flightwall, flights, radar, silhouette, mbta, sports, forecast, prayers, testpattern
+channels/   render a 256x64 frame            flightwall, flights, radar, silhouette, mbta, sports, forecast, prayers, meadow, testpattern
 scheduler   picks a channel (priority + rotation + hold), wipes between them, quiet hours
 sinks/      show the frame: SimulatorSink (Mac/PNG) or ColorlightSink (raw Ethernet)
 data/       shared ADS-B feed, MBTA / ESPN / Open-Meteo clients, airline / aircraft-type / airport lookups
@@ -27,6 +27,7 @@ web         the control server (standard library http.server, no build step)
 | `mbta` | Red Line strip with live trains and next arrivals at Harvard | 5 (idle content) |
 | `sports` | "BOSTON TONIGHT": featured game card (live > next > last final) + one row per other tracked team, from ESPN's public scoreboard JSON (unofficial, keyless) | 25 for 15 s after a tracked team scores, 12 live, 4 game today, else 0 |
 | `prayers` | today's athan and iqama times from your fiveprayers.org display page, next-prayer countdown, sunrise and Jumu'ah | 20 from 10 min before to 3 min after each athan / iqama, else 4 |
+| `meadow` | API-free screensaver: an orange tabby and Kuromi wander a looping parallax meadow (walk, sit, glance back, butterflies, swaying grass) | 2 (idle) |
 | `forecast` | Open-Meteo (keyless): WEEK view (7 days, glyphs, hi/lo, precip %) and HOURLY view (next 12 h temperature line) alternating every 20 s | 3, or 8 for 60 s when the current weather turns to precipitation |
 | `testpattern` | panel numbers 1–8, RGB bars, origin marker | bring-up only (`test`) |
 

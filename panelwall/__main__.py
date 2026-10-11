@@ -28,7 +28,7 @@ def _sink(args):
     return make_sink("sim", png_path=args.png, window=None if not args.no_window else False)
 
 
-DEFAULT_CHANNELS = ["flightwall", "flights", "radar", "silhouette", "mbta", "sports", "forecast", "prayers"]
+DEFAULT_CHANNELS = ["flightwall", "flights", "radar", "silhouette", "mbta", "sports", "forecast", "prayers", "meadow"]
 AIRCRAFT_CHANNELS = {"flightwall", "flights", "radar", "silhouette"}
 
 
@@ -58,6 +58,8 @@ def build_channels(names: list[str]):
             out.append(ch.ForecastChannel())
         elif name == "prayers":
             out.append(ch.PrayersChannel())
+        elif name == "meadow":
+            out.append(ch.MeadowChannel())
         elif name == "testpattern":
             out.append(ch.TestPatternChannel())
         else:
@@ -157,12 +159,14 @@ def fixture_channel(name: str, **kw):
     if name == "forecast":
         from .data.openmeteo import ForecastFeed
         return ch.ForecastChannel(feed=ForecastFeed(static=json.loads((FIXTURES / "openmeteo.json").read_text())), view=kw.get("view"))
+    if name == "meadow":
+        return ch.MeadowChannel()
     if name == "testpattern":
         return ch.TestPatternChannel()
     raise ValueError(f"no fixture demo for {name!r}")
 
 
-DEMO_CHANNELS = ["flightwall", "flights", "radar", "silhouette", "mbta", "sports", "forecast", "prayers", "testpattern"]
+DEMO_CHANNELS = ["flightwall", "flights", "radar", "silhouette", "mbta", "sports", "forecast", "prayers", "meadow", "testpattern"]
 
 
 def cmd_demo(args):
