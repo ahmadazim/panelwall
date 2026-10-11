@@ -225,6 +225,11 @@ panelwall/
                        512 px wide, flowered ground, 90 swaying blades, butterflies) with a procedural orange tabby
                        (4-step walk, sit, tail flick, look back) and Kuromi hopping behind. Seeded -> deterministic.
                        0.1 ms/frame. prio 2. Pick it from the phone UI (Ahmad's "dynamic screensaver", 11 Oct)
+    meadow_sky.py      the meadow's sky: scene_state(now, sunrise, sunset, weather) -> sun/moon position (EAST = LEFT,
+                       the wall is assumed to face south), elevation-keyed palette (night/twilight/golden/day), cloud
+                       cover, rain/snow/lightning/fog. Sunrise/sunset + weather come from the SHARED ForecastFeed
+                       (build_channels passes one feed to both forecast and meadow); fallback 06:30/18:30 clear.
+                       Sky image cached by quantised (e, sun_x, cover). demo-meadow --sky X --hour H to review
     forecast.py        ForecastChannel — WEEK (7 x 36 px columns: day, glyph, hi, lo, precip% if >=20) and HOURLY
                        (LARGE temp + glyph, FEELS/UV/HUM, SET/RISE; 12 x 15 px hour columns from x=70 with a
                        temperature polyline) alternating every 20 s on its own timer. prio 3 / 8 for 60 s when the

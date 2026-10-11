@@ -27,7 +27,7 @@ web         the control server (standard library http.server, no build step)
 | `mbta` | Red Line strip with live trains and next arrivals at Harvard | 5 (idle content) |
 | `sports` | "BOSTON TONIGHT": featured game card (live > next > last final) + one row per other tracked team, from ESPN's public scoreboard JSON (unofficial, keyless) | 25 for 15 s after a tracked team scores, 12 live, 4 game today, else 0 |
 | `prayers` | today's athan and iqama times from your fiveprayers.org display page, next-prayer countdown, sunrise and Jumu'ah | 20 from 10 min before to 3 min after each athan / iqama, else 4 |
-| `meadow` | API-free screensaver: an orange tabby and Kuromi wander a looping parallax meadow (walk, sit, glance back, butterflies, swaying grass) | 2 (idle) |
+| `meadow` | screensaver: an orange tabby and Kuromi wander a looping parallax meadow. The sky follows the real time and weather from the shared forecast feed: sun on an east-left to west-right arc, dawn/dusk glow on the sun's side, moon and stars at night, clouds, rain, snow, lightning, fog | 2 (idle) |
 | `forecast` | Open-Meteo (keyless): WEEK view (7 days, glyphs, hi/lo, precip %) and HOURLY view (next 12 h temperature line) alternating every 20 s | 3, or 8 for 60 s when the current weather turns to precipitation |
 | `testpattern` | panel numbers 1–8, RGB bars, origin marker | bring-up only (`test`) |
 
@@ -47,6 +47,7 @@ python -m panelwall demo-flightwall --case a|b|c|d       # the replica: routes /
 python -m panelwall demo-flights                         # fixture data, live pygame window
 python -m panelwall demo-radar | demo-silhouette | demo-mbta | demo-sports
 python -m panelwall demo-forecast --view week|hourly     # omit --view to alternate
+python -m panelwall demo-meadow --sky rain --hour 19      # force a sky / local hour for review
 python -m panelwall probe-sports | probe-forecast        # raw JSON from ESPN / Open-Meteo
 python -m panelwall run                                  # live data + control UI on :8080
 python -m panelwall run --channels flights,mbta          # load only some channels

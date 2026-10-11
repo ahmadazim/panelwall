@@ -1,7 +1,9 @@
 """MeadowChannel: a looping, API-free screensaver - an orange tabby and Kuromi in a meadow.
 
 Scene (256x64), back to front:
-  sky gradient + sun, three drifting clouds (slow parallax), two layers of rolling hills
+  sky (meadow_sky.py: sun/moon on an east-left to west-right arc from the forecast's
+  sunrise/sunset, palette by sun elevation, weather cover/rain/snow/storm/fog), clouds,
+  two layers of rolling hills
   (pre-rendered 512 px wide, scrolled with wrap), a flowered grass strip (y 44-63) with
   ~90 swaying blades, two butterflies on sine paths, the cat (60x36) and Kuromi (32x34).
   The palette is muted on purpose: the LEDs are bright, and the characters should pop.
@@ -12,9 +14,11 @@ flick, look back at Kuromi, walk on. Kuromi hops along a few steps behind, bobbi
 stops when the cat does. Everything is seeded, so frame N is always the same picture
 (tests) and nothing is fetched from anywhere.
 
-Cost: the hills, ground and sprites are rendered once; per frame it is four pastes,
-~60 short lines for the grass and a handful of pixels. ~1 ms on the Mac.
-priority(): 2 - idle content. Pick it from the phone UI or add it to the auto cycle.
+Weather and daylight come from the SHARED ForecastFeed (the same one the forecast panel
+uses, so no extra requests); without it the sky falls back to clear with sunrise 06:30 /
+sunset 18:30. Hills, ground and sprites are tinted for the light level via a small cache.
+
+Cost: ~0.3 ms per frame on the Mac. priority(): 2 - idle content.
 """
 
 from __future__ import annotations
@@ -25,8 +29,16 @@ from functools import lru_cache
 
 from PIL import Image, ImageDraw
 
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+from PIL import ImageEnhance
+
+from ..config import CONFIG
+from ..data.openmeteo import ForecastFeed, wmo
 from ..framebuffer import Frame, W, H
 from .base import Channel
+from .meadow_sky import SceneState, scene_state, draw_sky, draw_clouds, draw_precip, draw_fog, lightning, WEATHERS
 
 # ---- palette (deliberately muted: the wall is bright, and the characters should carry the scene) ----
 SKY_TOP, SKY_BOTTOM = (16, 40, 95), (70, 108, 140)
@@ -45,28 +57,28 @@ WALK_SPEED = 14.0                 # px/s world scroll while walking
 
 
 # ---- pre-rendered layers --------------------------------------------------------------------------
-@lru_cache(maxsize=1)
-def sky() -> Image.Image:
-    im = Image.new("RGB", (W, H), SKY_BOTTOM)
-    d = ImageDraw.Draw(im)
-    for y in range(HORIZON):
-        t = y / HORIZON
-        c = tuple(int(SKY_TOP[i] + (SKY_BOTTOM[i] - SKY_TOP[i]) * t) for i in range(3))
-        d.line([(0, y), (W, y)], fill=c)
-    d.ellipse([214, 6, 230, 22], fill=SUN)
-    return im
+@lru_cache(maxsize=48)
+def tinted(layer_name: str, light_q: int) -> Image.Image:
+    """A pre-rendered layer darkened for the light level (quantised to 1/20)."""
+    layer = {"far": hills_far, "near": hills_near, "ground": ground}[layer_name]()
+    f = light_q / 20.0
+    if f >= 0.99:
+        return layer
+    rgb = ImageEnhance.Brightness(layer.convert("RGB")).enhance(f)
+    out = rgb.convert("RGBA")
+    out.putalpha(layer.getchannel("A"))
+    return out
 
 
-@lru_cache(maxsize=1)
-def clouds() -> list[Image.Image]:
-    out = []
-    for w, h in ((34, 10), (26, 8), (42, 12)):
-        im = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-        d = ImageDraw.Draw(im)
-        d.ellipse([0, h // 2 - 1, w * 0.45, h - 1], fill=CLOUD)
-        d.ellipse([w * 0.25, 0, w * 0.75, h - 1], fill=CLOUD)
-        d.ellipse([w * 0.5, h // 3, w - 1, h - 1], fill=CLOUD)
-        out.append(im)
+@lru_cache(maxsize=64)
+def tinted_sprite(key: tuple, light_q: int) -> Image.Image:
+    spr = cat_sprite(*key[1:]) if key[0] == "cat" else kuromi_sprite(key[1])
+    f = light_q / 20.0
+    if f >= 0.99:
+        return spr
+    rgb = ImageEnhance.Brightness(spr.convert("RGB")).enhance(f)
+    out = rgb.convert("RGBA")
+    out.putalpha(spr.getchannel("A"))
     return out
 
 
@@ -234,7 +246,8 @@ def butterfly_sprite(open_wings: bool) -> Image.Image:
 class MeadowChannel(Channel):
     name = "meadow"
 
-    def __init__(self, seed: int = 7):
+    def __init__(self, seed: int = 7, forecast: ForecastFeed | None = None,
+                 weather: str | None = None, now: datetime | None = None):
         self.t = 0.0
         self.scroll = 0.0               # world offset in px
         self.rnd = random.Random(seed)
@@ -243,12 +256,37 @@ class MeadowChannel(Channel):
         self.look_back = False
         self.kuromi_gap = 48.0          # how far behind the cat Kuromi is
         self._frames = 0
+        self.forecast = forecast
+        if forecast is not None:
+            forecast.register(self)     # keep the forecast polling while the meadow is on screen
+        self.weather_override = weather # demos / tests: force a sky
+        self.now_override = now
+        self.tz = ZoneInfo(CONFIG.forecast.timezone)
 
     def priority(self) -> int:
         return 2
 
     def status(self) -> dict:
-        return {"updated_at": None, "last_error": None, "state": self.state, "scroll": round(self.scroll, 1)}
+        st = self.scene()
+        return {"updated_at": None, "last_error": None, "state": self.state, "scroll": round(self.scroll, 1),
+                "sky": st.weather, "sun_elevation": round(st.e, 2), "light": st.light}
+
+    # ---- sky -----------------------------------------------------------------------
+    def now_local(self) -> datetime:
+        return self.now_override or datetime.now(self.tz).replace(tzinfo=None)
+
+    def scene(self) -> SceneState:
+        now = self.now_local()
+        sunrise = sunset = None
+        weather = self.weather_override or "sun"
+        fc = self.forecast.forecast if self.forecast is not None else None
+        if fc is not None:
+            day = next((d for d in fc.daily if d.date.date() == now.date()), fc.today())
+            if day is not None:
+                sunrise, sunset = day.sunrise, day.sunset
+            if self.weather_override is None:
+                weather = wmo(fc.code)[0]
+        return scene_state(now, sunrise, sunset, weather)
 
     # ---- behaviour -------------------------------------------------------------
     def tick(self, dt: float) -> None:
@@ -278,37 +316,48 @@ class MeadowChannel(Channel):
 
     # ---- drawing --------------------------------------------------------------
     def render(self, frame: Frame) -> None:
-        img = frame.img
-        img.paste(sky(), (0, 0))
-        for i, c in enumerate(clouds()):                                 # clouds drift on their own, very slowly
-            x = int((i * 90 + 20 - self.t * (2.0 + i * 0.6) - self.scroll * 0.05) % (W + c.width)) - c.width
-            img.paste(c, (x, 4 + i * 7), c)
-        self._paste_wrapped(img, hills_far(), self.scroll * 0.25)
-        self._paste_wrapped(img, hills_near(), self.scroll * 0.5)
-        self._paste_wrapped(img, ground(), self.scroll)
-        d = frame.draw
+        img, d = frame.img, frame.draw
+        st = self.scene()
+        lq = int(round(st.light * 20))
+        draw_sky(img, d, st, self.t)
+        self._paste_wrapped(img, tinted("far", lq), self.scroll * 0.25)
+        self._paste_wrapped(img, tinted("near", lq), self.scroll * 0.5)
+        draw_clouds(img, st, self.t, self.scroll)                        # clouds sit in front of the far hills
+        self._paste_wrapped(img, tinted("ground", lq), self.scroll)
         off = int(self.scroll)
+        gl = tuple(int(c * st.light) for c in GRASS_LIGHT)
+        gd = tuple(int(c * st.light) for c in GRASS_DARK)
         for bx, by, h, ph in blades():
             x = (bx - off) % WORLD_W
             if x >= W:
                 continue
             sway = round(1.2 * math.sin(self.t * 1.8 + ph))
-            d.line([(x, by), (x + sway, by - h)], fill=GRASS_LIGHT if h > 4 else GRASS_DARK)
-        for i in range(2):                                               # butterflies
-            bxf = (40 + i * 150 + 18 * math.sin(self.t * 0.7 + i) - self.scroll * 0.3) % (W + 20) - 10
-            byf = 24 + i * 8 + 5 * math.sin(self.t * 2.3 + i * 2)
-            spr = butterfly_sprite(int(self.t * 10 + i) % 2 == 0)
-            img.paste(spr, (int(bxf), int(byf)), spr)
-        # Kuromi hops behind the cat
+            d.line([(x, by), (x + sway, by - h)], fill=gl if h > 4 else gd)
+        if not st.night and st.weather in ("sun", "partly"):             # butterflies only in fair daylight
+            for i in range(2):
+                bxf = (40 + i * 150 + 18 * math.sin(self.t * 0.7 + i) - self.scroll * 0.3) % (W + 20) - 10
+                byf = 24 + i * 8 + 5 * math.sin(self.t * 2.3 + i * 2)
+                spr = butterfly_sprite(int(self.t * 10 + i) % 2 == 0)
+                img.paste(spr, (int(bxf), int(byf)), spr)
+        # characters: a little dimmer at night, never below 60% so they stay readable
+        cq = int(round(max(0.6, 0.4 + 0.6 * st.light) * 20))
         hop = abs(math.sin(self.t * 5.0)) * 4 if self.state == "walk" else 0
-        ks = kuromi_sprite(int(self.t * 6) % 4 if self.state == "walk" else 0)
+        ks = tinted_sprite(("kuromi", int(self.t * 6) % 4 if self.state == "walk" else 0), cq)
         img.paste(ks, (int(CAT_X - self.kuromi_gap), H - KUROMI_H - int(hop)), ks)
-        # the cat
         if self.state == "walk":
-            cs = cat_sprite("walk", int(self.t * 6) % 4)
+            cs = tinted_sprite(("cat", "walk", int(self.t * 6) % 4, False), cq)
         else:
-            cs = cat_sprite("sit", int(self.t * 2) % 2, self.look_back)
+            cs = tinted_sprite(("cat", "sit", int(self.t * 2) % 2, self.look_back), cq)
         img.paste(cs, (CAT_X, H - CAT_H), cs)
+        draw_precip(d, st, self.t)
+        if st.weather == "fog":
+            draw_fog(img)
+        if st.weather == "storm":
+            flash = lightning(self.t)
+            if flash > 0:
+                bolt_x = 60 + int((self.t * 2) % 7) * 25
+                d.line([(bolt_x, 0), (bolt_x - 4, 14), (bolt_x + 3, 16), (bolt_x - 2, 34)], fill=(235, 235, 255), width=1)
+                frame.img.paste(Image.blend(frame.img, Image.new("RGB", (W, H), (200, 205, 230)), 0.35 * flash), (0, 0))
         self._frames += 1
 
     @staticmethod

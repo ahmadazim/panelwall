@@ -66,3 +66,61 @@ def test_render_is_cheap_and_fills_the_frame():
     # the cat is where the scene says it is: orange pixels around CAT_X on the ground
     patch = arr[H - CAT_H:H, CAT_X:CAT_X + CAT_W]
     assert ((patch[:, :, 0] > 180) & (patch[:, :, 2] < 80)).sum() > 200
+
+
+def test_scene_state_sun_arc_east_left_west_right():
+    from datetime import datetime
+    from panelwall.channels.meadow_sky import scene_state
+    sr, ss = datetime(2026, 9, 15, 6, 41), datetime(2026, 9, 15, 19, 9)
+    dawn = scene_state(datetime(2026, 9, 15, 6, 50), sr, ss, "sun")
+    noon = scene_state(datetime(2026, 9, 15, 12, 55), sr, ss, "sun")
+    dusk = scene_state(datetime(2026, 9, 15, 19, 0), sr, ss, "sun")
+    night = scene_state(datetime(2026, 9, 15, 1, 0), sr, ss, "sun")
+    assert not dawn.night and dawn.sun_x < 40 and 0 < dawn.e < 0.1                 # just risen, on the left
+    assert noon.sun_x > 120 and noon.sun_x < 136 and noon.e > 0.99 and noon.sun_y < 8
+    assert dusk.sun_x > 216 and 0 < dusk.e < 0.1                                   # about to set, on the right
+    assert night.night and night.e < -0.5 and night.light <= 0.35
+    assert noon.light == 1.0 and dawn.light < noon.light
+    # weather darkens and hides the sun
+    rain = scene_state(datetime(2026, 9, 15, 12, 55), sr, ss, "rain")
+    assert rain.cover > 0.8 and rain.light < noon.light
+    assert scene_state(datetime(2026, 9, 15, 12, 0), None, None, "sun").e > 0.9    # defaults when no forecast
+    assert scene_state(datetime(2026, 9, 15, 12, 0), sr, ss, "bogus").weather == "cloud"
+
+
+def test_every_sky_renders_deterministically():
+    from datetime import datetime
+    seen = {}
+    for weather in ("sun", "partly", "cloud", "fog", "rain", "snow", "storm"):
+        for hour in (3, 6.8, 13, 18.9, 22):
+            ch = MeadowChannel(weather=weather, now=datetime(2026, 9, 15, int(hour), int(hour % 1 * 60)))
+            _run(ch, 1.0)
+            f = Frame()
+            ch.render(f)
+            arr = f.to_array()
+            assert arr.shape == (H, W, 3)
+            seen[(weather, hour)] = arr.copy()
+    assert (seen[("sun", 13)] != seen[("sun", 22)]).any()                           # day vs night differ
+    assert seen[("sun", 22)][:20].mean() < seen[("sun", 13)][:20].mean()           # night sky is darker
+    assert (seen[("rain", 13)] != seen[("sun", 13)]).any()
+    # same inputs -> same picture
+    a, b = MeadowChannel(weather="snow", now=datetime(2026, 9, 15, 13)), MeadowChannel(weather="snow", now=datetime(2026, 9, 15, 13))
+    _run(a, 2.0)
+    _run(b, 2.0)
+    fa, fb = Frame(), Frame()
+    a.render(fa)
+    b.render(fb)
+    assert (fa.to_array() == fb.to_array()).all()
+
+
+def test_meadow_uses_the_forecast_feed_and_registers_for_polling():
+    import json
+    from pathlib import Path
+    from panelwall.data.openmeteo import ForecastFeed
+    fx = json.loads((Path(__file__).resolve().parent.parent / "fixtures" / "openmeteo.json").read_text())
+    feed = ForecastFeed(static=fx)
+    ch = MeadowChannel(forecast=feed)
+    assert ch in feed.users
+    st = ch.scene()
+    assert st.weather == "sun"                                                      # fixture current code 0
+    assert ch.status()["sky"] == "sun"

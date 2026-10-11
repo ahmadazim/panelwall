@@ -40,6 +40,10 @@ def build_channels(names: list[str]):
     if AIRCRAFT_CHANNELS & set(names):
         from .data.feed import AircraftFeed
         feed = AircraftFeed()
+    fc_feed = None
+    if {"forecast", "meadow"} & set(names):
+        from .data.openmeteo import ForecastFeed
+        fc_feed = ForecastFeed()
     out = []
     for name in names:
         if name == "flightwall":
@@ -55,17 +59,19 @@ def build_channels(names: list[str]):
         elif name == "sports":
             out.append(ch.SportsChannel())
         elif name == "forecast":
-            out.append(ch.ForecastChannel())
+            out.append(ch.ForecastChannel(feed=fc_feed))
         elif name == "prayers":
             out.append(ch.PrayersChannel())
         elif name == "meadow":
-            out.append(ch.MeadowChannel())
+            out.append(ch.MeadowChannel(forecast=fc_feed))
         elif name == "testpattern":
             out.append(ch.TestPatternChannel())
         else:
             raise SystemExit(f"unknown channel {name!r}; choose from {DEFAULT_CHANNELS + ['testpattern']}")
-    if feed is not None:   # exactly one channel closes the shared feed on shutdown
-        sharers = [c for c in out if getattr(c, "feed", None) is feed]
+    for shared in (feed, fc_feed):   # exactly one channel closes each shared feed on shutdown
+        if shared is None:
+            continue
+        sharers = [c for c in out if getattr(c, "feed", None) is shared]
         for c in sharers:
             c._owns_feed = c is sharers[0]
     return out
@@ -160,7 +166,12 @@ def fixture_channel(name: str, **kw):
         from .data.openmeteo import ForecastFeed
         return ch.ForecastChannel(feed=ForecastFeed(static=json.loads((FIXTURES / "openmeteo.json").read_text())), view=kw.get("view"))
     if name == "meadow":
-        return ch.MeadowChannel()
+        from datetime import datetime
+        from .data.openmeteo import ForecastFeed
+        fc = ForecastFeed(static=json.loads((FIXTURES / "openmeteo.json").read_text()))
+        hour = kw.get("hour")
+        now = datetime(2026, 9, 15, int(hour), 20) if hour is not None else None
+        return ch.MeadowChannel(forecast=fc, weather=kw.get("sky"), now=now)
     if name == "testpattern":
         return ch.TestPatternChannel()
     raise ValueError(f"no fixture demo for {name!r}")
@@ -175,6 +186,10 @@ def cmd_demo(args):
     kw = {"view": args.view} if getattr(args, "view", None) else {}
     if getattr(args, "case", None):
         kw["case"] = args.case
+    if getattr(args, "sky", None):
+        kw["sky"] = args.sky
+    if getattr(args, "hour", None) is not None:
+        kw["hour"] = args.hour
     Scheduler([fixture_channel(args.channel, **kw)], _sink(args), args.fps).run(args.seconds)
 
 
@@ -376,6 +391,10 @@ def main(argv=None):
         common(sp)
         if name == "forecast":
             sp.add_argument("--view", choices=["week", "hourly"], default=None, help="pin one view (default: alternate)")
+        if name == "meadow":
+            sp.add_argument("--sky", choices=["sun", "partly", "cloud", "fog", "rain", "snow", "storm"], default=None,
+                            help="force the weather (default: the forecast fixture's current code)")
+            sp.add_argument("--hour", type=float, default=None, help="force the local hour (0-23.99) for the sun/moon")
         if name == "flightwall":
             sp.add_argument("--case", choices=["a", "b", "c", "d"], default="a",
                             help="a: 3 flights with routes, b: private no route, c: 7 flights (+2 more), d: empty sky")
