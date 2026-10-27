@@ -3,3 +3,9 @@ __pycache__/
 *.pyc
 sim.png
 .pytest_cache/
+
+# local-only, never commit
+.env
+*.log
+.DS_Store
+settings.json
