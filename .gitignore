@@ -9,3 +9,9 @@ sim.png
 *.log
 .DS_Store
 settings.json
+
+# local-only, never commit
+.env
+*.log
+.DS_Store
+settings.json
