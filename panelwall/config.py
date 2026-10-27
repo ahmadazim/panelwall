@@ -56,6 +56,32 @@ class MbtaConfig:
     poll_seconds: float = _env("PW_MBTA_POLL", 30.0)      # 2 requests per poll -> 4/min, well under the keyless 20/min
 
 
+@dataclass
+class LineSpec:
+    """One transit panel: an MBTA route drawn as a strip with the home station's next arrivals,
+    optionally with a bus route's next buses at the stops outside that station."""
+    name: str                       # channel name ("mbta", "greenb", ...)
+    route: str                      # MBTA route id ("Red", "Green-B", ...)
+    home_stop: str                  # parent station id
+    title: str                      # header text
+    branch: str = ""                # Red only: "Ashmont" | "Braintree" (the line forks after JFK/UMass)
+    bus_route: str = ""             # e.g. "65"
+    bus_stops: tuple = ()           # (outbound stop id, inbound stop id) for the bus predictions
+    bus_label: str = ""             # e.g. "BUS 65"
+
+
+# The transit panels. Home for the B is Washington Street; C and D don't pass it, so they default to
+# Kenmore (where B, C and D meet) - override with PW_GREEN_HOME_C / PW_GREEN_HOME_D.
+MBTA_LINES: dict[str, LineSpec] = {
+    "mbta": LineSpec("mbta", _env("PW_MBTA_ROUTE", "Red"), _env("PW_MBTA_STOP", "place-harsq"), "RED LINE",
+                     branch=_env("PW_MBTA_BRANCH", "Braintree")),
+    "greenb": LineSpec("greenb", "Green-B", _env("PW_GREEN_HOME_B", "place-wascm"), "GREEN LINE B",
+                       bus_route="65", bus_stops=("1295", "1273"), bus_label="BUS 65"),   # Washington St @ Comm Ave, out/in
+    "greenc": LineSpec("greenc", "Green-C", _env("PW_GREEN_HOME_C", "place-kencl"), "GREEN LINE C"),
+    "greend": LineSpec("greend", "Green-D", _env("PW_GREEN_HOME_D", "place-kencl"), "GREEN LINE D"),
+}
+
+
 def _teams(default):
     """PW_TEAMS='mlb:BOS:SOX,nfl:NE:PATS' -> [(league, abbreviation, label), ...]"""
     v = os.environ.get("PW_TEAMS")

@@ -28,7 +28,7 @@ def _sink(args):
     return make_sink("sim", png_path=args.png, window=None if not args.no_window else False)
 
 
-DEFAULT_CHANNELS = ["flightwall", "flights", "radar", "silhouette", "mbta", "sports", "forecast", "prayers", "meadow"]
+DEFAULT_CHANNELS = ["flightwall", "flights", "radar", "silhouette", "mbta", "greenb", "greenc", "greend", "green", "sports", "forecast", "prayers", "meadow"]
 AIRCRAFT_CHANNELS = {"flightwall", "flights", "radar", "silhouette"}
 
 
@@ -44,6 +44,14 @@ def build_channels(names: list[str]):
     if {"forecast", "meadow"} & set(names):
         from .data.openmeteo import ForecastFeed
         fc_feed = ForecastFeed()
+    transit = {}                                   # LineSpec name -> MbtaFeed, shared by per-line panels + overview
+    if {"greenb", "greenc", "greend", "green", "mbta"} & set(names):
+        from .config import MBTA_LINES
+        from .data.mbta import MbtaFeed
+        wanted = set(names) | ({"greenb", "greenc", "greend"} if "green" in names else set())
+        for key, spec in MBTA_LINES.items():
+            if key in wanted:
+                transit[key] = MbtaFeed(spec=spec)
     out = []
     for name in names:
         if name == "flightwall":
@@ -54,8 +62,10 @@ def build_channels(names: list[str]):
             out.append(ch.RadarChannel(feed=feed))
         elif name == "silhouette":
             out.append(ch.SilhouetteChannel(feed=feed))
-        elif name == "mbta":
-            out.append(ch.MbtaChannel())
+        elif name in ("mbta", "greenb", "greenc", "greend"):
+            out.append(ch.MbtaChannel(feed=transit[name]))
+        elif name == "green":
+            out.append(ch.GreenOverviewChannel({k: transit[k] for k in ("greenb", "greenc", "greend")}))
         elif name == "sports":
             out.append(ch.SportsChannel())
         elif name == "forecast":
@@ -68,7 +78,7 @@ def build_channels(names: list[str]):
             out.append(ch.TestPatternChannel())
         else:
             raise SystemExit(f"unknown channel {name!r}; choose from {DEFAULT_CHANNELS + ['testpattern']}")
-    for shared in (feed, fc_feed):   # exactly one channel closes each shared feed on shutdown
+    for shared in (feed, fc_feed, *transit.values()):   # exactly one channel closes each shared feed on shutdown
         if shared is None:
             continue
         sharers = [c for c in out if getattr(c, "feed", None) is shared]
@@ -90,9 +100,10 @@ def cmd_run(args):
     if AIRCRAFT_CHANNELS & set(names):
         print(f"[run] aircraft within {loc.radius_nm:g} nm of {loc.lat:.4f},{loc.lon:.4f} via {CONFIG.data.adsb_base}, "
               f"polling every {CONFIG.data.poll_seconds:g}s", flush=True)
-    if "mbta" in names:
+    if {"mbta", "greenb", "greenc", "greend", "green"} & set(names):
         m = CONFIG.mbta
-        print(f"[run] MBTA {m.route} line, home {m.home_stop}, {m.branch} branch, key {'set' if m.api_key else 'not set (fine)'}", flush=True)
+        print(f"[run] MBTA panels: {', '.join(n for n in names if n in ('mbta', 'greenb', 'greenc', 'greend', 'green'))}; "
+              f"key {'set' if m.api_key else 'not set (fine for one panel at a time)'}", flush=True)
     sched = Scheduler(build_channels(names), _sink(args), args.fps, settings=settings)
     if not args.no_web:
         from .web import ControlServer
@@ -155,6 +166,14 @@ def fixture_channel(name: str, **kw):
     if name == "mbta":
         from .data.mbta import MbtaFeed
         return ch.MbtaChannel(feed=MbtaFeed(static=json.loads((FIXTURES / "mbta_red.json").read_text())))
+    if name in ("greenb", "greenc", "greend", "green"):
+        from .config import MBTA_LINES
+        from .data.mbta import MbtaFeed
+        fx = json.loads((FIXTURES / "mbta_green.json").read_text())
+        feeds = {k: MbtaFeed(static=dict(fx[k], _now=fx["_now"]), spec=MBTA_LINES[k]) for k in ("greenb", "greenc", "greend")}
+        if name == "green":
+            return ch.GreenOverviewChannel(feeds)
+        return ch.MbtaChannel(feed=feeds[name])
     if name == "sports":
         from .data.espn import SportsFeed
         return ch.SportsChannel(feed=SportsFeed(static=json.loads((FIXTURES / "espn_scoreboards.json").read_text())))
@@ -177,7 +196,7 @@ def fixture_channel(name: str, **kw):
     raise ValueError(f"no fixture demo for {name!r}")
 
 
-DEMO_CHANNELS = ["flightwall", "flights", "radar", "silhouette", "mbta", "sports", "forecast", "prayers", "meadow", "testpattern"]
+DEMO_CHANNELS = ["flightwall", "flights", "radar", "silhouette", "mbta", "greenb", "greenc", "greend", "green", "sports", "forecast", "prayers", "meadow", "testpattern"]
 
 
 def cmd_demo(args):

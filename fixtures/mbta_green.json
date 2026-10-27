@@ -1,0 +1,2655 @@
+{
+ "_comment": "Captured live from api-v3.mbta.com on 2026-10-26T21:53:17-04:00, trimmed to the fields panelwall reads. One entry per line spec; bus_predictions is route 65 at stops 1295 (outbound) and 1273 (inbound), both by Washington Street station.",
+ "_now": "2026-10-26T21:53:17-04:00",
+ "greenb": {
+  "route": {
+   "data": {
+    "id": "Green-B",
+    "attributes": {
+     "direction_names": [
+      "West",
+      "East"
+     ],
+     "direction_destinations": [
+      "Boston College",
+      "Government Center"
+     ],
+     "long_name": "Green Line B",
+     "color": "00843D"
+    }
+   }
+  },
+  "stops": {
+   "data": [
+    {
+     "id": "place-gover",
+     "type": "stop",
+     "attributes": {
+      "name": "Government Center",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-pktrm",
+     "type": "stop",
+     "attributes": {
+      "name": "Park Street",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-boyls",
+     "type": "stop",
+     "attributes": {
+      "name": "Boylston",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-armnl",
+     "type": "stop",
+     "attributes": {
+      "name": "Arlington",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-coecl",
+     "type": "stop",
+     "attributes": {
+      "name": "Copley",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-hymnl",
+     "type": "stop",
+     "attributes": {
+      "name": "Hynes Convention Center",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-kencl",
+     "type": "stop",
+     "attributes": {
+      "name": "Kenmore",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-bland",
+     "type": "stop",
+     "attributes": {
+      "name": "Blandford Street",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-buest",
+     "type": "stop",
+     "attributes": {
+      "name": "Boston University East",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-bucen",
+     "type": "stop",
+     "attributes": {
+      "name": "Boston University Central",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-amory",
+     "type": "stop",
+     "attributes": {
+      "name": "Amory Street",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-babck",
+     "type": "stop",
+     "attributes": {
+      "name": "Babcock Street",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-brico",
+     "type": "stop",
+     "attributes": {
+      "name": "Packard's Corner",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-harvd",
+     "type": "stop",
+     "attributes": {
+      "name": "Harvard Avenue",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-grigg",
+     "type": "stop",
+     "attributes": {
+      "name": "Griggs Street",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-alsgr",
+     "type": "stop",
+     "attributes": {
+      "name": "Allston Street",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-wrnst",
+     "type": "stop",
+     "attributes": {
+      "name": "Warren Street",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-wascm",
+     "type": "stop",
+     "attributes": {
+      "name": "Washington Street",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-sthld",
+     "type": "stop",
+     "attributes": {
+      "name": "Sutherland Road",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-chswk",
+     "type": "stop",
+     "attributes": {
+      "name": "Chiswick Road",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-chill",
+     "type": "stop",
+     "attributes": {
+      "name": "Chestnut Hill Avenue",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-sougr",
+     "type": "stop",
+     "attributes": {
+      "name": "South Street",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-lake",
+     "type": "stop",
+     "attributes": {
+      "name": "Boston College",
+      "location_type": 1
+     },
+     "relationships": {}
+    }
+   ]
+  },
+  "vehicles": {
+   "data": [
+    {
+     "id": "G-10216",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "STOPPED_AT",
+      "direction_id": 1,
+      "label": "3607-3872",
+      "updated_at": "2026-10-26T21:52:50-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70126",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10192",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "STOPPED_AT",
+      "direction_id": 0,
+      "label": "3601-3864",
+      "updated_at": "2026-10-26T21:52:48-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "170141",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10144",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "STOPPED_AT",
+      "direction_id": 1,
+      "label": "3600-3821",
+      "updated_at": "2026-10-26T21:52:42-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70201",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10100",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "INCOMING_AT",
+      "direction_id": 1,
+      "label": "3699-3826",
+      "updated_at": "2026-10-26T21:52:58-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70114",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10091",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "INCOMING_AT",
+      "direction_id": 1,
+      "label": "3674-3813",
+      "updated_at": "2026-10-26T21:52:26-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70156",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10089",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "INCOMING_AT",
+      "direction_id": 0,
+      "label": "3907-3921",
+      "updated_at": "2026-10-26T21:53:13-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70107",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10078",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "INCOMING_AT",
+      "direction_id": 0,
+      "label": "3631-3855",
+      "updated_at": "2026-10-26T21:53:00-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70121",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10064",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "INCOMING_AT",
+      "direction_id": 0,
+      "label": "3652-3853",
+      "updated_at": "2026-10-26T21:51:19-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70157",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10057",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "STOPPED_AT",
+      "direction_id": 1,
+      "label": "3715-3844",
+      "updated_at": "2026-10-26T21:52:41-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70144",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10033",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "STOPPED_AT",
+      "direction_id": 0,
+      "label": "3617-3871",
+      "updated_at": "2026-10-26T21:52:49-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70111",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10029",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "STOPPED_AT",
+      "direction_id": 0,
+      "label": "3651-3815",
+      "updated_at": "2026-10-26T21:45:29-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70107",
+        "type": "stop"
+       }
+      }
+     }
+    }
+   ],
+   "included": [
+    {
+     "id": "170141",
+     "type": "stop",
+     "attributes": {
+      "name": "Amory Street"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-amory",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70107",
+     "type": "stop",
+     "attributes": {
+      "name": "Boston College"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-lake",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70111",
+     "type": "stop",
+     "attributes": {
+      "name": "South Street"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-sougr",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70114",
+     "type": "stop",
+     "attributes": {
+      "name": "Chiswick Road"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-chswk",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70121",
+     "type": "stop",
+     "attributes": {
+      "name": "Washington Street"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-wascm",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70126",
+     "type": "stop",
+     "attributes": {
+      "name": "Allston Street"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-alsgr",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70144",
+     "type": "stop",
+     "attributes": {
+      "name": "Boston University Central"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-bucen",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70156",
+     "type": "stop",
+     "attributes": {
+      "name": "Arlington"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-armnl",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70157",
+     "type": "stop",
+     "attributes": {
+      "name": "Arlington"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-armnl",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70201",
+     "type": "stop",
+     "attributes": {
+      "name": "Government Center"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-gover",
+        "type": "stop"
+       }
+      }
+     }
+    }
+   ]
+  },
+  "predictions": {
+   "data": [
+    {
+     "id": "prediction-77745874-70121-260-Green-B",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T21:53:46-04:00",
+      "departure_time": "2026-10-26T21:55:08-04:00",
+      "direction_id": 0,
+      "status": null,
+      "stop_sequence": 260
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70121",
+        "type": "stop"
+       }
+      },
+      "trip": {
+       "data": {
+        "id": "77745874",
+        "type": "trip"
+       }
+      }
+     }
+    },
+    {
+     "id": "prediction-77745901-70120-50-Green-B",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T21:56:00-04:00",
+      "departure_time": "2026-10-26T21:56:40-04:00",
+      "direction_id": 1,
+      "status": null,
+      "stop_sequence": 50
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70120",
+        "type": "stop"
+       }
+      },
+      "trip": {
+       "data": {
+        "id": "77745901",
+        "type": "trip"
+       }
+      }
+     }
+    },
+    {
+     "id": "prediction-77745876-70121-260-Green-B",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T22:06:42-04:00",
+      "departure_time": "2026-10-26T22:08:04-04:00",
+      "direction_id": 0,
+      "status": null,
+      "stop_sequence": 260
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70121",
+        "type": "stop"
+       }
+      },
+      "trip": {
+       "data": {
+        "id": "77745876",
+        "type": "trip"
+       }
+      }
+     }
+    },
+    {
+     "id": "prediction-77745882-70121-260-Green-B",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T22:21:17-04:00",
+      "departure_time": "2026-10-26T22:22:39-04:00",
+      "direction_id": 0,
+      "status": null,
+      "stop_sequence": 260
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70121",
+        "type": "stop"
+       }
+      },
+      "trip": {
+       "data": {
+        "id": "77745882",
+        "type": "trip"
+       }
+      }
+     }
+    },
+    {
+     "id": "prediction-77745886-70121-260-Green-B",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T22:36:33-04:00",
+      "departure_time": "2026-10-26T22:37:55-04:00",
+      "direction_id": 0,
+      "status": null,
+      "stop_sequence": 260
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70121",
+        "type": "stop"
+       }
+      },
+      "trip": {
+       "data": {
+        "id": "77745886",
+        "type": "trip"
+       }
+      }
+     }
+    },
+    {
+     "id": "prediction-77745890-70121-260-Green-B",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T22:46:33-04:00",
+      "departure_time": "2026-10-26T22:47:55-04:00",
+      "direction_id": 0,
+      "status": null,
+      "stop_sequence": 260
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70121",
+        "type": "stop"
+       }
+      },
+      "trip": {
+       "data": {
+        "id": "77745890",
+        "type": "trip"
+       }
+      }
+     }
+    },
+    {
+     "id": "prediction-77745891-70121-260-Green-B",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T22:55:33-04:00",
+      "departure_time": "2026-10-26T22:56:55-04:00",
+      "direction_id": 0,
+      "status": null,
+      "stop_sequence": 260
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70121",
+        "type": "stop"
+       }
+      },
+      "trip": {
+       "data": {
+        "id": "77745891",
+        "type": "trip"
+       }
+      }
+     }
+    },
+    {
+     "id": "prediction-77745898-70121-260-Green-B",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T23:05:33-04:00",
+      "departure_time": "2026-10-26T23:06:55-04:00",
+      "direction_id": 0,
+      "status": null,
+      "stop_sequence": 260
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70121",
+        "type": "stop"
+       }
+      },
+      "trip": {
+       "data": {
+        "id": "77745898",
+        "type": "trip"
+       }
+      }
+     }
+    },
+    {
+     "id": "prediction-77745902-70121-260-Green-B",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T23:14:33-04:00",
+      "departure_time": "2026-10-26T23:15:55-04:00",
+      "direction_id": 0,
+      "status": null,
+      "stop_sequence": 260
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70121",
+        "type": "stop"
+       }
+      },
+      "trip": {
+       "data": {
+        "id": "77745902",
+        "type": "trip"
+       }
+      }
+     }
+    }
+   ]
+  },
+  "bus_predictions": {
+   "data": [
+    {
+     "id": "prediction-78182599-1273-7-65",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T22:07:39-04:00",
+      "departure_time": "2026-10-26T22:07:39-04:00",
+      "direction_id": 1,
+      "status": null,
+      "stop_sequence": 7
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "1273",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "prediction-78182606-1295-20-65",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T22:19:40-04:00",
+      "departure_time": "2026-10-26T22:19:40-04:00",
+      "direction_id": 0,
+      "status": null,
+      "stop_sequence": 20
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "1295",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "prediction-78182613-1273-7-65",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T22:37:38-04:00",
+      "departure_time": "2026-10-26T22:37:38-04:00",
+      "direction_id": 1,
+      "status": null,
+      "stop_sequence": 7
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "1273",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "prediction-78182595-1295-20-65",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T22:47:13-04:00",
+      "departure_time": "2026-10-26T22:47:13-04:00",
+      "direction_id": 0,
+      "status": null,
+      "stop_sequence": 20
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "1295",
+        "type": "stop"
+       }
+      }
+     }
+    }
+   ]
+  },
+  "bus_route": {
+   "data": {
+    "id": "65",
+    "attributes": {
+     "direction_names": [
+      "Outbound",
+      "Inbound"
+     ],
+     "direction_destinations": [
+      "Brighton Center",
+      "Ruggles Station"
+     ],
+     "long_name": "Brighton Center - Ruggles Station"
+    }
+   }
+  }
+ },
+ "greenc": {
+  "route": {
+   "data": {
+    "id": "Green-C",
+    "attributes": {
+     "direction_names": [
+      "West",
+      "East"
+     ],
+     "direction_destinations": [
+      "Cleveland Circle",
+      "Government Center"
+     ],
+     "long_name": "Green Line C",
+     "color": "00843D"
+    }
+   }
+  },
+  "stops": {
+   "data": [
+    {
+     "id": "place-clmnl",
+     "type": "stop",
+     "attributes": {
+      "name": "Cleveland Circle",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-engav",
+     "type": "stop",
+     "attributes": {
+      "name": "Englewood Avenue",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-denrd",
+     "type": "stop",
+     "attributes": {
+      "name": "Dean Road",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-tapst",
+     "type": "stop",
+     "attributes": {
+      "name": "Tappan Street",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-bcnwa",
+     "type": "stop",
+     "attributes": {
+      "name": "Washington Square",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-fbkst",
+     "type": "stop",
+     "attributes": {
+      "name": "Fairbanks Street",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-bndhl",
+     "type": "stop",
+     "attributes": {
+      "name": "Brandon Hall",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-sumav",
+     "type": "stop",
+     "attributes": {
+      "name": "Summit Avenue",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-cool",
+     "type": "stop",
+     "attributes": {
+      "name": "Coolidge Corner",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-stpul",
+     "type": "stop",
+     "attributes": {
+      "name": "Saint Paul Street",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-kntst",
+     "type": "stop",
+     "attributes": {
+      "name": "Kent Street",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-hwsst",
+     "type": "stop",
+     "attributes": {
+      "name": "Hawes Street",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-smary",
+     "type": "stop",
+     "attributes": {
+      "name": "Saint Mary's Street",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-kencl",
+     "type": "stop",
+     "attributes": {
+      "name": "Kenmore",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-hymnl",
+     "type": "stop",
+     "attributes": {
+      "name": "Hynes Convention Center",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-coecl",
+     "type": "stop",
+     "attributes": {
+      "name": "Copley",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-armnl",
+     "type": "stop",
+     "attributes": {
+      "name": "Arlington",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-boyls",
+     "type": "stop",
+     "attributes": {
+      "name": "Boylston",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-pktrm",
+     "type": "stop",
+     "attributes": {
+      "name": "Park Street",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-gover",
+     "type": "stop",
+     "attributes": {
+      "name": "Government Center",
+      "location_type": 1
+     },
+     "relationships": {}
+    }
+   ]
+  },
+  "vehicles": {
+   "data": [
+    {
+     "id": "G-10229",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "INCOMING_AT",
+      "direction_id": 0,
+      "label": "3641-3802",
+      "updated_at": "2026-10-26T21:51:23-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70155",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10212",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "STOPPED_AT",
+      "direction_id": 0,
+      "label": "3860-3634",
+      "updated_at": "2026-10-26T21:47:48-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70237",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10166",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "IN_TRANSIT_TO",
+      "direction_id": 1,
+      "label": "3841-3625",
+      "updated_at": "2026-10-26T21:52:58-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70154",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10095",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "IN_TRANSIT_TO",
+      "direction_id": 0,
+      "label": "3633-3845",
+      "updated_at": "2026-10-26T21:52:37-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70159",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10083",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "STOPPED_AT",
+      "direction_id": 0,
+      "label": "3707-3885",
+      "updated_at": "2026-10-26T21:52:50-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70237",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10080",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "INCOMING_AT",
+      "direction_id": 1,
+      "label": "3655-3843",
+      "updated_at": "2026-10-26T21:52:55-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70212",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10068",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "INCOMING_AT",
+      "direction_id": 1,
+      "label": "3717-3833",
+      "updated_at": "2026-10-26T21:53:00-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70201",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10055",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "INCOMING_AT",
+      "direction_id": 0,
+      "label": "3862-3691",
+      "updated_at": "2026-10-26T21:53:13-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70231",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10007",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "STOPPED_AT",
+      "direction_id": 1,
+      "label": "3647-3838",
+      "updated_at": "2026-10-26T21:52:59-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70230",
+        "type": "stop"
+       }
+      }
+     }
+    }
+   ],
+   "included": [
+    {
+     "id": "70154",
+     "type": "stop",
+     "attributes": {
+      "name": "Copley"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-coecl",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70155",
+     "type": "stop",
+     "attributes": {
+      "name": "Copley"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-coecl",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70159",
+     "type": "stop",
+     "attributes": {
+      "name": "Boylston"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-boyls",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70201",
+     "type": "stop",
+     "attributes": {
+      "name": "Government Center"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-gover",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70212",
+     "type": "stop",
+     "attributes": {
+      "name": "Saint Mary's Street"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-smary",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70230",
+     "type": "stop",
+     "attributes": {
+      "name": "Washington Square"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-bcnwa",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70231",
+     "type": "stop",
+     "attributes": {
+      "name": "Tappan Street"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-tapst",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70237",
+     "type": "stop",
+     "attributes": {
+      "name": "Cleveland Circle"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-clmnl",
+        "type": "stop"
+       }
+      }
+     }
+    }
+   ]
+  },
+  "predictions": {
+   "data": [
+    {
+     "id": "prediction-77745015-70150-550-Green-C",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T21:56:38-04:00",
+      "departure_time": "2026-10-26T21:57:20-04:00",
+      "direction_id": 1,
+      "status": null,
+      "stop_sequence": 550
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70150",
+        "type": "stop"
+       }
+      },
+      "trip": {
+       "data": {
+        "id": "77745015",
+        "type": "trip"
+       }
+      }
+     }
+    },
+    {
+     "id": "prediction-77744954-70151-130-Green-C",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T21:58:27-04:00",
+      "departure_time": "2026-10-26T21:59:06-04:00",
+      "direction_id": 0,
+      "status": null,
+      "stop_sequence": 130
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70151",
+        "type": "stop"
+       }
+      },
+      "trip": {
+       "data": {
+        "id": "77744954",
+        "type": "trip"
+       }
+      }
+     }
+    },
+    {
+     "id": "prediction-77745089-70151-130-Green-C",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T22:03:57-04:00",
+      "departure_time": "2026-10-26T22:04:36-04:00",
+      "direction_id": 0,
+      "status": null,
+      "stop_sequence": 130
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70151",
+        "type": "stop"
+       }
+      },
+      "trip": {
+       "data": {
+        "id": "77745089",
+        "type": "trip"
+       }
+      }
+     }
+    },
+    {
+     "id": "prediction-77745003-70150-550-Green-C",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T22:05:12-04:00",
+      "departure_time": "2026-10-26T22:05:54-04:00",
+      "direction_id": 1,
+      "status": null,
+      "stop_sequence": 550
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70150",
+        "type": "stop"
+       }
+      },
+      "trip": {
+       "data": {
+        "id": "77745003",
+        "type": "trip"
+       }
+      }
+     }
+    },
+    {
+     "id": "prediction-77745083-70151-130-Green-C",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T22:14:37-04:00",
+      "departure_time": "2026-10-26T22:15:16-04:00",
+      "direction_id": 0,
+      "status": null,
+      "stop_sequence": 130
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70151",
+        "type": "stop"
+       }
+      },
+      "trip": {
+       "data": {
+        "id": "77745083",
+        "type": "trip"
+       }
+      }
+     }
+    },
+    {
+     "id": "prediction-77745005-70151-130-Green-C",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T22:22:37-04:00",
+      "departure_time": "2026-10-26T22:23:16-04:00",
+      "direction_id": 0,
+      "status": null,
+      "stop_sequence": 130
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70151",
+        "type": "stop"
+       }
+      },
+      "trip": {
+       "data": {
+        "id": "77745005",
+        "type": "trip"
+       }
+      }
+     }
+    },
+    {
+     "id": "prediction-77745018-70151-130-Green-C",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T22:31:37-04:00",
+      "departure_time": "2026-10-26T22:32:16-04:00",
+      "direction_id": 0,
+      "status": null,
+      "stop_sequence": 130
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70151",
+        "type": "stop"
+       }
+      },
+      "trip": {
+       "data": {
+        "id": "77745018",
+        "type": "trip"
+       }
+      }
+     }
+    },
+    {
+     "id": "prediction-77745006-70151-130-Green-C",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T22:40:37-04:00",
+      "departure_time": "2026-10-26T22:41:16-04:00",
+      "direction_id": 0,
+      "status": null,
+      "stop_sequence": 130
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70151",
+        "type": "stop"
+       }
+      },
+      "trip": {
+       "data": {
+        "id": "77745006",
+        "type": "trip"
+       }
+      }
+     }
+    }
+   ]
+  }
+ },
+ "greend": {
+  "route": {
+   "data": {
+    "id": "Green-D",
+    "attributes": {
+     "direction_names": [
+      "West",
+      "East"
+     ],
+     "direction_destinations": [
+      "Riverside",
+      "Union Square"
+     ],
+     "long_name": "Green Line D",
+     "color": "00843D"
+    }
+   }
+  },
+  "stops": {
+   "data": [
+    {
+     "id": "place-river",
+     "type": "stop",
+     "attributes": {
+      "name": "Riverside",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-woodl",
+     "type": "stop",
+     "attributes": {
+      "name": "Woodland",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-waban",
+     "type": "stop",
+     "attributes": {
+      "name": "Waban",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-eliot",
+     "type": "stop",
+     "attributes": {
+      "name": "Eliot",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-newtn",
+     "type": "stop",
+     "attributes": {
+      "name": "Newton Highlands",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-newto",
+     "type": "stop",
+     "attributes": {
+      "name": "Newton Centre",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-chhil",
+     "type": "stop",
+     "attributes": {
+      "name": "Chestnut Hill",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-rsmnl",
+     "type": "stop",
+     "attributes": {
+      "name": "Reservoir",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-bcnfd",
+     "type": "stop",
+     "attributes": {
+      "name": "Beaconsfield",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-brkhl",
+     "type": "stop",
+     "attributes": {
+      "name": "Brookline Hills",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-bvmnl",
+     "type": "stop",
+     "attributes": {
+      "name": "Brookline Village",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-longw",
+     "type": "stop",
+     "attributes": {
+      "name": "Longwood",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-fenwy",
+     "type": "stop",
+     "attributes": {
+      "name": "Fenway",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-kencl",
+     "type": "stop",
+     "attributes": {
+      "name": "Kenmore",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-hymnl",
+     "type": "stop",
+     "attributes": {
+      "name": "Hynes Convention Center",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-coecl",
+     "type": "stop",
+     "attributes": {
+      "name": "Copley",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-armnl",
+     "type": "stop",
+     "attributes": {
+      "name": "Arlington",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-boyls",
+     "type": "stop",
+     "attributes": {
+      "name": "Boylston",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-pktrm",
+     "type": "stop",
+     "attributes": {
+      "name": "Park Street",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-gover",
+     "type": "stop",
+     "attributes": {
+      "name": "Government Center",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-haecl",
+     "type": "stop",
+     "attributes": {
+      "name": "Haymarket",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-north",
+     "type": "stop",
+     "attributes": {
+      "name": "North Station",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-spmnl",
+     "type": "stop",
+     "attributes": {
+      "name": "Science Park/West End",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-lech",
+     "type": "stop",
+     "attributes": {
+      "name": "Lechmere",
+      "location_type": 1
+     },
+     "relationships": {}
+    },
+    {
+     "id": "place-unsqu",
+     "type": "stop",
+     "attributes": {
+      "name": "Union Square",
+      "location_type": 1
+     },
+     "relationships": {}
+    }
+   ]
+  },
+  "vehicles": {
+   "data": [
+    {
+     "id": "G-10217",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "INCOMING_AT",
+      "direction_id": 0,
+      "label": "3700-3819",
+      "updated_at": "2026-10-26T21:52:15-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70175",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10209",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "STOPPED_AT",
+      "direction_id": 0,
+      "label": "3861-3610",
+      "updated_at": "2026-10-26T21:52:37-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70202",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10201",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "IN_TRANSIT_TO",
+      "direction_id": 1,
+      "label": "3875-3863",
+      "updated_at": "2026-10-26T21:52:58-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70152",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10200",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "IN_TRANSIT_TO",
+      "direction_id": 0,
+      "label": "3829-3706",
+      "updated_at": "2026-10-26T21:53:12-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70167",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10186",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "INCOMING_AT",
+      "direction_id": 0,
+      "label": "3869-3632",
+      "updated_at": "2026-10-26T21:52:58-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70206",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10180",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "INCOMING_AT",
+      "direction_id": 0,
+      "label": "3876-3642",
+      "updated_at": "2026-10-26T21:53:09-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70163",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10169",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "STOPPED_AT",
+      "direction_id": 0,
+      "label": "3914-3919",
+      "updated_at": "2026-10-26T21:53:11-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "Union Square-01",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10160",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "IN_TRANSIT_TO",
+      "direction_id": 1,
+      "label": "3811-3629",
+      "updated_at": "2026-10-26T21:52:57-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70503",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10156",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "STOPPED_AT",
+      "direction_id": 1,
+      "label": "3918-3908",
+      "updated_at": "2026-10-26T21:52:08-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70186",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10149",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "STOPPED_AT",
+      "direction_id": 0,
+      "label": "3820-3670",
+      "updated_at": "2026-10-26T21:53:02-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "Union Square-02",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10143",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "INCOMING_AT",
+      "direction_id": 0,
+      "label": "3922",
+      "updated_at": "2026-10-26T21:53:10-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70179",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10129",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "STOPPED_AT",
+      "direction_id": 0,
+      "label": "3639-3866",
+      "updated_at": "2026-10-26T21:52:32-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70163",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10120",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "INCOMING_AT",
+      "direction_id": 1,
+      "label": "3702-3809",
+      "updated_at": "2026-10-26T21:52:58-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70205",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10093",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "INCOMING_AT",
+      "direction_id": 0,
+      "label": "3887-3635",
+      "updated_at": "2026-10-26T21:52:43-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70155",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10049",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "STOPPED_AT",
+      "direction_id": 1,
+      "label": "3684-3816",
+      "updated_at": "2026-10-26T21:53:12-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70176",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10035",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "STOPPED_AT",
+      "direction_id": 0,
+      "label": "3917-3904",
+      "updated_at": "2026-10-26T21:51:52-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70155",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10016",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "IN_TRANSIT_TO",
+      "direction_id": 1,
+      "label": "3804-3714",
+      "updated_at": "2026-10-26T21:53:13-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70172",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "G-10013",
+     "type": "vehicle",
+     "attributes": {
+      "current_status": "IN_TRANSIT_TO",
+      "direction_id": 0,
+      "label": "3800-3645",
+      "updated_at": "2026-10-26T21:53:03-04:00"
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70173",
+        "type": "stop"
+       }
+      }
+     }
+    }
+   ],
+   "included": [
+    {
+     "id": "70152",
+     "type": "stop",
+     "attributes": {
+      "name": "Hynes Convention Center"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-hymnl",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70155",
+     "type": "stop",
+     "attributes": {
+      "name": "Copley"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-coecl",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70163",
+     "type": "stop",
+     "attributes": {
+      "name": "Woodland"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-woodl",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70167",
+     "type": "stop",
+     "attributes": {
+      "name": "Eliot"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-eliot",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70172",
+     "type": "stop",
+     "attributes": {
+      "name": "Chestnut Hill"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-chhil",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70173",
+     "type": "stop",
+     "attributes": {
+      "name": "Chestnut Hill"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-chhil",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70175",
+     "type": "stop",
+     "attributes": {
+      "name": "Reservoir"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-rsmnl",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70176",
+     "type": "stop",
+     "attributes": {
+      "name": "Beaconsfield"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-bcnfd",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70179",
+     "type": "stop",
+     "attributes": {
+      "name": "Brookline Hills"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-brkhl",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70186",
+     "type": "stop",
+     "attributes": {
+      "name": "Fenway"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-fenwy",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70202",
+     "type": "stop",
+     "attributes": {
+      "name": "Government Center"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-gover",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70205",
+     "type": "stop",
+     "attributes": {
+      "name": "North Station"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-north",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70206",
+     "type": "stop",
+     "attributes": {
+      "name": "North Station"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-north",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "70503",
+     "type": "stop",
+     "attributes": {
+      "name": "Union Square"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-unsqu",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "Union Square-01",
+     "type": "stop",
+     "attributes": {
+      "name": "Union Square"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-unsqu",
+        "type": "stop"
+       }
+      }
+     }
+    },
+    {
+     "id": "Union Square-02",
+     "type": "stop",
+     "attributes": {
+      "name": "Union Square"
+     },
+     "relationships": {
+      "parent_station": {
+       "data": {
+        "id": "place-unsqu",
+        "type": "stop"
+       }
+      }
+     }
+    }
+   ]
+  },
+  "predictions": {
+   "data": [
+    {
+     "id": "prediction-77745451-70150-550-Green-D",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T21:55:24-04:00",
+      "departure_time": "2026-10-26T21:56:06-04:00",
+      "direction_id": 1,
+      "status": null,
+      "stop_sequence": 550
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70150",
+        "type": "stop"
+       }
+      },
+      "trip": {
+       "data": {
+        "id": "77745451",
+        "type": "trip"
+       }
+      }
+     }
+    },
+    {
+     "id": "prediction-77745345-70151-130-Green-D",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T21:57:23-04:00",
+      "departure_time": "2026-10-26T21:58:02-04:00",
+      "direction_id": 0,
+      "status": null,
+      "stop_sequence": 130
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70151",
+        "type": "stop"
+       }
+      },
+      "trip": {
+       "data": {
+        "id": "77745345",
+        "type": "trip"
+       }
+      }
+     }
+    },
+    {
+     "id": "prediction-77745359-70151-130-Green-D",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T21:59:11-04:00",
+      "departure_time": "2026-10-26T21:59:50-04:00",
+      "direction_id": 0,
+      "status": null,
+      "stop_sequence": 130
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70151",
+        "type": "stop"
+       }
+      },
+      "trip": {
+       "data": {
+        "id": "77745359",
+        "type": "trip"
+       }
+      }
+     }
+    },
+    {
+     "id": "prediction-77745432-70150-550-Green-D",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T22:04:03-04:00",
+      "departure_time": "2026-10-26T22:04:45-04:00",
+      "direction_id": 1,
+      "status": null,
+      "stop_sequence": 550
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70150",
+        "type": "stop"
+       }
+      },
+      "trip": {
+       "data": {
+        "id": "77745432",
+        "type": "trip"
+       }
+      }
+     }
+    },
+    {
+     "id": "prediction-77745165-70151-130-Green-D",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T22:07:08-04:00",
+      "departure_time": "2026-10-26T22:07:47-04:00",
+      "direction_id": 0,
+      "status": null,
+      "stop_sequence": 130
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70151",
+        "type": "stop"
+       }
+      },
+      "trip": {
+       "data": {
+        "id": "77745165",
+        "type": "trip"
+       }
+      }
+     }
+    },
+    {
+     "id": "prediction-77745431-70150-550-Green-D",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T22:12:02-04:00",
+      "departure_time": "2026-10-26T22:12:44-04:00",
+      "direction_id": 1,
+      "status": null,
+      "stop_sequence": 550
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70150",
+        "type": "stop"
+       }
+      },
+      "trip": {
+       "data": {
+        "id": "77745431",
+        "type": "trip"
+       }
+      }
+     }
+    },
+    {
+     "id": "prediction-77745444-70151-130-Green-D",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T22:12:36-04:00",
+      "departure_time": "2026-10-26T22:13:15-04:00",
+      "direction_id": 0,
+      "status": null,
+      "stop_sequence": 130
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70151",
+        "type": "stop"
+       }
+      },
+      "trip": {
+       "data": {
+        "id": "77745444",
+        "type": "trip"
+       }
+      }
+     }
+    },
+    {
+     "id": "prediction-77745447-70151-130-Green-D",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T22:21:48-04:00",
+      "departure_time": "2026-10-26T22:22:27-04:00",
+      "direction_id": 0,
+      "status": null,
+      "stop_sequence": 130
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70151",
+        "type": "stop"
+       }
+      },
+      "trip": {
+       "data": {
+        "id": "77745447",
+        "type": "trip"
+       }
+      }
+     }
+    },
+    {
+     "id": "prediction-77745440-70151-130-Green-D",
+     "type": "prediction",
+     "attributes": {
+      "arrival_time": "2026-10-26T22:30:50-04:00",
+      "departure_time": "2026-10-26T22:31:29-04:00",
+      "direction_id": 0,
+      "status": null,
+      "stop_sequence": 130
+     },
+     "relationships": {
+      "stop": {
+       "data": {
+        "id": "70151",
+        "type": "stop"
+       }
+      },
+      "trip": {
+       "data": {
+        "id": "77745440",
+        "type": "trip"
+       }
+      }
+     }
+    }
+   ]
+  }
+ }
+}

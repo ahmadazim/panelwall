@@ -242,8 +242,13 @@ panelwall/
                        (dot = great-circle fraction flown; adsbdb airport coords, else data/airports.py),
                        alt/spd/phase, hdg/reg/type. prio 20 when exactly 1 aircraft; 25 for 8 s ("detail")
                        whenever a not-yet-featured aircraft is the closest, at most every 45 s; else 0
-    mbta.py            MbtaChannel — Red Line strip (stations spaced evenly, labels alternate above/below,
-                       home amber, trains as arrows N above / S below the line) + 2 arrival rows. prio 5
+    mbta.py            MbtaChannel(spec: LineSpec) — ONE transit line as a strip (stations spaced evenly, labels
+                       alternate above/below - every 4th stop per row on dense lines, home always labelled and amber,
+                       trains as arrows: direction 1 above pointing left, direction 0 below pointing right) + 2 arrival
+                       rows (+ a third row for a bus route). Specs in config.MBTA_LINES: mbta (Red, Harvard), greenb
+                       (Green-B, Washington St, bus 65 at stops 1295/1273), greenc / greend (Kenmore). prio 5
+    green.py           GreenOverviewChannel — B, C, D strips on one screen (termini only) + Washington St trains + bus 65.
+                       Shares the three MbtaFeeds with the per-line panels (build_channels). prio 5
     testpattern.py     panel numbers 1–8 + RGB bars + origin marker + moving dot; for bring-up
   sinks/
     base.py            Sink.show(np.ndarray HxWx3 uint8 RGB), set_brightness(level)
@@ -253,8 +258,11 @@ panelwall/
     adsb.py            AdsbClient (adsb.lol /v2/point + adsbdb routes, 429 backoff), Aircraft, parse_aircraft,
                        parse_adsbdb_route (parse_route = dead routeset shape, kept for reference)
     feed.py            AircraftFeed — ONE background poller shared by flights/radar/silhouette (never poll twice)
-    mbta.py            MbtaClient + pure parsers (parse_stops/vehicles/predictions, select_branch, upcoming),
-                       MbtaFeed poller (stops hourly, vehicles+predictions every 15 s), ABBREV table
+    mbta.py            MbtaClient + pure parsers (parse_stops/vehicles/predictions, select_branch, orient, upcoming),
+                       MbtaFeed(spec) poller (route + stops hourly, vehicles + home predictions + bus predictions every
+                       30 s = 2-3 requests), ABBREV table for Red + all Green stops, short_name/tiny_name.
+                       NOTE: /stops?filter[route] order is ARBITRARY per route (B starts east, C/D start west):
+                       orient() flips so direction_id 0's destination is on the right; train_x relies on that
     airlines.py        ICAO operator → (IATA, name): JBU→(B6, JETBLUE). ~60 carriers; FULL_NAMES ("Southwest
                        Airlines") + airline_full_name(callsign) for the card
     aircraft_types.py  ICAO type → ≤10-char name: A21N→A321NEO. ~170 types incl. GA; LONG_TYPES ("Boeing 737-700")
@@ -279,6 +287,7 @@ assets/data/airports.csv  OurAirports trim (public domain)
 tools/                 build_fw_font.py, build_logos.py — regenerate the font / logos; never hand-edit the outputs
 fixtures/bos_point.json  hand-built readsb-shaped Boston traffic + `_routes` sidecar (test only)
 fixtures/mbta_red.json   trimmed LIVE capture of the MBTA V3 API (stops, vehicles+included, predictions), 14 Sep
+fixtures/mbta_green.json trimmed LIVE capture for Green-B/C/D (+ /routes, + bus 65 predictions), 26 Oct
 fixtures/espn_scoreboards.json  trimmed LIVE ESPN capture, 15 Sep, 4 leagues; ONE substitution (MIA->BOS on the live
                          MLB game so the fixture has a live Boston card) - see its _comment
 fixtures/openmeteo.json  unmodified LIVE Open-Meteo capture, 15 Sep 00:15, Doylestown
@@ -487,6 +496,12 @@ from #parms (lat, lon, elev, fajr/isha angles, asr factor) and #fat (CLCLT, iqam
 exactly (incl. floor/ceil rounding) and verified against node running the original script. Iqama = athan +
 offset when the offset > 0, else the fixed td value; Jumu'ah = td#fdp unless offset[5] != 0.
 - **UNVERIFIED:** CLCLT=0 pages (server-supplied future athan rows); the alert-window behaviour on the real wall.
+
+Added 26 Oct: Green Line B / C / D panels + a combined overview + the 65 bus (Ahmad). MbtaChannel became
+spec-driven (config.MBTA_LINES). VERIFIED live: Green-B/C/D stops, vehicles (parent stations resolve), predictions
+at place-wascm / place-kencl, /routes direction_destinations, bus 65 predictions with filter[stop]=1295,1273 in
+one request. Keyless budget: one panel on screen = 3 req / 30 s; the overview = 7 req / 30 s = 14/min, still
+under 20/min but get a free MBTA key if more panels poll at once.
 
 Verified vs. unverified for the earlier channels:
 - **Changed 15 Sep ~01:00 (Ahmad's request):** the wall no longer cycles by default. Manual mode pins the

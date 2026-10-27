@@ -50,7 +50,8 @@ def test_state_machine_visits_every_pose():
 
 
 def test_render_is_cheap_and_fills_the_frame():
-    ch = MeadowChannel()
+    from datetime import datetime
+    ch = MeadowChannel(weather="sun", now=datetime(2026, 9, 15, 13))   # daylight: the cat is at full colour
     f = Frame()
     _run(ch, 2.0)
     ch.render(f)

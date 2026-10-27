@@ -6,7 +6,7 @@ a radar scope, a hero card for the closest aircraft, and the MBTA Red Line. Cont
 from your phone.
 
 ```
-channels/   render a 256x64 frame            flightwall, flights, radar, silhouette, mbta, sports, forecast, prayers, meadow, testpattern
+channels/   render a 256x64 frame            flightwall, flights, radar, silhouette, mbta, greenb/c/d, green, sports, forecast, prayers, meadow, testpattern
 scheduler   picks a channel (priority + rotation + hold), wipes between them, quiet hours
 sinks/      show the frame: SimulatorSink (Mac/PNG) or ColorlightSink (raw Ethernet)
 data/       shared ADS-B feed, MBTA / ESPN / Open-Meteo clients, airline / aircraft-type / airport lookups
@@ -25,6 +25,9 @@ web         the control server (standard library http.server, no build step)
 | `radar` | 64×64 radar scope (rings, sweep, altitude-colored blips) + list of 4 | 10 with aircraft, else 1 |
 | `silhouette` | the closest aircraft as a hero card: sprite in airline colors, ORIGIN → DEST with progress dot, alt/spd/phase | 20 when exactly one aircraft is in range; 25 for 8 s whenever a not-yet-shown aircraft becomes the closest (at most every 45 s); else 0 |
 | `mbta` | Red Line strip with live trains and next arrivals at Harvard | 5 (idle content) |
+| `greenb` | Green Line B strip, home Washington Street, next trains both ways, plus the 65 bus at the stops outside the station | 5 |
+| `greenc`, `greend` | Green Line C and D strips (home Kenmore by default; `PW_GREEN_HOME_C` / `PW_GREEN_HOME_D` to change) | 5 |
+| `green` | all three Green branches on one screen (termini labelled, trains moving, home in amber) with Washington Street's next trains and the 65 bus | 5 |
 | `sports` | "BOSTON TONIGHT": featured game card (live > next > last final) + one row per other tracked team, from ESPN's public scoreboard JSON (unofficial, keyless) | 25 for 15 s after a tracked team scores, 12 live, 4 game today, else 0 |
 | `prayers` | today's athan and iqama times from your fiveprayers.org display page, next-prayer countdown, sunrise and Jumu'ah | 20 from 10 min before to 3 min after each athan / iqama, else 4 |
 | `meadow` | screensaver: an orange tabby and Kuromi wander a looping parallax meadow. The sky follows the real time and weather from the shared forecast feed: sun on an east-left to west-right arc, dawn/dusk glow on the sun's side, moon and stars at night, clouds, rain, snow, lightning, fog | 2 (idle) |
@@ -102,6 +105,8 @@ All optional. The app runs with none of them set.
 | `PW_MBTA_STOP` | `place-harsq` (Harvard) | home station, a parent-station id |
 | `PW_MBTA_BRANCH` | `Braintree` | `Braintree` or `Ashmont`; the Red Line forks after JFK/UMass |
 | `PW_MBTA_BASE` | `https://api-v3.mbta.com` | |
+| `PW_GREEN_HOME_B` | `place-wascm` (Washington Street) | home station for the B panel |
+| `PW_GREEN_HOME_C`, `PW_GREEN_HOME_D` | `place-kencl` (Kenmore) | home station for the C and D panels |
 | `PW_TEAMS` | `mlb:BOS:SOX,nfl:NE:PATS,nba:BOS:CELTS,nhl:BOS:B'S` | tracked teams as `league:ESPN-abbreviation:label`; labels <= 5 chars fit next to any status |
 | `PW_CITY` | `BOSTON` | header of the sports channel |
 | `PW_TZ` | `America/New_York` | timezone for Open-Meteo timestamps and prayer-time calculation |

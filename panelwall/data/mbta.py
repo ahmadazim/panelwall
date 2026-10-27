@@ -31,7 +31,7 @@ import urllib.request
 from dataclasses import dataclass
 from datetime import datetime, timezone
 
-from ..config import CONFIG
+from ..config import CONFIG, LineSpec, MBTA_LINES
 from .polling import Backoff, DemandPoller, retry_after_seconds
 
 # Red Line branches south of JFK/UMass. Drawing both on one horizontal strip is
@@ -43,13 +43,61 @@ BRANCHES: dict[str, set[str]] = {
 
 # 3-letter labels for the strip. Anything missing falls back to the first 3 letters of the name.
 ABBREV: dict[str, str] = {
+    # Red
     "place-alfcl": "ALW", "place-davis": "DAV", "place-portr": "PTR", "place-harsq": "HVD",
     "place-cntsq": "CEN", "place-knncl": "KEN", "place-chmnl": "CHS", "place-pktrm": "PRK",
     "place-dwnxg": "DTX", "place-sstat": "SST", "place-brdwy": "BRD", "place-andrw": "AND",
     "place-jfk": "JFK", "place-shmnl": "SAV", "place-fldcr": "FLD", "place-smmnl": "SHW",
     "place-asmnl": "ASH", "place-nqncy": "NQU", "place-wlsta": "WOL", "place-qnctr": "QCT",
     "place-qamnl": "QAD", "place-brntn": "BRN",
+    # Green trunk
+    "place-unsqu": "USQ", "place-lech": "LEC", "place-spmnl": "SCP", "place-north": "NST", "place-haecl": "HAY",
+    "place-gover": "GOV", "place-boyls": "BOY", "place-armnl": "ARL", "place-coecl": "COP", "place-hymnl": "HYN",
+    "place-kencl": "KEN",
+    # Green B
+    "place-bland": "BLA", "place-buest": "BUE", "place-bucen": "BUC", "place-amory": "AMO", "place-babck": "BAB",
+    "place-brico": "PAC", "place-harvd": "HAR", "place-grigg": "GRI", "place-alsgr": "ALL", "place-wrnst": "WAR",
+    "place-wascm": "WAS", "place-sthld": "SUT", "place-chswk": "CHW", "place-chill": "CHA", "place-sougr": "SOU",
+    "place-lake": "BC",
+    # Green C
+    "place-smary": "STM", "place-hwsst": "HAW", "place-kntst": "KNT", "place-stpul": "STP", "place-cool": "COO",
+    "place-sumav": "SUM", "place-bndhl": "BRA", "place-fbkst": "FAI", "place-bcnwa": "WSQ", "place-tapst": "TAP",
+    "place-denrd": "DEA", "place-engav": "ENG", "place-clmnl": "CLE",
+    # Green D
+    "place-fenwy": "FEN", "place-longw": "LNG", "place-bvmnl": "BVL", "place-brkhl": "BHL", "place-bcnfd": "BCF",
+    "place-rsmnl": "RES", "place-chhil": "CHH", "place-newto": "NCT", "place-newtn": "NHL", "place-eliot": "ELI",
+    "place-waban": "WAB", "place-woodl": "WOO", "place-river": "RIV",
 }
+
+# Long station / destination names -> what fits on the arrival rows
+_SHORT = (("Government Center", "GOV CTR"), ("Boston University", "BU"), ("Convention Center", "CONV CTR"),
+          ("Cleveland Circle", "CLEVELAND CIR"), ("Brighton Center", "BRIGHTON CTR"),
+          ("Street", "ST"), ("Square", "SQ"), ("Avenue", "AVE"), ("Center", "CTR"), ("Centre", "CTR"),
+          ("Station", ""), ("Saint", "ST"), ("Road", "RD"), ("Highlands", "HLDS"))
+# tightest forms, for rows that hold two destinations
+_TINY = {"Boston College": "BC", "Government Center": "GOV CTR", "Cleveland Circle": "CLEV CIR", "Union Square": "UNION SQ",
+         "Riverside": "RIVERSIDE", "Ruggles Station": "RUGGLES", "Brighton Center": "BRIGHTON", "Alewife": "ALEWIFE",
+         "Ashmont/Braintree": "ASH/BRAIN", "Washington Street": "WASH ST"}
+
+
+def short_name(name: str, limit: int = 15) -> str:
+    n = name
+    for a, b in _SHORT:
+        n = n.replace(a, b)
+    return " ".join(n.upper().split())[:limit]
+
+
+def tiny_name(name: str, limit: int = 9) -> str:
+    """Shortest readable form of a terminus / station, for rows that list two of them."""
+    return _TINY.get(name.strip(), short_name(name, limit))[:limit]
+
+
+def orient(stops: list[Stop], dest0: str | None) -> list[Stop]:
+    """The API's stop order is arbitrary per route. Flip the list so that direction_id 0's
+    destination is the LAST stop (right end of the strip); train_x relies on that."""
+    if stops and dest0 and stops[0].name.strip().lower() == dest0.strip().lower():
+        return list(reversed(stops))
+    return list(stops)
 
 
 @dataclass
@@ -178,35 +226,44 @@ class MbtaClient:
         return self._get("/vehicles", {"filter[route]": route, "include": "stop"})
 
     def predictions(self, stop: str, route: str) -> dict | None:
+        """`stop` may be a comma-separated list (the API accepts it) - used for the two bus stops."""
         return self._get("/predictions", {"filter[stop]": stop, "filter[route]": route, "sort": "arrival_time"})
+
+    def route(self, route: str) -> dict | None:
+        return self._get(f"/routes/{route}", {})
 
 
 class MbtaFeed(DemandPoller):
-    """Background poller. Stops are fetched once an hour (they don't move);
-    vehicles + predictions every CONFIG.mbta.poll_seconds.
+    """Background poller for one LineSpec. Stops + route info are fetched once an hour; vehicles,
+    home predictions and (if configured) bus predictions every CONFIG.mbta.poll_seconds -
+    2 or 3 requests per poll.
 
-    MbtaFeed(static=fixture_dict) never starts a thread and freezes 'now' at
-    the fixture's _now so the demo shows stable minutes.
+    MbtaFeed(static=fixture_dict) never starts a thread and freezes 'now' at the fixture's
+    _now so the demo shows stable minutes.
     """
 
-    def __init__(self, client: MbtaClient | None = None, static: dict | None = None):
-        cfg = CONFIG.mbta
+    def __init__(self, client: MbtaClient | None = None, static: dict | None = None, spec: LineSpec | None = None):
+        self.spec = spec or MBTA_LINES["mbta"]
         self.client = client or MbtaClient()
-        self.route, self.home, self.branch = cfg.route, cfg.home_stop, cfg.branch
+        self.route, self.home, self.branch = self.spec.route, self.spec.home_stop, self.spec.branch
         self.stops: list[Stop] = []
         self.vehicles: list[Vehicle] = []
         self.predictions: list[Prediction] = []
+        self.bus_predictions: list[Prediction] = []
+        self.directions: tuple[str, str] = ("", "")        # direction_destinations from /routes/{id}
+        self.bus_directions: tuple[str, str] = ("", "")
         self.updated_at = 0.0
         self._stops_at = 0.0
         self._fixed_now: datetime | None = None
         self._init_demand()
         self._thread = None
         if static is not None:
-            self._ingest(static.get("stops"), static.get("vehicles"), static.get("predictions"))
+            self._ingest(static.get("stops"), static.get("vehicles"), static.get("predictions"),
+                         static.get("route"), static.get("bus_predictions"), static.get("bus_route"))
             self._fixed_now = _parse_time(static.get("_now"))
             self.updated_at = time.time()
         else:
-            self._thread = threading.Thread(target=self._poll_loop, daemon=True, name="mbta-poll")
+            self._thread = threading.Thread(target=self._poll_loop, daemon=True, name=f"mbta-{self.spec.name}")
             self._thread.start()
 
     @property
@@ -216,34 +273,61 @@ class MbtaFeed(DemandPoller):
     def now(self) -> datetime:
         return self._fixed_now or datetime.now(timezone.utc)
 
-    def _ingest(self, stops_doc, vehicles_doc, preds_doc) -> None:
+    def home_stop(self) -> Stop | None:
+        return next((s for s in self.stops if s.id == self.home), None)
+
+    @staticmethod
+    def _dests(route_doc) -> tuple[str, str]:
+        try:
+            d = route_doc["data"]["attributes"]["direction_destinations"]
+            return str(d[0]), str(d[1])
+        except (KeyError, IndexError, TypeError):
+            return "", ""
+
+    def _ingest(self, stops_doc, vehicles_doc, preds_doc, route_doc=None, bus_doc=None, bus_route_doc=None) -> None:
+        if route_doc is not None:
+            self.directions = self._dests(route_doc)
+        if bus_route_doc is not None:
+            self.bus_directions = self._dests(bus_route_doc)
         if stops_doc is not None:
-            self.stops = select_branch(parse_stops(stops_doc), self.branch)
+            self.stops = orient(select_branch(parse_stops(stops_doc), self.branch), self.directions[0])
         if vehicles_doc is not None:
             self.vehicles = parse_vehicles(vehicles_doc)
         if preds_doc is not None:
             self.predictions = parse_predictions(preds_doc)
+        if bus_doc is not None:
+            self.bus_predictions = parse_predictions(bus_doc)
 
     def _poll_loop(self):
         self._startup_grace()
         self._wait_wanted()
         while not self._stop.is_set():
             t = time.time()
-            stops_doc = None
+            stops_doc = route_doc = bus_route_doc = None
             if not self.stops or t - self._stops_at > 3600:
+                route_doc = self.client.route(self.route)
                 stops_doc = self.client.stops(self.route)
+                if self.spec.bus_route and not self.bus_directions[0]:
+                    bus_route_doc = self.client.route(self.spec.bus_route)
                 if stops_doc is not None:
                     self._stops_at = t
-            veh = self.client.vehicles(self.route) if self.client.backoff.remaining() == 0 else None
-            preds = self.client.predictions(self.home, self.route) if self.client.backoff.remaining() == 0 else None
-            self._ingest(stops_doc, veh, preds)
+            ok = self.client.backoff.remaining() == 0
+            veh = self.client.vehicles(self.route) if ok else None
+            preds = self.client.predictions(self.home, self.route) if ok else None
+            bus = None
+            if ok and self.spec.bus_route and self.spec.bus_stops:
+                bus = self.client.predictions(",".join(self.spec.bus_stops), self.spec.bus_route)
+            self._ingest(stops_doc, veh, preds, route_doc, bus, bus_route_doc)
             if veh is not None or preds is not None:
                 self.updated_at = time.time()
             self._sleep_or_pause(max(CONFIG.mbta.poll_seconds, self.client.backoff.remaining()))
 
     def status(self) -> dict:
-        return {"updated_at": self.updated_at or None, "last_error": self.last_error, "paused": self.paused,
-                "stops": len(self.stops), "vehicles": len(self.vehicles), "predictions": len(self.predictions)}
+        s = {"updated_at": self.updated_at or None, "last_error": self.last_error, "paused": self.paused,
+             "stops": len(self.stops), "vehicles": len(self.vehicles), "predictions": len(self.predictions)}
+        if self.spec.bus_route:
+            s["bus"] = len(self.bus_predictions)
+        return s
 
     def close(self):
         self._stop.set()

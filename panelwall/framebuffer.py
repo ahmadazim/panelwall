@@ -76,13 +76,19 @@ class Frame:
             tile = tile.crop((0, 0, max_w, tile.height))
         self.img.paste(tile, (int(x), int(y)), tile)
 
-    def text_right(self, x_right: int, y: int, s: str, font=None, fill=WHITE):
+    def text_right(self, x_right: int, y: int, s: str, font=None, fill=WHITE, max_w: int | None = None):
         f = font or fonts.SMALL
-        self.text(x_right - fonts.width(s, f), y, s, f, fill)
+        w = fonts.width(s, f)
+        if max_w is not None and w > max_w:          # clip from the LEFT so the right edge stays put
+            tile = _TEXT_CACHE.get(s, f, fill)
+            tile = tile.crop((w - max_w, 0, tile.width, tile.height))
+            self.img.paste(tile, (int(x_right - max_w), int(y)), tile)
+            return
+        self.text(x_right - w, y, s, f, fill)
 
-    def text_center(self, cx: int, y: int, s: str, font=None, fill=WHITE):
+    def text_center(self, cx: int, y: int, s: str, font=None, fill=WHITE, max_w: int | None = None):
         f = font or fonts.SMALL
-        self.text(cx - fonts.width(s, f) // 2, y, s, f, fill)
+        self.text(cx - fonts.width(s, f) // 2, y, s, f, fill, max_w=max_w)
 
     def hline(self, y: int, x0: int = 0, x1: int = W - 1, fill=DIM):
         self.draw.line([(x0, y), (x1, y)], fill=fill)
