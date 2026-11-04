@@ -1,13 +1,17 @@
 {
- "_comment": "Captured live from site.api.espn.com on 2026-11-03T21:41:33-05:00 by tools/capture_espn_fixture.py, trimmed to the keys panelwall reads (crest URLs, records, soccer goals/red cards, NFL leaders kept).",
- "_now": "2026-11-03T21:41:33-05:00",
+ "_comment": "Captured live from site.api.espn.com on 2026-11-03T21:57:57-05:00 by tools/capture_espn_fixture.py, trimmed to the keys panelwall reads (crest URLs, records, soccer goals/red cards, NFL leaders kept).",
+ "_now": "2026-11-03T21:57:57-05:00",
  "schedules": {
   "mlb:BOS": {
    "team": {
     "abbreviation": "BOS",
     "displayName": "Boston Red Sox",
+    "name": "Red Sox",
     "color": "0d2b56",
-    "alternateColor": null
+    "alternateColor": null,
+    "logo": "https://a.espncdn.com/i/teamlogos/mlb/500/bos.png",
+    "recordSummary": "0-2",
+    "standingSummary": "3rd in AL East"
    },
    "events": [
     {
@@ -45,7 +49,13 @@
          "score": {
           "value": 9.0,
           "displayValue": "9"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "93-68"
+          }
+         ]
         },
         {
          "id": "2",
@@ -67,7 +77,13 @@
          "score": {
           "value": 0.0,
           "displayValue": "0"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "87-75"
+          }
+         ]
         }
        ],
        "status": {
@@ -121,7 +137,13 @@
          "score": {
           "value": 9.0,
           "displayValue": "9"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "93-68"
+          }
+         ]
         },
         {
          "id": "2",
@@ -143,7 +165,13 @@
          "score": {
           "value": 2.0,
           "displayValue": "2"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "87-75"
+          }
+         ]
         }
        ],
        "status": {
@@ -168,8 +196,12 @@
    "team": {
     "abbreviation": "NE",
     "displayName": "New England Patriots",
+    "name": "Patriots",
     "color": "002a5c",
-    "alternateColor": null
+    "alternateColor": null,
+    "logo": "https://a.espncdn.com/i/teamlogos/nfl/500/ne.png",
+    "recordSummary": "5-3",
+    "standingSummary": "2nd in AFC East"
    },
    "events": [
     {
@@ -207,7 +239,13 @@
          "score": {
           "value": 35.0,
           "displayValue": "35"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "2-1"
+          }
+         ]
         },
         {
          "id": "17",
@@ -229,7 +267,51 @@
          "score": {
           "value": 6.0,
           "displayValue": "6"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "1-2"
+          }
+         ],
+         "leaders": [
+          {
+           "name": "passingLeader",
+           "leaders": [
+            {
+             "displayValue": "14/25, 199 YDS, 2 INT",
+             "athlete": {
+              "shortName": "D. Maye",
+              "displayName": "Drake Maye"
+             }
+            }
+           ]
+          },
+          {
+           "name": "rushingLeader",
+           "leaders": [
+            {
+             "displayValue": "8 CAR, 23 YDS",
+             "athlete": {
+              "shortName": "T. Henderson",
+              "displayName": "TreVeyon Henderson"
+             }
+            }
+           ]
+          },
+          {
+           "name": "receivingLeader",
+           "leaders": [
+            {
+             "displayValue": "6 REC, 87 YDS",
+             "athlete": {
+              "shortName": "M. Hollins",
+              "displayName": "Mack Hollins"
+             }
+            }
+           ]
+          }
+         ]
         }
        ],
        "status": {
@@ -283,7 +365,13 @@
          "score": {
           "value": 26.0,
           "displayValue": "26"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "3-1"
+          }
+         ]
         },
         {
          "id": "17",
@@ -305,7 +393,51 @@
          "score": {
           "value": 29.0,
           "displayValue": "29"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "2-2"
+          }
+         ],
+         "leaders": [
+          {
+           "name": "passingLeader",
+           "leaders": [
+            {
+             "displayValue": "22/37, 269 YDS, 3 TD, 1 INT",
+             "athlete": {
+              "shortName": "D. Maye",
+              "displayName": "Drake Maye"
+             }
+            }
+           ]
+          },
+          {
+           "name": "rushingLeader",
+           "leaders": [
+            {
+             "displayValue": "8 CAR, 54 YDS",
+             "athlete": {
+              "shortName": "D. Maye",
+              "displayName": "Drake Maye"
+             }
+            }
+           ]
+          },
+          {
+           "name": "receivingLeader",
+           "leaders": [
+            {
+             "displayValue": "5 REC, 62 YDS",
+             "athlete": {
+              "shortName": "H. Henry",
+              "displayName": "Hunter Henry"
+             }
+            }
+           ]
+          }
+         ]
         }
        ],
        "status": {
@@ -359,7 +491,51 @@
          "score": {
           "value": 45.0,
           "displayValue": "45"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "3-2"
+          }
+         ],
+         "leaders": [
+          {
+           "name": "passingLeader",
+           "leaders": [
+            {
+             "displayValue": "26/34, 374 YDS, 4 TD",
+             "athlete": {
+              "shortName": "D. Maye",
+              "displayName": "Drake Maye"
+             }
+            }
+           ]
+          },
+          {
+           "name": "rushingLeader",
+           "leaders": [
+            {
+             "displayValue": "13 CAR, 64 YDS, 1 TD",
+             "athlete": {
+              "shortName": "R. Stevenson",
+              "displayName": "Rhamondre Stevenson"
+             }
+            }
+           ]
+          },
+          {
+           "name": "receivingLeader",
+           "leaders": [
+            {
+             "displayValue": "3 REC, 91 YDS, 1 TD",
+             "athlete": {
+              "shortName": "K. Williams",
+              "displayName": "Kyle Williams"
+             }
+            }
+           ]
+          }
+         ]
         },
         {
          "id": "13",
@@ -381,7 +557,13 @@
          "score": {
           "value": 17.0,
           "displayValue": "17"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "3-2"
+          }
+         ]
         }
        ],
        "status": {
@@ -435,7 +617,51 @@
          "score": {
           "value": 26.0,
           "displayValue": "26"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "4-2"
+          }
+         ],
+         "leaders": [
+          {
+           "name": "passingLeader",
+           "leaders": [
+            {
+             "displayValue": "18/32, 235 YDS, 3 TD",
+             "athlete": {
+              "shortName": "D. Maye",
+              "displayName": "Drake Maye"
+             }
+            }
+           ]
+          },
+          {
+           "name": "rushingLeader",
+           "leaders": [
+            {
+             "displayValue": "11 CAR, 57 YDS",
+             "athlete": {
+              "shortName": "C. Kiner",
+              "displayName": "Corey Kiner"
+             }
+            }
+           ]
+          },
+          {
+           "name": "receivingLeader",
+           "leaders": [
+            {
+             "displayValue": "7 REC, 86 YDS, 1 TD",
+             "athlete": {
+              "shortName": "D. Douglas",
+              "displayName": "DeMario Douglas"
+             }
+            }
+           ]
+          }
+         ]
         },
         {
          "id": "20",
@@ -457,7 +683,13 @@
          "score": {
           "value": 19.0,
           "displayValue": "19"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "2-4"
+          }
+         ]
         }
        ],
        "status": {
@@ -511,7 +743,13 @@
          "score": {
           "value": 30.0,
           "displayValue": "30"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "5-2"
+          }
+         ]
         },
         {
          "id": "17",
@@ -533,7 +771,51 @@
          "score": {
           "value": 24.0,
           "displayValue": "24"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "4-3"
+          }
+         ],
+         "leaders": [
+          {
+           "name": "passingLeader",
+           "leaders": [
+            {
+             "displayValue": "24/31, 321 YDS, 2 TD, 1 INT",
+             "athlete": {
+              "shortName": "D. Maye",
+              "displayName": "Drake Maye"
+             }
+            }
+           ]
+          },
+          {
+           "name": "rushingLeader",
+           "leaders": [
+            {
+             "displayValue": "4 CAR, 26 YDS, 1 TD",
+             "athlete": {
+              "shortName": "D. Maye",
+              "displayName": "Drake Maye"
+             }
+            }
+           ]
+          },
+          {
+           "name": "receivingLeader",
+           "leaders": [
+            {
+             "displayValue": "5 REC, 93 YDS, 1 TD",
+             "athlete": {
+              "shortName": "R. Stevenson",
+              "displayName": "Rhamondre Stevenson"
+             }
+            }
+           ]
+          }
+         ]
         }
        ],
        "status": {
@@ -587,7 +869,13 @@
          "score": {
           "value": 19.0,
           "displayValue": "19"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "1-6"
+          }
+         ]
         },
         {
          "id": "17",
@@ -609,7 +897,51 @@
          "score": {
           "value": 24.0,
           "displayValue": "24"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "5-3"
+          }
+         ],
+         "leaders": [
+          {
+           "name": "passingLeader",
+           "leaders": [
+            {
+             "displayValue": "16/20, 199 YDS, 2 TD",
+             "athlete": {
+              "shortName": "D. Maye",
+              "displayName": "Drake Maye"
+             }
+            }
+           ]
+          },
+          {
+           "name": "rushingLeader",
+           "leaders": [
+            {
+             "displayValue": "19 CAR, 82 YDS",
+             "athlete": {
+              "shortName": "R. Stevenson",
+              "displayName": "Rhamondre Stevenson"
+             }
+            }
+           ]
+          },
+          {
+           "name": "receivingLeader",
+           "leaders": [
+            {
+             "displayValue": "3 REC, 76 YDS, 1 TD",
+             "athlete": {
+              "shortName": "D. Douglas",
+              "displayName": "DeMario Douglas"
+             }
+            }
+           ]
+          }
+         ]
         }
        ],
        "status": {
@@ -1054,8 +1386,12 @@
    "team": {
     "abbreviation": "BOS",
     "displayName": "Boston Celtics",
+    "name": "Celtics",
     "color": "008348",
-    "alternateColor": null
+    "alternateColor": null,
+    "logo": "https://a.espncdn.com/i/teamlogos/nba/500/bos.png",
+    "recordSummary": "5-2",
+    "standingSummary": "2nd in Atlantic Division"
    },
    "events": [
     {
@@ -1093,7 +1429,51 @@
          "score": {
           "value": 107.0,
           "displayValue": "107"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "1-1"
+          }
+         ],
+         "leaders": [
+          {
+           "name": "points",
+           "leaders": [
+            {
+             "displayValue": "36",
+             "athlete": {
+              "shortName": "J. Tatum",
+              "displayName": "Jayson Tatum"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assists",
+           "leaders": [
+            {
+             "displayValue": "7",
+             "athlete": {
+              "shortName": "J. Tatum",
+              "displayName": "Jayson Tatum"
+             }
+            }
+           ]
+          },
+          {
+           "name": "rebounds",
+           "leaders": [
+            {
+             "displayValue": "9",
+             "athlete": {
+              "shortName": "J. Tatum",
+              "displayName": "Jayson Tatum"
+             }
+            }
+           ]
+          }
+         ]
         },
         {
          "id": "18",
@@ -1115,7 +1495,13 @@
          "score": {
           "value": 103.0,
           "displayValue": "103"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "0-2"
+          }
+         ]
         }
        ],
        "status": {
@@ -1169,7 +1555,51 @@
          "score": {
           "value": 134.0,
           "displayValue": "134"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "2-1"
+          }
+         ],
+         "leaders": [
+          {
+           "name": "points",
+           "leaders": [
+            {
+             "displayValue": "28",
+             "athlete": {
+              "shortName": "P. Pritchard",
+              "displayName": "Payton Pritchard"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assists",
+           "leaders": [
+            {
+             "displayValue": "6",
+             "athlete": {
+              "shortName": "J. Tatum",
+              "displayName": "Jayson Tatum"
+             }
+            }
+           ]
+          },
+          {
+           "name": "rebounds",
+           "leaders": [
+            {
+             "displayValue": "7",
+             "athlete": {
+              "shortName": "J. Tatum",
+              "displayName": "Jayson Tatum"
+             }
+            }
+           ]
+          }
+         ]
         },
         {
          "id": "4",
@@ -1191,7 +1621,13 @@
          "score": {
           "value": 99.0,
           "displayValue": "99"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "1-3"
+          }
+         ]
         }
        ],
        "status": {
@@ -1245,7 +1681,51 @@
          "score": {
           "value": 125.0,
           "displayValue": "125"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "3-1"
+          }
+         ],
+         "leaders": [
+          {
+           "name": "points",
+           "leaders": [
+            {
+             "displayValue": "40",
+             "athlete": {
+              "shortName": "J. Tatum",
+              "displayName": "Jayson Tatum"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assists",
+           "leaders": [
+            {
+             "displayValue": "8",
+             "athlete": {
+              "shortName": "J. Tatum",
+              "displayName": "Jayson Tatum"
+             }
+            }
+           ]
+          },
+          {
+           "name": "rebounds",
+           "leaders": [
+            {
+             "displayValue": "7",
+             "athlete": {
+              "shortName": "P. George",
+              "displayName": "Paul George"
+             }
+            }
+           ]
+          }
+         ]
         },
         {
          "id": "17",
@@ -1267,7 +1747,13 @@
          "score": {
           "value": 124.0,
           "displayValue": "124"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "0-4"
+          }
+         ]
         }
        ],
        "status": {
@@ -1321,7 +1807,51 @@
          "score": {
           "value": 125.0,
           "displayValue": "125"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "4-1"
+          }
+         ],
+         "leaders": [
+          {
+           "name": "points",
+           "leaders": [
+            {
+             "displayValue": "30",
+             "athlete": {
+              "shortName": "P. Pritchard",
+              "displayName": "Payton Pritchard"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assists",
+           "leaders": [
+            {
+             "displayValue": "8",
+             "athlete": {
+              "shortName": "P. George",
+              "displayName": "Paul George"
+             }
+            }
+           ]
+          },
+          {
+           "name": "rebounds",
+           "leaders": [
+            {
+             "displayValue": "7",
+             "athlete": {
+              "shortName": "J. Tatum",
+              "displayName": "Jayson Tatum"
+             }
+            }
+           ]
+          }
+         ]
         },
         {
          "id": "4",
@@ -1343,7 +1873,13 @@
          "score": {
           "value": 111.0,
           "displayValue": "111"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "1-5"
+          }
+         ]
         }
        ],
        "status": {
@@ -1397,7 +1933,13 @@
          "score": {
           "value": 97.0,
           "displayValue": "97"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "2-4"
+          }
+         ]
         },
         {
          "id": "2",
@@ -1419,7 +1961,51 @@
          "score": {
           "value": 108.0,
           "displayValue": "108"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "5-1"
+          }
+         ],
+         "leaders": [
+          {
+           "name": "points",
+           "leaders": [
+            {
+             "displayValue": "32",
+             "athlete": {
+              "shortName": "J. Tatum",
+              "displayName": "Jayson Tatum"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assists",
+           "leaders": [
+            {
+             "displayValue": "8",
+             "athlete": {
+              "shortName": "P. George",
+              "displayName": "Paul George"
+             }
+            }
+           ]
+          },
+          {
+           "name": "rebounds",
+           "leaders": [
+            {
+             "displayValue": "8",
+             "athlete": {
+              "shortName": "N. Queta",
+              "displayName": "Neemias Queta"
+             }
+            }
+           ]
+          }
+         ]
         }
        ],
        "status": {
@@ -1473,7 +2059,13 @@
          "score": {
           "value": 109.0,
           "displayValue": "109"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "7-1"
+          }
+         ]
         },
         {
          "id": "2",
@@ -1495,7 +2087,51 @@
          "score": {
           "value": 93.0,
           "displayValue": "93"
-         }
+         },
+         "record": [
+          {
+           "type": "total",
+           "displayValue": "5-2"
+          }
+         ],
+         "leaders": [
+          {
+           "name": "points",
+           "leaders": [
+            {
+             "displayValue": "19",
+             "athlete": {
+              "shortName": "J. Tatum",
+              "displayName": "Jayson Tatum"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assists",
+           "leaders": [
+            {
+             "displayValue": "9",
+             "athlete": {
+              "shortName": "J. Tatum",
+              "displayName": "Jayson Tatum"
+             }
+            }
+           ]
+          },
+          {
+           "name": "rebounds",
+           "leaders": [
+            {
+             "displayValue": "6",
+             "athlete": {
+              "shortName": "J. Tatum",
+              "displayName": "Jayson Tatum"
+             }
+            }
+           ]
+          }
+         ]
         }
        ],
        "status": {
@@ -1940,8 +2576,12 @@
    "team": {
     "abbreviation": "BOS",
     "displayName": "Boston Bruins",
+    "name": "Bruins",
     "color": "231f20",
-    "alternateColor": null
+    "alternateColor": null,
+    "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/bos.png",
+    "recordSummary": "11-4-1",
+    "standingSummary": "1st in Atlantic Division"
    },
    "events": [
     {
@@ -1979,7 +2619,13 @@
          "score": {
           "value": 6.0,
           "displayValue": "6"
-         }
+         },
+         "record": [
+          {
+           "type": "ytd",
+           "displayValue": "8-2-1, 17 PTS"
+          }
+         ]
         },
         {
          "id": "27",
@@ -2001,7 +2647,13 @@
          "score": {
           "value": 0.0,
           "displayValue": "0"
-         }
+         },
+         "record": [
+          {
+           "type": "ytd",
+           "displayValue": "3-3-3, 9 PTS"
+          }
+         ]
         }
        ],
        "status": {
@@ -2055,7 +2707,13 @@
          "score": {
           "value": 6.0,
           "displayValue": "6"
-         }
+         },
+         "record": [
+          {
+           "type": "ytd",
+           "displayValue": "9-2-1, 19 PTS"
+          }
+         ]
         },
         {
          "id": "18",
@@ -2077,7 +2735,13 @@
          "score": {
           "value": 4.0,
           "displayValue": "4"
-         }
+         },
+         "record": [
+          {
+           "type": "ytd",
+           "displayValue": "6-5-1, 13 PTS"
+          }
+         ]
         }
        ],
        "status": {
@@ -2131,7 +2795,13 @@
          "score": {
           "value": 2.0,
           "displayValue": "2"
-         }
+         },
+         "record": [
+          {
+           "type": "ytd",
+           "displayValue": "10-2-2, 22 PTS"
+          }
+         ]
         },
         {
          "id": "1",
@@ -2153,7 +2823,13 @@
          "score": {
           "value": 1.0,
           "displayValue": "1"
-         }
+         },
+         "record": [
+          {
+           "type": "ytd",
+           "displayValue": "9-3-1, 19 PTS"
+          }
+         ]
         }
        ],
        "status": {
@@ -2207,7 +2883,13 @@
          "score": {
           "value": 4.0,
           "displayValue": "4"
-         }
+         },
+         "record": [
+          {
+           "type": "ytd",
+           "displayValue": "6-6-1, 13 PTS"
+          }
+         ]
         },
         {
          "id": "1",
@@ -2229,7 +2911,13 @@
          "score": {
           "value": 1.0,
           "displayValue": "1"
-         }
+         },
+         "record": [
+          {
+           "type": "ytd",
+           "displayValue": "9-4-1, 19 PTS"
+          }
+         ]
         }
        ],
        "status": {
@@ -2283,7 +2971,13 @@
          "score": {
           "value": 5.0,
           "displayValue": "5"
-         }
+         },
+         "record": [
+          {
+           "type": "ytd",
+           "displayValue": "10-4-1, 21 PTS"
+          }
+         ]
         },
         {
          "id": "4",
@@ -2305,7 +2999,13 @@
          "score": {
           "value": 4.0,
           "displayValue": "4"
-         }
+         },
+         "record": [
+          {
+           "type": "ytd",
+           "displayValue": "4-9-1, 9 PTS"
+          }
+         ]
         }
        ],
        "status": {
@@ -2359,7 +3059,13 @@
          "score": {
           "value": 3.0,
           "displayValue": "3"
-         }
+         },
+         "record": [
+          {
+           "type": "ytd",
+           "displayValue": "11-4-1, 23 PTS"
+          }
+         ]
         },
         {
          "id": "37",
@@ -2381,7 +3087,13 @@
          "score": {
           "value": 2.0,
           "displayValue": "2"
-         }
+         },
+         "record": [
+          {
+           "type": "ytd",
+           "displayValue": "9-5-2, 20 PTS"
+          }
+         ]
         }
        ],
        "status": {
@@ -2866,6 +3578,45 @@
            "summary": "98-64"
           }
          ],
+         "record": "1-4",
+         "leaders": [
+          {
+           "name": "avg",
+           "leaders": [
+            {
+             "displayValue": "2-4, 2B, RBI",
+             "athlete": {
+              "shortName": "C. Simpson",
+              "displayName": "Chandler Simpson"
+             }
+            }
+           ]
+          },
+          {
+           "name": "homeRuns",
+           "leaders": [
+            {
+             "displayValue": "0-3, BB, K",
+             "athlete": {
+              "shortName": "Y. Diaz",
+              "displayName": "Yandy Diaz"
+             }
+            }
+           ]
+          },
+          {
+           "name": "RBIs",
+           "leaders": [
+            {
+             "displayValue": "2-4, 2B, RBI",
+             "athlete": {
+              "shortName": "C. Simpson",
+              "displayName": "Chandler Simpson"
+             }
+            }
+           ]
+          }
+         ],
          "linescores": [
           {
            "value": 0.0
@@ -2919,6 +3670,45 @@
            "name": "overall",
            "type": "total",
            "summary": "103-59"
+          }
+         ],
+         "record": "4-1",
+         "leaders": [
+          {
+           "name": "avg",
+           "leaders": [
+            {
+             "displayValue": "2-3, 2 RBI, R",
+             "athlete": {
+              "shortName": "C. Pratt",
+              "displayName": "Cooper Pratt"
+             }
+            }
+           ]
+          },
+          {
+           "name": "homeRuns",
+           "leaders": [
+            {
+             "displayValue": "0-3, R",
+             "athlete": {
+              "shortName": "C. Yelich",
+              "displayName": "Christian Yelich"
+             }
+            }
+           ]
+          },
+          {
+           "name": "RBIs",
+           "leaders": [
+            {
+             "displayValue": "2-3, 2 RBI, R",
+             "athlete": {
+              "shortName": "C. Pratt",
+              "displayName": "Cooper Pratt"
+             }
+            }
+           ]
           }
          ],
          "linescores": [
@@ -4032,6 +4822,44 @@
            "type": "total",
            "summary": "6-1"
           }
+         ],
+         "leaders": [
+          {
+           "name": "pointsPerGame",
+           "leaders": [
+            {
+             "displayValue": "23.7",
+             "athlete": {
+              "shortName": "C. Cunningham",
+              "displayName": "Cade Cunningham"
+             }
+            }
+           ]
+          },
+          {
+           "name": "reboundsPerGame",
+           "leaders": [
+            {
+             "displayValue": "7.2",
+             "athlete": {
+              "shortName": "A. Thompson",
+              "displayName": "Ausar Thompson"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assistsPerGame",
+           "leaders": [
+            {
+             "displayValue": "7.1",
+             "athlete": {
+              "shortName": "C. Cunningham",
+              "displayName": "Cade Cunningham"
+             }
+            }
+           ]
+          }
          ]
         },
         {
@@ -4057,6 +4885,44 @@
            "name": "overall",
            "type": "total",
            "summary": "7-1"
+          }
+         ],
+         "leaders": [
+          {
+           "name": "pointsPerGame",
+           "leaders": [
+            {
+             "displayValue": "29.1",
+             "athlete": {
+              "shortName": "T. Maxey",
+              "displayName": "Tyrese Maxey"
+             }
+            }
+           ]
+          },
+          {
+           "name": "reboundsPerGame",
+           "leaders": [
+            {
+             "displayValue": "9.2",
+             "athlete": {
+              "shortName": "J. Embiid",
+              "displayName": "Joel Embiid"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assistsPerGame",
+           "leaders": [
+            {
+             "displayValue": "7.3",
+             "athlete": {
+              "shortName": "L. James",
+              "displayName": "LeBron James"
+             }
+            }
+           ]
           }
          ]
         }
@@ -4129,6 +4995,44 @@
            "type": "total",
            "summary": "4-3"
           }
+         ],
+         "leaders": [
+          {
+           "name": "pointsPerGame",
+           "leaders": [
+            {
+             "displayValue": "23.0",
+             "athlete": {
+              "shortName": "A. Davis",
+              "displayName": "Anthony Davis"
+             }
+            }
+           ]
+          },
+          {
+           "name": "reboundsPerGame",
+           "leaders": [
+            {
+             "displayValue": "9.1",
+             "athlete": {
+              "shortName": "A. Davis",
+              "displayName": "Anthony Davis"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assistsPerGame",
+           "leaders": [
+            {
+             "displayValue": "10.0",
+             "athlete": {
+              "shortName": "T. Young",
+              "displayName": "Trae Young"
+             }
+            }
+           ]
+          }
          ]
         },
         {
@@ -4154,6 +5058,44 @@
            "name": "overall",
            "type": "total",
            "summary": "4-4"
+          }
+         ],
+         "leaders": [
+          {
+           "name": "pointsPerGame",
+           "leaders": [
+            {
+             "displayValue": "21.1",
+             "athlete": {
+              "shortName": "N. Alexander-Walker",
+              "displayName": "Nickeil Alexander-Walker"
+             }
+            }
+           ]
+          },
+          {
+           "name": "reboundsPerGame",
+           "leaders": [
+            {
+             "displayValue": "9.0",
+             "athlete": {
+              "shortName": "J. Johnson",
+              "displayName": "Jalen Johnson"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assistsPerGame",
+           "leaders": [
+            {
+             "displayValue": "7.9",
+             "athlete": {
+              "shortName": "J. Johnson",
+              "displayName": "Jalen Johnson"
+             }
+            }
+           ]
           }
          ]
         }
@@ -4226,6 +5168,44 @@
            "type": "total",
            "summary": "5-2"
           }
+         ],
+         "leaders": [
+          {
+           "name": "pointsPerGame",
+           "leaders": [
+            {
+             "displayValue": "27.0",
+             "athlete": {
+              "shortName": "J. Tatum",
+              "displayName": "Jayson Tatum"
+             }
+            }
+           ]
+          },
+          {
+           "name": "reboundsPerGame",
+           "leaders": [
+            {
+             "displayValue": "6.0",
+             "athlete": {
+              "shortName": "P. George",
+              "displayName": "Paul George"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assistsPerGame",
+           "leaders": [
+            {
+             "displayValue": "7.9",
+             "athlete": {
+              "shortName": "J. Tatum",
+              "displayName": "Jayson Tatum"
+             }
+            }
+           ]
+          }
          ]
         },
         {
@@ -4251,6 +5231,44 @@
            "name": "overall",
            "type": "total",
            "summary": "1-6"
+          }
+         ],
+         "leaders": [
+          {
+           "name": "pointsPerGame",
+           "leaders": [
+            {
+             "displayValue": "21.9",
+             "athlete": {
+              "shortName": "T. Herro",
+              "displayName": "Tyler Herro"
+             }
+            }
+           ]
+          },
+          {
+           "name": "reboundsPerGame",
+           "leaders": [
+            {
+             "displayValue": "8.7",
+             "athlete": {
+              "shortName": "K. Ware",
+              "displayName": "Kel'el Ware"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assistsPerGame",
+           "leaders": [
+            {
+             "displayValue": "4.4",
+             "athlete": {
+              "shortName": "R. Rollins",
+              "displayName": "Ryan Rollins"
+             }
+            }
+           ]
           }
          ]
         }
@@ -4323,6 +5341,44 @@
            "type": "total",
            "summary": "1-6"
           }
+         ],
+         "leaders": [
+          {
+           "name": "pointsPerGame",
+           "leaders": [
+            {
+             "displayValue": "20.9",
+             "athlete": {
+              "shortName": "J. Randle",
+              "displayName": "Julius Randle"
+             }
+            }
+           ]
+          },
+          {
+           "name": "reboundsPerGame",
+           "leaders": [
+            {
+             "displayValue": "7.7",
+             "athlete": {
+              "shortName": "J. Randle",
+              "displayName": "Julius Randle"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assistsPerGame",
+           "leaders": [
+            {
+             "displayValue": "4.9",
+             "athlete": {
+              "shortName": "J. Randle",
+              "displayName": "Julius Randle"
+             }
+            }
+           ]
+          }
          ]
         },
         {
@@ -4348,6 +5404,44 @@
            "name": "overall",
            "type": "total",
            "summary": "3-5"
+          }
+         ],
+         "leaders": [
+          {
+           "name": "pointsPerGame",
+           "leaders": [
+            {
+             "displayValue": "23.5",
+             "athlete": {
+              "shortName": "B. Miller",
+              "displayName": "Brandon Miller"
+             }
+            }
+           ]
+          },
+          {
+           "name": "reboundsPerGame",
+           "leaders": [
+            {
+             "displayValue": "9.5",
+             "athlete": {
+              "shortName": "M. Diabate",
+              "displayName": "Moussa Diabate"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assistsPerGame",
+           "leaders": [
+            {
+             "displayValue": "5.0",
+             "athlete": {
+              "shortName": "D. Schroder",
+              "displayName": "Dennis Schroder"
+             }
+            }
+           ]
           }
          ]
         }
@@ -4420,6 +5514,44 @@
            "type": "total",
            "summary": "3-4"
           }
+         ],
+         "leaders": [
+          {
+           "name": "pointsPerGame",
+           "leaders": [
+            {
+             "displayValue": "24.6",
+             "athlete": {
+              "shortName": "J. Brunson",
+              "displayName": "Jalen Brunson"
+             }
+            }
+           ]
+          },
+          {
+           "name": "reboundsPerGame",
+           "leaders": [
+            {
+             "displayValue": "13.9",
+             "athlete": {
+              "shortName": "K. Towns",
+              "displayName": "Karl-Anthony Towns"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assistsPerGame",
+           "leaders": [
+            {
+             "displayValue": "5.3",
+             "athlete": {
+              "shortName": "J. Brunson",
+              "displayName": "Jalen Brunson"
+             }
+            }
+           ]
+          }
          ]
         },
         {
@@ -4445,6 +5577,44 @@
            "name": "overall",
            "type": "total",
            "summary": "1-6"
+          }
+         ],
+         "leaders": [
+          {
+           "name": "pointsPerGame",
+           "leaders": [
+            {
+             "displayValue": "21.6",
+             "athlete": {
+              "shortName": "C. Wilson",
+              "displayName": "Caleb Wilson"
+             }
+            }
+           ]
+          },
+          {
+           "name": "reboundsPerGame",
+           "leaders": [
+            {
+             "displayValue": "8.6",
+             "athlete": {
+              "shortName": "J. Smith",
+              "displayName": "Jalen Smith"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assistsPerGame",
+           "leaders": [
+            {
+             "displayValue": "7.9",
+             "athlete": {
+              "shortName": "J. Giddey",
+              "displayName": "Josh Giddey"
+             }
+            }
+           ]
           }
          ]
         }
@@ -4517,6 +5687,44 @@
            "type": "total",
            "summary": "6-1"
           }
+         ],
+         "leaders": [
+          {
+           "name": "pointsPerGame",
+           "leaders": [
+            {
+             "displayValue": "28.2",
+             "athlete": {
+              "shortName": "T. Jerome",
+              "displayName": "Ty Jerome"
+             }
+            }
+           ]
+          },
+          {
+           "name": "reboundsPerGame",
+           "leaders": [
+            {
+             "displayValue": "10.3",
+             "athlete": {
+              "shortName": "C. Boozer",
+              "displayName": "Cameron Boozer"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assistsPerGame",
+           "leaders": [
+            {
+             "displayValue": "5.7",
+             "athlete": {
+              "shortName": "T. Jerome",
+              "displayName": "Ty Jerome"
+             }
+            }
+           ]
+          }
          ]
         },
         {
@@ -4542,6 +5750,44 @@
            "name": "overall",
            "type": "total",
            "summary": "2-6"
+          }
+         ],
+         "leaders": [
+          {
+           "name": "pointsPerGame",
+           "leaders": [
+            {
+             "displayValue": "21.4",
+             "athlete": {
+              "shortName": "P. Siakam",
+              "displayName": "Pascal Siakam"
+             }
+            }
+           ]
+          },
+          {
+           "name": "reboundsPerGame",
+           "leaders": [
+            {
+             "displayValue": "7.4",
+             "athlete": {
+              "shortName": "P. Siakam",
+              "displayName": "Pascal Siakam"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assistsPerGame",
+           "leaders": [
+            {
+             "displayValue": "7.3",
+             "athlete": {
+              "shortName": "A. Nembhard",
+              "displayName": "Andrew Nembhard"
+             }
+            }
+           ]
           }
          ]
         }
@@ -4597,7 +5843,7 @@
         {
          "id": "21",
          "homeAway": "home",
-         "winner": null,
+         "winner": false,
          "order": 0,
          "type": "team",
          "team": {
@@ -4614,9 +5860,47 @@
          "score": "2",
          "records": [
           {
-           "name": "overall",
-           "type": "total",
-           "summary": "8-6-2"
+           "name": "YTD",
+           "type": "ytd",
+           "summary": "8-7-2"
+          }
+         ],
+         "leaders": [
+          {
+           "name": "goals",
+           "leaders": [
+            {
+             "displayValue": "2",
+             "athlete": {
+              "shortName": "J. Roslovic",
+              "displayName": "Jack Roslovic"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assists",
+           "leaders": [
+            {
+             "displayValue": "2",
+             "athlete": {
+              "shortName": "A. Matthews",
+              "displayName": "Auston Matthews"
+             }
+            }
+           ]
+          },
+          {
+           "name": "points",
+           "leaders": [
+            {
+             "displayValue": "2",
+             "athlete": {
+              "shortName": "J. Roslovic",
+              "displayName": "Jack Roslovic"
+             }
+            }
+           ]
           }
          ],
          "linescores": [
@@ -4634,7 +5918,7 @@
         {
          "id": "129764",
          "homeAway": "away",
-         "winner": null,
+         "winner": true,
          "order": 1,
          "type": "team",
          "team": {
@@ -4651,9 +5935,47 @@
          "score": "3",
          "records": [
           {
-           "name": "overall",
-           "type": "total",
-           "summary": "9-6-0"
+           "name": "YTD",
+           "type": "ytd",
+           "summary": "10-6-0"
+          }
+         ],
+         "leaders": [
+          {
+           "name": "goals",
+           "leaders": [
+            {
+             "displayValue": "1",
+             "athlete": {
+              "shortName": "N. Schmaltz",
+              "displayName": "Nick Schmaltz"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assists",
+           "leaders": [
+            {
+             "displayValue": "3",
+             "athlete": {
+              "shortName": "C. Keller",
+              "displayName": "Clayton Keller"
+             }
+            }
+           ]
+          },
+          {
+           "name": "points",
+           "leaders": [
+            {
+             "displayValue": "3",
+             "athlete": {
+              "shortName": "C. Keller",
+              "displayName": "Clayton Keller"
+             }
+            }
+           ]
           }
          ],
          "linescores": [
@@ -4674,15 +5996,14 @@
         "displayClock": "0:00",
         "period": 3,
         "type": {
-         "id": "22",
-         "name": "STATUS_END_PERIOD",
-         "state": "in",
-         "completed": false,
-         "detail": "End of 3rd Period",
-         "shortDetail": "End of 3rd"
+         "id": "3",
+         "name": "STATUS_FINAL",
+         "state": "post",
+         "completed": true,
+         "detail": "Final",
+         "shortDetail": "Final"
         }
-       },
-       "situation": {}
+       }
       }
      ],
      "status": {
@@ -4690,12 +6011,12 @@
       "displayClock": "0:00",
       "period": 3,
       "type": {
-       "id": "22",
-       "name": "STATUS_END_PERIOD",
-       "state": "in",
-       "completed": false,
-       "detail": "End of 3rd Period",
-       "shortDetail": "End of 3rd"
+       "id": "3",
+       "name": "STATUS_FINAL",
+       "state": "post",
+       "completed": true,
+       "detail": "Final",
+       "shortDetail": "Final"
       }
      }
     },
@@ -4739,6 +6060,44 @@
            "summary": "9-3-2"
           }
          ],
+         "leaders": [
+          {
+           "name": "goals",
+           "leaders": [
+            {
+             "displayValue": "2",
+             "athlete": {
+              "shortName": "C. Caufield",
+              "displayName": "Cole Caufield"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assists",
+           "leaders": [
+            {
+             "displayValue": "2",
+             "athlete": {
+              "shortName": "J. Slafkovsky",
+              "displayName": "Juraj Slafkovsky"
+             }
+            }
+           ]
+          },
+          {
+           "name": "points",
+           "leaders": [
+            {
+             "displayValue": "2",
+             "athlete": {
+              "shortName": "C. Caufield",
+              "displayName": "Cole Caufield"
+             }
+            }
+           ]
+          }
+         ],
          "linescores": [
           {
            "value": 2.0
@@ -4768,12 +6127,50 @@
           "alternateColor": "c41230",
           "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/scoreboard/wpg.png"
          },
-         "score": "0",
+         "score": "4",
          "records": [
           {
            "name": "overall",
            "type": "total",
            "summary": "4-8-3"
+          }
+         ],
+         "leaders": [
+          {
+           "name": "goals",
+           "leaders": [
+            {
+             "displayValue": "2",
+             "athlete": {
+              "shortName": "K. Connor",
+              "displayName": "Kyle Connor"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assists",
+           "leaders": [
+            {
+             "displayValue": "2",
+             "athlete": {
+              "shortName": "M. Scheifele",
+              "displayName": "Mark Scheifele"
+             }
+            }
+           ]
+          },
+          {
+           "name": "points",
+           "leaders": [
+            {
+             "displayValue": "2",
+             "athlete": {
+              "shortName": "K. Connor",
+              "displayName": "Kyle Connor"
+             }
+            }
+           ]
           }
          ],
          "linescores": [
@@ -4784,38 +6181,38 @@
            "value": 0.0
           },
           {
-           "value": 0.0
+           "value": 4.0
           }
          ]
         }
        ],
        "status": {
-        "clock": 298.0,
-        "displayClock": "4:58",
+        "clock": 0.0,
+        "displayClock": "0:00",
         "period": 3,
         "type": {
-         "id": "2",
-         "name": "STATUS_IN_PROGRESS",
+         "id": "22",
+         "name": "STATUS_END_PERIOD",
          "state": "in",
          "completed": false,
-         "detail": "4:58 - 3rd Period",
-         "shortDetail": "4:58 - 3rd"
+         "detail": "End of 3rd Period",
+         "shortDetail": "End of 3rd"
         }
        },
        "situation": {}
       }
      ],
      "status": {
-      "clock": 298.0,
-      "displayClock": "4:58",
+      "clock": 0.0,
+      "displayClock": "0:00",
       "period": 3,
       "type": {
-       "id": "2",
-       "name": "STATUS_IN_PROGRESS",
+       "id": "22",
+       "name": "STATUS_END_PERIOD",
        "state": "in",
        "completed": false,
-       "detail": "4:58 - 3rd Period",
-       "shortDetail": "4:58 - 3rd"
+       "detail": "End of 3rd Period",
+       "shortDetail": "End of 3rd"
       }
      }
     },
@@ -4859,6 +6256,44 @@
            "summary": "9-3-2"
           }
          ],
+         "leaders": [
+          {
+           "name": "goals",
+           "leaders": [
+            {
+             "displayValue": "2",
+             "athlete": {
+              "shortName": "B. Point",
+              "displayName": "Brayden Point"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assists",
+           "leaders": [
+            {
+             "displayValue": "2",
+             "athlete": {
+              "shortName": "N. Kucherov",
+              "displayName": "Nikita Kucherov"
+             }
+            }
+           ]
+          },
+          {
+           "name": "points",
+           "leaders": [
+            {
+             "displayValue": "2",
+             "athlete": {
+              "shortName": "B. Point",
+              "displayName": "Brayden Point"
+             }
+            }
+           ]
+          }
+         ],
          "linescores": [
           {
            "value": 2.0
@@ -4894,6 +6329,44 @@
            "name": "YTD",
            "type": "ytd",
            "summary": "7-6-3"
+          }
+         ],
+         "leaders": [
+          {
+           "name": "goals",
+           "leaders": [
+            {
+             "displayValue": "1",
+             "athlete": {
+              "shortName": "J.T. Compher",
+              "displayName": "J.T. Compher"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assists",
+           "leaders": [
+            {
+             "displayValue": "1",
+             "athlete": {
+              "shortName": "J.T. Compher",
+              "displayName": "J.T. Compher"
+             }
+            }
+           ]
+          },
+          {
+           "name": "points",
+           "leaders": [
+            {
+             "displayValue": "2",
+             "athlete": {
+              "shortName": "J.T. Compher",
+              "displayName": "J.T. Compher"
+             }
+            }
+           ]
           }
          ],
          "linescores": [
@@ -4956,7 +6429,7 @@
         {
          "id": "13",
          "homeAway": "home",
-         "winner": null,
+         "winner": true,
          "order": 0,
          "type": "team",
          "team": {
@@ -4970,12 +6443,50 @@
           "alternateColor": "e51937",
           "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/scoreboard/nyr.png"
          },
-         "score": "2",
+         "score": "3",
          "records": [
           {
-           "name": "overall",
-           "type": "total",
-           "summary": "7-7-1"
+           "name": "YTD",
+           "type": "ytd",
+           "summary": "8-7-1"
+          }
+         ],
+         "leaders": [
+          {
+           "name": "goals",
+           "leaders": [
+            {
+             "displayValue": "1",
+             "athlete": {
+              "shortName": "A. Fox",
+              "displayName": "Adam Fox"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assists",
+           "leaders": [
+            {
+             "displayValue": "2",
+             "athlete": {
+              "shortName": "J.T. Miller",
+              "displayName": "J.T. Miller"
+             }
+            }
+           ]
+          },
+          {
+           "name": "points",
+           "leaders": [
+            {
+             "displayValue": "2",
+             "athlete": {
+              "shortName": "A. Fox",
+              "displayName": "Adam Fox"
+             }
+            }
+           ]
           }
          ],
          "linescores": [
@@ -4986,14 +6497,14 @@
            "value": 1.0
           },
           {
-           "value": 1.0
+           "value": 2.0
           }
          ]
         },
         {
          "id": "19",
          "homeAway": "away",
-         "winner": null,
+         "winner": false,
          "order": 1,
          "type": "team",
          "team": {
@@ -5007,12 +6518,50 @@
           "alternateColor": "fdb71a",
           "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/scoreboard/stl.png"
          },
-         "score": "0",
+         "score": "1",
          "records": [
           {
-           "name": "overall",
-           "type": "total",
-           "summary": "7-6-1"
+           "name": "YTD",
+           "type": "ytd",
+           "summary": "7-7-1"
+          }
+         ],
+         "leaders": [
+          {
+           "name": "goals",
+           "leaders": [
+            {
+             "displayValue": "1",
+             "athlete": {
+              "shortName": "P. Suter",
+              "displayName": "Pius Suter"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assists",
+           "leaders": [
+            {
+             "displayValue": "1",
+             "athlete": {
+              "shortName": "A. Toropchenko",
+              "displayName": "Alexey Toropchenko"
+             }
+            }
+           ]
+          },
+          {
+           "name": "points",
+           "leaders": [
+            {
+             "displayValue": "1",
+             "athlete": {
+              "shortName": "P. Suter",
+              "displayName": "Pius Suter"
+             }
+            }
+           ]
           }
          ],
          "linescores": [
@@ -5023,38 +6572,37 @@
            "value": 0.0
           },
           {
-           "value": 0.0
+           "value": 1.0
           }
          ]
         }
        ],
        "status": {
-        "clock": 184.0,
-        "displayClock": "3:04",
+        "clock": 0.0,
+        "displayClock": "0:00",
         "period": 3,
         "type": {
-         "id": "2",
-         "name": "STATUS_IN_PROGRESS",
-         "state": "in",
-         "completed": false,
-         "detail": "3:04 - 3rd Period",
-         "shortDetail": "3:04 - 3rd"
+         "id": "3",
+         "name": "STATUS_FINAL",
+         "state": "post",
+         "completed": true,
+         "detail": "Final",
+         "shortDetail": "Final"
         }
-       },
-       "situation": {}
+       }
       }
      ],
      "status": {
-      "clock": 184.0,
-      "displayClock": "3:04",
+      "clock": 0.0,
+      "displayClock": "0:00",
       "period": 3,
       "type": {
-       "id": "2",
-       "name": "STATUS_IN_PROGRESS",
-       "state": "in",
-       "completed": false,
-       "detail": "3:04 - 3rd Period",
-       "shortDetail": "3:04 - 3rd"
+       "id": "3",
+       "name": "STATUS_FINAL",
+       "state": "post",
+       "completed": true,
+       "detail": "Final",
+       "shortDetail": "Final"
       }
      }
     },
@@ -5098,6 +6646,44 @@
            "summary": "4-9-4"
           }
          ],
+         "leaders": [
+          {
+           "name": "goals",
+           "leaders": [
+            {
+             "displayValue": "1",
+             "athlete": {
+              "shortName": "T. Foerster",
+              "displayName": "Tyson Foerster"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assists",
+           "leaders": [
+            {
+             "displayValue": "1",
+             "athlete": {
+              "shortName": "J. Drysdale",
+              "displayName": "Jamie Drysdale"
+             }
+            }
+           ]
+          },
+          {
+           "name": "points",
+           "leaders": [
+            {
+             "displayValue": "1",
+             "athlete": {
+              "shortName": "T. Foerster",
+              "displayName": "Tyson Foerster"
+             }
+            }
+           ]
+          }
+         ],
          "linescores": [
           {
            "value": 0.0
@@ -5133,6 +6719,44 @@
            "name": "YTD",
            "type": "ytd",
            "summary": "11-3-3"
+          }
+         ],
+         "leaders": [
+          {
+           "name": "goals",
+           "leaders": [
+            {
+             "displayValue": "1",
+             "athlete": {
+              "shortName": "M. Boldy",
+              "displayName": "Matt Boldy"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assists",
+           "leaders": [
+            {
+             "displayValue": "1",
+             "athlete": {
+              "shortName": "M. Boldy",
+              "displayName": "Matt Boldy"
+             }
+            }
+           ]
+          },
+          {
+           "name": "points",
+           "leaders": [
+            {
+             "displayValue": "2",
+             "athlete": {
+              "shortName": "M. Boldy",
+              "displayName": "Matt Boldy"
+             }
+            }
+           ]
           }
          ],
          "linescores": [
@@ -5217,6 +6841,44 @@
            "summary": "5-8-2"
           }
          ],
+         "leaders": [
+          {
+           "name": "goals",
+           "leaders": [
+            {
+             "displayValue": "1",
+             "athlete": {
+              "shortName": "T. Novak",
+              "displayName": "Tommy Novak"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assists",
+           "leaders": [
+            {
+             "displayValue": "2",
+             "athlete": {
+              "shortName": "K. Korczak",
+              "displayName": "Kaedan Korczak"
+             }
+            }
+           ]
+          },
+          {
+           "name": "points",
+           "leaders": [
+            {
+             "displayValue": "2",
+             "athlete": {
+              "shortName": "T. Novak",
+              "displayName": "Tommy Novak"
+             }
+            }
+           ]
+          }
+         ],
          "linescores": [
           {
            "value": 0.0
@@ -5252,6 +6914,44 @@
            "name": "YTD",
            "type": "ytd",
            "summary": "10-5-2"
+          }
+         ],
+         "leaders": [
+          {
+           "name": "goals",
+           "leaders": [
+            {
+             "displayValue": "2",
+             "athlete": {
+              "shortName": "T. Hertl",
+              "displayName": "Tomas Hertl"
+             }
+            }
+           ]
+          },
+          {
+           "name": "assists",
+           "leaders": [
+            {
+             "displayValue": "2",
+             "athlete": {
+              "shortName": "J. Eichel",
+              "displayName": "Jack Eichel"
+             }
+            }
+           ]
+          },
+          {
+           "name": "points",
+           "leaders": [
+            {
+             "displayValue": "2",
+             "athlete": {
+              "shortName": "T. Hertl",
+              "displayName": "Tomas Hertl"
+             }
+            }
+           ]
           }
          ],
          "linescores": [
@@ -5298,6 +6998,2432 @@
     }
    ]
   }
+ },
+ "nba_day": {
+  "events": [
+   {
+    "id": "401909922",
+    "date": "2026-11-05T00:00Z",
+    "endDate": null,
+    "name": "Philadelphia 76ers at Detroit Pistons",
+    "shortName": "PHI @ DET",
+    "competitions": [
+     {
+      "id": "401909922",
+      "date": "2026-11-05T00:00Z",
+      "type": {
+       "abbreviation": "STD",
+       "text": null
+      },
+      "competitors": [
+       {
+        "id": "8",
+        "homeAway": "home",
+        "winner": null,
+        "order": 0,
+        "type": "team",
+        "team": {
+         "id": "8",
+         "location": "Detroit",
+         "name": "Pistons",
+         "abbreviation": "DET",
+         "displayName": "Detroit Pistons",
+         "shortDisplayName": "Pistons",
+         "color": "1d428a",
+         "alternateColor": "c8102e",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/det.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "6-1"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "23.7",
+            "athlete": {
+             "shortName": "C. Cunningham",
+             "displayName": "Cade Cunningham"
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "7.2",
+            "athlete": {
+             "shortName": "A. Thompson",
+             "displayName": "Ausar Thompson"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "7.1",
+            "athlete": {
+             "shortName": "C. Cunningham",
+             "displayName": "Cade Cunningham"
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "id": "20",
+        "homeAway": "away",
+        "winner": null,
+        "order": 1,
+        "type": "team",
+        "team": {
+         "id": "20",
+         "location": "Philadelphia",
+         "name": "76ers",
+         "abbreviation": "PHI",
+         "displayName": "Philadelphia 76ers",
+         "shortDisplayName": "76ers",
+         "color": "1d428a",
+         "alternateColor": "e01234",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/phi.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "7-1"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "29.1",
+            "athlete": {
+             "shortName": "T. Maxey",
+             "displayName": "Tyrese Maxey"
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "9.2",
+            "athlete": {
+             "shortName": "J. Embiid",
+             "displayName": "Joel Embiid"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "7.3",
+            "athlete": {
+             "shortName": "L. James",
+             "displayName": "LeBron James"
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ],
+      "status": {
+       "clock": 0.0,
+       "displayClock": "0.0",
+       "period": 0,
+       "type": {
+        "id": "1",
+        "name": "STATUS_SCHEDULED",
+        "state": "pre",
+        "completed": false,
+        "detail": "Wed, November 4th at 7:00 PM EST",
+        "shortDetail": "11/4 - 7:00 PM EST"
+       }
+      }
+     }
+    ],
+    "status": {
+     "clock": 0.0,
+     "displayClock": "0.0",
+     "period": 0,
+     "type": {
+      "id": "1",
+      "name": "STATUS_SCHEDULED",
+      "state": "pre",
+      "completed": false,
+      "detail": "Wed, November 4th at 7:00 PM EST",
+      "shortDetail": "11/4 - 7:00 PM EST"
+     }
+    }
+   },
+   {
+    "id": "401909923",
+    "date": "2026-11-05T00:00Z",
+    "endDate": null,
+    "name": "Atlanta Hawks at Washington Wizards",
+    "shortName": "ATL @ WSH",
+    "competitions": [
+     {
+      "id": "401909923",
+      "date": "2026-11-05T00:00Z",
+      "type": {
+       "abbreviation": "STD",
+       "text": null
+      },
+      "competitors": [
+       {
+        "id": "27",
+        "homeAway": "home",
+        "winner": null,
+        "order": 0,
+        "type": "team",
+        "team": {
+         "id": "27",
+         "location": "Washington",
+         "name": "Wizards",
+         "abbreviation": "WSH",
+         "displayName": "Washington Wizards",
+         "shortDisplayName": "Wizards",
+         "color": "e31837",
+         "alternateColor": "002b5c",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/wsh.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "4-3"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "23.0",
+            "athlete": {
+             "shortName": "A. Davis",
+             "displayName": "Anthony Davis"
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "9.1",
+            "athlete": {
+             "shortName": "A. Davis",
+             "displayName": "Anthony Davis"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "10.0",
+            "athlete": {
+             "shortName": "T. Young",
+             "displayName": "Trae Young"
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "id": "1",
+        "homeAway": "away",
+        "winner": null,
+        "order": 1,
+        "type": "team",
+        "team": {
+         "id": "1",
+         "location": "Atlanta",
+         "name": "Hawks",
+         "abbreviation": "ATL",
+         "displayName": "Atlanta Hawks",
+         "shortDisplayName": "Hawks",
+         "color": "c8102e",
+         "alternateColor": "fdb927",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/atl.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "4-4"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "21.1",
+            "athlete": {
+             "shortName": "N. Alexander-Walker",
+             "displayName": "Nickeil Alexander-Walker"
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "9.0",
+            "athlete": {
+             "shortName": "J. Johnson",
+             "displayName": "Jalen Johnson"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "7.9",
+            "athlete": {
+             "shortName": "J. Johnson",
+             "displayName": "Jalen Johnson"
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ],
+      "status": {
+       "clock": 0.0,
+       "displayClock": "0.0",
+       "period": 0,
+       "type": {
+        "id": "1",
+        "name": "STATUS_SCHEDULED",
+        "state": "pre",
+        "completed": false,
+        "detail": "Wed, November 4th at 7:00 PM EST",
+        "shortDetail": "11/4 - 7:00 PM EST"
+       }
+      }
+     }
+    ],
+    "status": {
+     "clock": 0.0,
+     "displayClock": "0.0",
+     "period": 0,
+     "type": {
+      "id": "1",
+      "name": "STATUS_SCHEDULED",
+      "state": "pre",
+      "completed": false,
+      "detail": "Wed, November 4th at 7:00 PM EST",
+      "shortDetail": "11/4 - 7:00 PM EST"
+     }
+    }
+   },
+   {
+    "id": "401909924",
+    "date": "2026-11-05T00:30Z",
+    "endDate": null,
+    "name": "Milwaukee Bucks at Boston Celtics",
+    "shortName": "MIL @ BOS",
+    "competitions": [
+     {
+      "id": "401909924",
+      "date": "2026-11-05T00:30Z",
+      "type": {
+       "abbreviation": "STD",
+       "text": null
+      },
+      "competitors": [
+       {
+        "id": "2",
+        "homeAway": "home",
+        "winner": null,
+        "order": 0,
+        "type": "team",
+        "team": {
+         "id": "2",
+         "location": "Boston",
+         "name": "Celtics",
+         "abbreviation": "BOS",
+         "displayName": "Boston Celtics",
+         "shortDisplayName": "Celtics",
+         "color": "008348",
+         "alternateColor": "ffffff",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/bos.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "5-2"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "27.0",
+            "athlete": {
+             "shortName": "J. Tatum",
+             "displayName": "Jayson Tatum"
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "6.0",
+            "athlete": {
+             "shortName": "P. George",
+             "displayName": "Paul George"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "7.9",
+            "athlete": {
+             "shortName": "J. Tatum",
+             "displayName": "Jayson Tatum"
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "id": "15",
+        "homeAway": "away",
+        "winner": null,
+        "order": 1,
+        "type": "team",
+        "team": {
+         "id": "15",
+         "location": "Milwaukee",
+         "name": "Bucks",
+         "abbreviation": "MIL",
+         "displayName": "Milwaukee Bucks",
+         "shortDisplayName": "Bucks",
+         "color": "00471b",
+         "alternateColor": "eee1c6",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/mil.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "1-6"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "21.9",
+            "athlete": {
+             "shortName": "T. Herro",
+             "displayName": "Tyler Herro"
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "8.7",
+            "athlete": {
+             "shortName": "K. Ware",
+             "displayName": "Kel'el Ware"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "4.4",
+            "athlete": {
+             "shortName": "R. Rollins",
+             "displayName": "Ryan Rollins"
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ],
+      "status": {
+       "clock": 0.0,
+       "displayClock": "0.0",
+       "period": 0,
+       "type": {
+        "id": "1",
+        "name": "STATUS_SCHEDULED",
+        "state": "pre",
+        "completed": false,
+        "detail": "Wed, November 4th at 7:30 PM EST",
+        "shortDetail": "11/4 - 7:30 PM EST"
+       }
+      }
+     }
+    ],
+    "status": {
+     "clock": 0.0,
+     "displayClock": "0.0",
+     "period": 0,
+     "type": {
+      "id": "1",
+      "name": "STATUS_SCHEDULED",
+      "state": "pre",
+      "completed": false,
+      "detail": "Wed, November 4th at 7:30 PM EST",
+      "shortDetail": "11/4 - 7:30 PM EST"
+     }
+    }
+   },
+   {
+    "id": "401909925",
+    "date": "2026-11-05T00:30Z",
+    "endDate": null,
+    "name": "Charlotte Hornets at Brooklyn Nets",
+    "shortName": "CHA @ BKN",
+    "competitions": [
+     {
+      "id": "401909925",
+      "date": "2026-11-05T00:30Z",
+      "type": {
+       "abbreviation": "STD",
+       "text": null
+      },
+      "competitors": [
+       {
+        "id": "17",
+        "homeAway": "home",
+        "winner": null,
+        "order": 0,
+        "type": "team",
+        "team": {
+         "id": "17",
+         "location": "Brooklyn",
+         "name": "Nets",
+         "abbreviation": "BKN",
+         "displayName": "Brooklyn Nets",
+         "shortDisplayName": "Nets",
+         "color": "000000",
+         "alternateColor": "ffffff",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/bkn.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "1-6"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "20.9",
+            "athlete": {
+             "shortName": "J. Randle",
+             "displayName": "Julius Randle"
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "7.7",
+            "athlete": {
+             "shortName": "J. Randle",
+             "displayName": "Julius Randle"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "4.9",
+            "athlete": {
+             "shortName": "J. Randle",
+             "displayName": "Julius Randle"
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "id": "30",
+        "homeAway": "away",
+        "winner": null,
+        "order": 1,
+        "type": "team",
+        "team": {
+         "id": "30",
+         "location": "Charlotte",
+         "name": "Hornets",
+         "abbreviation": "CHA",
+         "displayName": "Charlotte Hornets",
+         "shortDisplayName": "Hornets",
+         "color": "008ca8",
+         "alternateColor": "1d1060",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/cha.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "3-5"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "23.5",
+            "athlete": {
+             "shortName": "B. Miller",
+             "displayName": "Brandon Miller"
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "9.5",
+            "athlete": {
+             "shortName": "M. Diabate",
+             "displayName": "Moussa Diabate"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "5.0",
+            "athlete": {
+             "shortName": "D. Schroder",
+             "displayName": "Dennis Schroder"
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ],
+      "status": {
+       "clock": 0.0,
+       "displayClock": "0.0",
+       "period": 0,
+       "type": {
+        "id": "1",
+        "name": "STATUS_SCHEDULED",
+        "state": "pre",
+        "completed": false,
+        "detail": "Wed, November 4th at 7:30 PM EST",
+        "shortDetail": "11/4 - 7:30 PM EST"
+       }
+      }
+     }
+    ],
+    "status": {
+     "clock": 0.0,
+     "displayClock": "0.0",
+     "period": 0,
+     "type": {
+      "id": "1",
+      "name": "STATUS_SCHEDULED",
+      "state": "pre",
+      "completed": false,
+      "detail": "Wed, November 4th at 7:30 PM EST",
+      "shortDetail": "11/4 - 7:30 PM EST"
+     }
+    }
+   },
+   {
+    "id": "401909926",
+    "date": "2026-11-05T00:30Z",
+    "endDate": null,
+    "name": "Chicago Bulls at New York Knicks",
+    "shortName": "CHI @ NY",
+    "competitions": [
+     {
+      "id": "401909926",
+      "date": "2026-11-05T00:30Z",
+      "type": {
+       "abbreviation": "STD",
+       "text": null
+      },
+      "competitors": [
+       {
+        "id": "18",
+        "homeAway": "home",
+        "winner": null,
+        "order": 0,
+        "type": "team",
+        "team": {
+         "id": "18",
+         "location": "New York",
+         "name": "Knicks",
+         "abbreviation": "NY",
+         "displayName": "New York Knicks",
+         "shortDisplayName": "Knicks",
+         "color": "1d428a",
+         "alternateColor": "f58426",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/ny.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "3-4"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "24.6",
+            "athlete": {
+             "shortName": "J. Brunson",
+             "displayName": "Jalen Brunson"
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "13.9",
+            "athlete": {
+             "shortName": "K. Towns",
+             "displayName": "Karl-Anthony Towns"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "5.3",
+            "athlete": {
+             "shortName": "J. Brunson",
+             "displayName": "Jalen Brunson"
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "id": "4",
+        "homeAway": "away",
+        "winner": null,
+        "order": 1,
+        "type": "team",
+        "team": {
+         "id": "4",
+         "location": "Chicago",
+         "name": "Bulls",
+         "abbreviation": "CHI",
+         "displayName": "Chicago Bulls",
+         "shortDisplayName": "Bulls",
+         "color": "ce1141",
+         "alternateColor": "000000",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/chi.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "1-6"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "21.6",
+            "athlete": {
+             "shortName": "C. Wilson",
+             "displayName": "Caleb Wilson"
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "8.6",
+            "athlete": {
+             "shortName": "J. Smith",
+             "displayName": "Jalen Smith"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "7.9",
+            "athlete": {
+             "shortName": "J. Giddey",
+             "displayName": "Josh Giddey"
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ],
+      "status": {
+       "clock": 0.0,
+       "displayClock": "0.0",
+       "period": 0,
+       "type": {
+        "id": "1",
+        "name": "STATUS_SCHEDULED",
+        "state": "pre",
+        "completed": false,
+        "detail": "Wed, November 4th at 7:30 PM EST",
+        "shortDetail": "11/4 - 7:30 PM EST"
+       }
+      }
+     }
+    ],
+    "status": {
+     "clock": 0.0,
+     "displayClock": "0.0",
+     "period": 0,
+     "type": {
+      "id": "1",
+      "name": "STATUS_SCHEDULED",
+      "state": "pre",
+      "completed": false,
+      "detail": "Wed, November 4th at 7:30 PM EST",
+      "shortDetail": "11/4 - 7:30 PM EST"
+     }
+    }
+   },
+   {
+    "id": "401909927",
+    "date": "2026-11-05T01:00Z",
+    "endDate": null,
+    "name": "Indiana Pacers at Memphis Grizzlies",
+    "shortName": "IND @ MEM",
+    "competitions": [
+     {
+      "id": "401909927",
+      "date": "2026-11-05T01:00Z",
+      "type": {
+       "abbreviation": "STD",
+       "text": null
+      },
+      "competitors": [
+       {
+        "id": "29",
+        "homeAway": "home",
+        "winner": null,
+        "order": 0,
+        "type": "team",
+        "team": {
+         "id": "29",
+         "location": "Memphis",
+         "name": "Grizzlies",
+         "abbreviation": "MEM",
+         "displayName": "Memphis Grizzlies",
+         "shortDisplayName": "Grizzlies",
+         "color": "5d76a9",
+         "alternateColor": "12173f",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/mem.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "6-1"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "28.2",
+            "athlete": {
+             "shortName": "T. Jerome",
+             "displayName": "Ty Jerome"
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "10.3",
+            "athlete": {
+             "shortName": "C. Boozer",
+             "displayName": "Cameron Boozer"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "5.7",
+            "athlete": {
+             "shortName": "T. Jerome",
+             "displayName": "Ty Jerome"
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "id": "11",
+        "homeAway": "away",
+        "winner": null,
+        "order": 1,
+        "type": "team",
+        "team": {
+         "id": "11",
+         "location": "Indiana",
+         "name": "Pacers",
+         "abbreviation": "IND",
+         "displayName": "Indiana Pacers",
+         "shortDisplayName": "Pacers",
+         "color": "0c2340",
+         "alternateColor": "ffd520",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/ind.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "2-6"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "21.4",
+            "athlete": {
+             "shortName": "P. Siakam",
+             "displayName": "Pascal Siakam"
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "7.4",
+            "athlete": {
+             "shortName": "P. Siakam",
+             "displayName": "Pascal Siakam"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "7.3",
+            "athlete": {
+             "shortName": "A. Nembhard",
+             "displayName": "Andrew Nembhard"
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ],
+      "status": {
+       "clock": 0.0,
+       "displayClock": "0.0",
+       "period": 0,
+       "type": {
+        "id": "1",
+        "name": "STATUS_SCHEDULED",
+        "state": "pre",
+        "completed": false,
+        "detail": "Wed, November 4th at 8:00 PM EST",
+        "shortDetail": "11/4 - 8:00 PM EST"
+       }
+      }
+     }
+    ],
+    "status": {
+     "clock": 0.0,
+     "displayClock": "0.0",
+     "period": 0,
+     "type": {
+      "id": "1",
+      "name": "STATUS_SCHEDULED",
+      "state": "pre",
+      "completed": false,
+      "detail": "Wed, November 4th at 8:00 PM EST",
+      "shortDetail": "11/4 - 8:00 PM EST"
+     }
+    }
+   },
+   {
+    "id": "401909928",
+    "date": "2026-11-05T01:00Z",
+    "endDate": null,
+    "name": "Utah Jazz at New Orleans Pelicans",
+    "shortName": "UTAH @ NO",
+    "competitions": [
+     {
+      "id": "401909928",
+      "date": "2026-11-05T01:00Z",
+      "type": {
+       "abbreviation": "STD",
+       "text": null
+      },
+      "competitors": [
+       {
+        "id": "3",
+        "homeAway": "home",
+        "winner": null,
+        "order": 0,
+        "type": "team",
+        "team": {
+         "id": "3",
+         "location": "New Orleans",
+         "name": "Pelicans",
+         "abbreviation": "NO",
+         "displayName": "New Orleans Pelicans",
+         "shortDisplayName": "Pelicans",
+         "color": "0a2240",
+         "alternateColor": "b4975a",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/no.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "3-4"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "21.3",
+            "athlete": {
+             "shortName": "Z. Williamson",
+             "displayName": "Zion Williamson"
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "7.7",
+            "athlete": {
+             "shortName": "D. Queen",
+             "displayName": "Derik Queen"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "4.9",
+            "athlete": {
+             "shortName": "J. Fears",
+             "displayName": "Jeremiah Fears"
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "id": "26",
+        "homeAway": "away",
+        "winner": null,
+        "order": 1,
+        "type": "team",
+        "team": {
+         "id": "26",
+         "location": "Utah",
+         "name": "Jazz",
+         "abbreviation": "UTAH",
+         "displayName": "Utah Jazz",
+         "shortDisplayName": "Jazz",
+         "color": "4e008e",
+         "alternateColor": "79a3dc",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/utah.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "1-6"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "19.6",
+            "athlete": {
+             "shortName": "K. George",
+             "displayName": "Keyonte George"
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "7.6",
+            "athlete": {
+             "shortName": "A. Bailey",
+             "displayName": "Ace Bailey"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "5.4",
+            "athlete": {
+             "shortName": "K. George",
+             "displayName": "Keyonte George"
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ],
+      "status": {
+       "clock": 0.0,
+       "displayClock": "0.0",
+       "period": 0,
+       "type": {
+        "id": "1",
+        "name": "STATUS_SCHEDULED",
+        "state": "pre",
+        "completed": false,
+        "detail": "Wed, November 4th at 8:00 PM EST",
+        "shortDetail": "11/4 - 8:00 PM EST"
+       }
+      }
+     }
+    ],
+    "status": {
+     "clock": 0.0,
+     "displayClock": "0.0",
+     "period": 0,
+     "type": {
+      "id": "1",
+      "name": "STATUS_SCHEDULED",
+      "state": "pre",
+      "completed": false,
+      "detail": "Wed, November 4th at 8:00 PM EST",
+      "shortDetail": "11/4 - 8:00 PM EST"
+     }
+    }
+   },
+   {
+    "id": "401909929",
+    "date": "2026-11-05T01:00Z",
+    "endDate": null,
+    "name": "Cleveland Cavaliers at Oklahoma City Thunder",
+    "shortName": "CLE @ OKC",
+    "competitions": [
+     {
+      "id": "401909929",
+      "date": "2026-11-05T01:00Z",
+      "type": {
+       "abbreviation": "STD",
+       "text": null
+      },
+      "competitors": [
+       {
+        "id": "25",
+        "homeAway": "home",
+        "winner": null,
+        "order": 0,
+        "type": "team",
+        "team": {
+         "id": "25",
+         "location": "Oklahoma City",
+         "name": "Thunder",
+         "abbreviation": "OKC",
+         "displayName": "Oklahoma City Thunder",
+         "shortDisplayName": "Thunder",
+         "color": "007ac1",
+         "alternateColor": "ef3b24",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/okc.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "5-2"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "28.4",
+            "athlete": {
+             "shortName": "S. Gilgeous-Alexander",
+             "displayName": "Shai Gilgeous-Alexander"
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "9.9",
+            "athlete": {
+             "shortName": "I. Hartenstein",
+             "displayName": "Isaiah Hartenstein"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "4.0",
+            "athlete": {
+             "shortName": "S. Gilgeous-Alexander",
+             "displayName": "Shai Gilgeous-Alexander"
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "id": "5",
+        "homeAway": "away",
+        "winner": null,
+        "order": 1,
+        "type": "team",
+        "team": {
+         "id": "5",
+         "location": "Cleveland",
+         "name": "Cavaliers",
+         "abbreviation": "CLE",
+         "displayName": "Cleveland Cavaliers",
+         "shortDisplayName": "Cavaliers",
+         "color": "860038",
+         "alternateColor": "bc945c",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/cle.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "4-3"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "21.9",
+            "athlete": {
+             "shortName": "D. Mitchell",
+             "displayName": "Donovan Mitchell"
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "8.7",
+            "athlete": {
+             "shortName": "J. Allen",
+             "displayName": "Jarrett Allen"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "6.3",
+            "athlete": {
+             "shortName": "J. Harden",
+             "displayName": "James Harden"
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ],
+      "status": {
+       "clock": 0.0,
+       "displayClock": "0.0",
+       "period": 0,
+       "type": {
+        "id": "1",
+        "name": "STATUS_SCHEDULED",
+        "state": "pre",
+        "completed": false,
+        "detail": "Wed, November 4th at 8:00 PM EST",
+        "shortDetail": "11/4 - 8:00 PM EST"
+       }
+      }
+     }
+    ],
+    "status": {
+     "clock": 0.0,
+     "displayClock": "0.0",
+     "period": 0,
+     "type": {
+      "id": "1",
+      "name": "STATUS_SCHEDULED",
+      "state": "pre",
+      "completed": false,
+      "detail": "Wed, November 4th at 8:00 PM EST",
+      "shortDetail": "11/4 - 8:00 PM EST"
+     }
+    }
+   },
+   {
+    "id": "401909930",
+    "date": "2026-11-05T01:30Z",
+    "endDate": null,
+    "name": "Minnesota Timberwolves at Houston Rockets",
+    "shortName": "MIN @ HOU",
+    "competitions": [
+     {
+      "id": "401909930",
+      "date": "2026-11-05T01:30Z",
+      "type": {
+       "abbreviation": "STD",
+       "text": null
+      },
+      "competitors": [
+       {
+        "id": "10",
+        "homeAway": "home",
+        "winner": null,
+        "order": 0,
+        "type": "team",
+        "team": {
+         "id": "10",
+         "location": "Houston",
+         "name": "Rockets",
+         "abbreviation": "HOU",
+         "displayName": "Houston Rockets",
+         "shortDisplayName": "Rockets",
+         "color": "ce0e2d",
+         "alternateColor": "000000",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/hou.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "7-1"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "23.3",
+            "athlete": {
+             "shortName": "A. Sengun",
+             "displayName": "Alperen Sengun"
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "8.7",
+            "athlete": {
+             "shortName": "A. Sengun",
+             "displayName": "Alperen Sengun"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "7.8",
+            "athlete": {
+             "shortName": "A. Sengun",
+             "displayName": "Alperen Sengun"
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "id": "16",
+        "homeAway": "away",
+        "winner": null,
+        "order": 1,
+        "type": "team",
+        "team": {
+         "id": "16",
+         "location": "Minnesota",
+         "name": "Timberwolves",
+         "abbreviation": "MIN",
+         "displayName": "Minnesota Timberwolves",
+         "shortDisplayName": "Timberwolves",
+         "color": "266092",
+         "alternateColor": "79bc43",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/min.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "5-3"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "16.9",
+            "athlete": {
+             "shortName": "L. Ball",
+             "displayName": "LaMelo Ball"
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "12.0",
+            "athlete": {
+             "shortName": "R. Gobert",
+             "displayName": "Rudy Gobert"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "5.9",
+            "athlete": {
+             "shortName": "L. Ball",
+             "displayName": "LaMelo Ball"
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ],
+      "status": {
+       "clock": 0.0,
+       "displayClock": "0.0",
+       "period": 0,
+       "type": {
+        "id": "1",
+        "name": "STATUS_SCHEDULED",
+        "state": "pre",
+        "completed": false,
+        "detail": "Wed, November 4th at 8:30 PM EST",
+        "shortDetail": "11/4 - 8:30 PM EST"
+       }
+      }
+     }
+    ],
+    "status": {
+     "clock": 0.0,
+     "displayClock": "0.0",
+     "period": 0,
+     "type": {
+      "id": "1",
+      "name": "STATUS_SCHEDULED",
+      "state": "pre",
+      "completed": false,
+      "detail": "Wed, November 4th at 8:30 PM EST",
+      "shortDetail": "11/4 - 8:30 PM EST"
+     }
+    }
+   },
+   {
+    "id": "401909931",
+    "date": "2026-11-05T02:00Z",
+    "endDate": null,
+    "name": "Toronto Raptors at Denver Nuggets",
+    "shortName": "TOR @ DEN",
+    "competitions": [
+     {
+      "id": "401909931",
+      "date": "2026-11-05T02:00Z",
+      "type": {
+       "abbreviation": "STD",
+       "text": null
+      },
+      "competitors": [
+       {
+        "id": "7",
+        "homeAway": "home",
+        "winner": null,
+        "order": 0,
+        "type": "team",
+        "team": {
+         "id": "7",
+         "location": "Denver",
+         "name": "Nuggets",
+         "abbreviation": "DEN",
+         "displayName": "Denver Nuggets",
+         "shortDisplayName": "Nuggets",
+         "color": "0e2240",
+         "alternateColor": "fec524",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/den.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "3-3"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "27.3",
+            "athlete": {
+             "shortName": "J. Murray",
+             "displayName": "Jamal Murray"
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "9.7",
+            "athlete": {
+             "shortName": "N. Jokic",
+             "displayName": "Nikola Jokic"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "9.0",
+            "athlete": {
+             "shortName": "N. Jokic",
+             "displayName": "Nikola Jokic"
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "id": "28",
+        "homeAway": "away",
+        "winner": null,
+        "order": 1,
+        "type": "team",
+        "team": {
+         "id": "28",
+         "location": "Toronto",
+         "name": "Raptors",
+         "abbreviation": "TOR",
+         "displayName": "Toronto Raptors",
+         "shortDisplayName": "Raptors",
+         "color": "d91244",
+         "alternateColor": "000000",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/tor.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "4-3"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "24.4",
+            "athlete": {
+             "shortName": "S. Barnes",
+             "displayName": "Scottie Barnes"
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "7.9",
+            "athlete": {
+             "shortName": "S. Barnes",
+             "displayName": "Scottie Barnes"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "5.6",
+            "athlete": {
+             "shortName": "I. Quickley",
+             "displayName": "Immanuel Quickley"
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ],
+      "status": {
+       "clock": 0.0,
+       "displayClock": "0.0",
+       "period": 0,
+       "type": {
+        "id": "1",
+        "name": "STATUS_SCHEDULED",
+        "state": "pre",
+        "completed": false,
+        "detail": "Wed, November 4th at 9:00 PM EST",
+        "shortDetail": "11/4 - 9:00 PM EST"
+       }
+      }
+     }
+    ],
+    "status": {
+     "clock": 0.0,
+     "displayClock": "0.0",
+     "period": 0,
+     "type": {
+      "id": "1",
+      "name": "STATUS_SCHEDULED",
+      "state": "pre",
+      "completed": false,
+      "detail": "Wed, November 4th at 9:00 PM EST",
+      "shortDetail": "11/4 - 9:00 PM EST"
+     }
+    }
+   },
+   {
+    "id": "401909932",
+    "date": "2026-11-05T02:00Z",
+    "endDate": null,
+    "name": "Portland Trail Blazers at Phoenix Suns",
+    "shortName": "POR @ PHX",
+    "competitions": [
+     {
+      "id": "401909932",
+      "date": "2026-11-05T02:00Z",
+      "type": {
+       "abbreviation": "STD",
+       "text": null
+      },
+      "competitors": [
+       {
+        "id": "21",
+        "homeAway": "home",
+        "winner": null,
+        "order": 0,
+        "type": "team",
+        "team": {
+         "id": "21",
+         "location": "Phoenix",
+         "name": "Suns",
+         "abbreviation": "PHX",
+         "displayName": "Phoenix Suns",
+         "shortDisplayName": "Suns",
+         "color": "29127a",
+         "alternateColor": "e56020",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/phx.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "1-4"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "23.0",
+            "athlete": {
+             "shortName": "D. Booker",
+             "displayName": "Devin Booker"
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "7.0",
+            "athlete": {
+             "shortName": "M. Bridges",
+             "displayName": "Miles Bridges"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "5.2",
+            "athlete": {
+             "shortName": "D. Booker",
+             "displayName": "Devin Booker"
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "id": "22",
+        "homeAway": "away",
+        "winner": null,
+        "order": 1,
+        "type": "team",
+        "team": {
+         "id": "22",
+         "location": "Portland",
+         "name": "Trail Blazers",
+         "abbreviation": "POR",
+         "displayName": "Portland Trail Blazers",
+         "shortDisplayName": "Trail Blazers",
+         "color": "e03a3e",
+         "alternateColor": "000000",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/por.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "5-1"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "23.8",
+            "athlete": {
+             "shortName": "D. Avdija",
+             "displayName": "Deni Avdija"
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "10.5",
+            "athlete": {
+             "shortName": "D. Clingan",
+             "displayName": "Donovan Clingan"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "5.5",
+            "athlete": {
+             "shortName": "D. Avdija",
+             "displayName": "Deni Avdija"
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ],
+      "status": {
+       "clock": 0.0,
+       "displayClock": "0.0",
+       "period": 0,
+       "type": {
+        "id": "1",
+        "name": "STATUS_SCHEDULED",
+        "state": "pre",
+        "completed": false,
+        "detail": "Wed, November 4th at 9:00 PM EST",
+        "shortDetail": "11/4 - 9:00 PM EST"
+       }
+      }
+     }
+    ],
+    "status": {
+     "clock": 0.0,
+     "displayClock": "0.0",
+     "period": 0,
+     "type": {
+      "id": "1",
+      "name": "STATUS_SCHEDULED",
+      "state": "pre",
+      "completed": false,
+      "detail": "Wed, November 4th at 9:00 PM EST",
+      "shortDetail": "11/4 - 9:00 PM EST"
+     }
+    }
+   },
+   {
+    "id": "401909933",
+    "date": "2026-11-05T02:30Z",
+    "endDate": null,
+    "name": "Dallas Mavericks at San Antonio Spurs",
+    "shortName": "DAL @ SA",
+    "competitions": [
+     {
+      "id": "401909933",
+      "date": "2026-11-05T02:30Z",
+      "type": {
+       "abbreviation": "STD",
+       "text": null
+      },
+      "competitors": [
+       {
+        "id": "24",
+        "homeAway": "home",
+        "winner": null,
+        "order": 0,
+        "type": "team",
+        "team": {
+         "id": "24",
+         "location": "San Antonio",
+         "name": "Spurs",
+         "abbreviation": "SA",
+         "displayName": "San Antonio Spurs",
+         "shortDisplayName": "Spurs",
+         "color": "000000",
+         "alternateColor": "c4ced4",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sa.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "5-2"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "25.7",
+            "athlete": {
+             "shortName": "V. Wembanyama",
+             "displayName": "Victor Wembanyama"
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "10.7",
+            "athlete": {
+             "shortName": "V. Wembanyama",
+             "displayName": "Victor Wembanyama"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "6.4",
+            "athlete": {
+             "shortName": "D. Fox",
+             "displayName": "De'Aaron Fox"
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "id": "6",
+        "homeAway": "away",
+        "winner": null,
+        "order": 1,
+        "type": "team",
+        "team": {
+         "id": "6",
+         "location": "Dallas",
+         "name": "Mavericks",
+         "abbreviation": "DAL",
+         "displayName": "Dallas Mavericks",
+         "shortDisplayName": "Mavericks",
+         "color": "0064b1",
+         "alternateColor": "bbc4ca",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/dal.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "4-3"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "25.2",
+            "athlete": {
+             "shortName": "C. Flagg",
+             "displayName": "Cooper Flagg"
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "7.7",
+            "athlete": {
+             "shortName": "P.J. Washington",
+             "displayName": "P.J. Washington"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "6.5",
+            "athlete": {
+             "shortName": "C. Flagg",
+             "displayName": "Cooper Flagg"
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ],
+      "status": {
+       "clock": 0.0,
+       "displayClock": "0.0",
+       "period": 0,
+       "type": {
+        "id": "1",
+        "name": "STATUS_SCHEDULED",
+        "state": "pre",
+        "completed": false,
+        "detail": "Wed, November 4th at 9:30 PM EST",
+        "shortDetail": "11/4 - 9:30 PM EST"
+       }
+      }
+     }
+    ],
+    "status": {
+     "clock": 0.0,
+     "displayClock": "0.0",
+     "period": 0,
+     "type": {
+      "id": "1",
+      "name": "STATUS_SCHEDULED",
+      "state": "pre",
+      "completed": false,
+      "detail": "Wed, November 4th at 9:30 PM EST",
+      "shortDetail": "11/4 - 9:30 PM EST"
+     }
+    }
+   },
+   {
+    "id": "401909934",
+    "date": "2026-11-05T03:00Z",
+    "endDate": null,
+    "name": "Los Angeles Lakers at Sacramento Kings",
+    "shortName": "LAL @ SAC",
+    "competitions": [
+     {
+      "id": "401909934",
+      "date": "2026-11-05T03:00Z",
+      "type": {
+       "abbreviation": "STD",
+       "text": null
+      },
+      "competitors": [
+       {
+        "id": "23",
+        "homeAway": "home",
+        "winner": null,
+        "order": 0,
+        "type": "team",
+        "team": {
+         "id": "23",
+         "location": "Sacramento",
+         "name": "Kings",
+         "abbreviation": "SAC",
+         "displayName": "Sacramento Kings",
+         "shortDisplayName": "Kings",
+         "color": "5a2d81",
+         "alternateColor": "6a7a82",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sac.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "1-6"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "26.1",
+            "athlete": {
+             "shortName": "D. Acuff Jr.",
+             "displayName": "Darius Acuff Jr."
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "14.6",
+            "athlete": {
+             "shortName": "D. Sabonis",
+             "displayName": "Domantas Sabonis"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "6.9",
+            "athlete": {
+             "shortName": "D. Sabonis",
+             "displayName": "Domantas Sabonis"
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "id": "13",
+        "homeAway": "away",
+        "winner": null,
+        "order": 1,
+        "type": "team",
+        "team": {
+         "id": "13",
+         "location": "Los Angeles",
+         "name": "Lakers",
+         "abbreviation": "LAL",
+         "displayName": "Los Angeles Lakers",
+         "shortDisplayName": "Lakers",
+         "color": "552583",
+         "alternateColor": "fdb927",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/lal.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "6-2"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "38.3",
+            "athlete": {
+             "shortName": "L. Doncic",
+             "displayName": "Luka Doncic"
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "10.5",
+            "athlete": {
+             "shortName": "W. Kessler",
+             "displayName": "Walker Kessler"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "8.1",
+            "athlete": {
+             "shortName": "L. Doncic",
+             "displayName": "Luka Doncic"
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ],
+      "status": {
+       "clock": 0.0,
+       "displayClock": "0.0",
+       "period": 0,
+       "type": {
+        "id": "1",
+        "name": "STATUS_SCHEDULED",
+        "state": "pre",
+        "completed": false,
+        "detail": "Wed, November 4th at 10:00 PM EST",
+        "shortDetail": "11/4 - 10:00 PM EST"
+       }
+      }
+     }
+    ],
+    "status": {
+     "clock": 0.0,
+     "displayClock": "0.0",
+     "period": 0,
+     "type": {
+      "id": "1",
+      "name": "STATUS_SCHEDULED",
+      "state": "pre",
+      "completed": false,
+      "detail": "Wed, November 4th at 10:00 PM EST",
+      "shortDetail": "11/4 - 10:00 PM EST"
+     }
+    }
+   },
+   {
+    "id": "401909935",
+    "date": "2026-11-05T03:30Z",
+    "endDate": null,
+    "name": "Miami Heat at LA Clippers",
+    "shortName": "MIA @ LAC",
+    "competitions": [
+     {
+      "id": "401909935",
+      "date": "2026-11-05T03:30Z",
+      "type": {
+       "abbreviation": "STD",
+       "text": null
+      },
+      "competitors": [
+       {
+        "id": "12",
+        "homeAway": "home",
+        "winner": null,
+        "order": 0,
+        "type": "team",
+        "team": {
+         "id": "12",
+         "location": "LA",
+         "name": "Clippers",
+         "abbreviation": "LAC",
+         "displayName": "LA Clippers",
+         "shortDisplayName": "Clippers",
+         "color": "12173f",
+         "alternateColor": "c8102e",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/lac.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "1-6"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "20.1",
+            "athlete": {
+             "shortName": "D. Garland",
+             "displayName": "Darius Garland"
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "6.4",
+            "athlete": {
+             "shortName": "I. Jackson",
+             "displayName": "Isaiah Jackson"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "6.6",
+            "athlete": {
+             "shortName": "D. Garland",
+             "displayName": "Darius Garland"
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "id": "14",
+        "homeAway": "away",
+        "winner": null,
+        "order": 1,
+        "type": "team",
+        "team": {
+         "id": "14",
+         "location": "Miami",
+         "name": "Heat",
+         "abbreviation": "MIA",
+         "displayName": "Miami Heat",
+         "shortDisplayName": "Heat",
+         "color": "98002e",
+         "alternateColor": "000000",
+         "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/mia.png"
+        },
+        "score": "0",
+        "records": [
+         {
+          "name": "overall",
+          "type": "total",
+          "summary": "2-5"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "pointsPerGame",
+          "leaders": [
+           {
+            "displayValue": "28.4",
+            "athlete": {
+             "shortName": "G. Antetokounmpo",
+             "displayName": "Giannis Antetokounmpo"
+            }
+           }
+          ]
+         },
+         {
+          "name": "reboundsPerGame",
+          "leaders": [
+           {
+            "displayValue": "12.3",
+            "athlete": {
+             "shortName": "G. Antetokounmpo",
+             "displayName": "Giannis Antetokounmpo"
+            }
+           }
+          ]
+         },
+         {
+          "name": "assistsPerGame",
+          "leaders": [
+           {
+            "displayValue": "8.0",
+            "athlete": {
+             "shortName": "D. Mitchell",
+             "displayName": "Davion Mitchell"
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ],
+      "status": {
+       "clock": 0.0,
+       "displayClock": "0.0",
+       "period": 0,
+       "type": {
+        "id": "1",
+        "name": "STATUS_SCHEDULED",
+        "state": "pre",
+        "completed": false,
+        "detail": "Wed, November 4th at 10:30 PM EST",
+        "shortDetail": "11/4 - 10:30 PM EST"
+       }
+      }
+     }
+    ],
+    "status": {
+     "clock": 0.0,
+     "displayClock": "0.0",
+     "period": 0,
+     "type": {
+      "id": "1",
+      "name": "STATUS_SCHEDULED",
+      "state": "pre",
+      "completed": false,
+      "detail": "Wed, November 4th at 10:30 PM EST",
+      "shortDetail": "11/4 - 10:30 PM EST"
+     }
+    }
+   }
+  ]
  },
  "nfl_week": {
   "week": {
@@ -9125,6 +13251,32 @@
           "type": "total",
           "summary": "1-0-2"
          }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "S. Pilios",
+             "displayName": "Stavros Pilios"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "S. Pilios",
+             "displayName": "Stavros Pilios"
+            }
+           }
+          ]
+         }
         ]
        },
        {
@@ -9150,6 +13302,32 @@
           "name": "All Splits",
           "type": "total",
           "summary": "3-0-0"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "3",
+            "athlete": {
+             "shortName": "K. Mbapp\u00e9",
+             "displayName": "Kylian Mbapp\u00e9"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "3",
+            "athlete": {
+             "shortName": "K. Mbapp\u00e9",
+             "displayName": "Kylian Mbapp\u00e9"
+            }
+           }
+          ]
          }
         ]
        }
@@ -9222,6 +13400,32 @@
           "type": "total",
           "summary": "0-2-1"
          }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "A. Brown",
+             "displayName": "Archie Brown"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "A. Brown",
+             "displayName": "Archie Brown"
+            }
+           }
+          ]
+         }
         ]
        },
        {
@@ -9247,6 +13451,32 @@
           "name": "All Splits",
           "type": "total",
           "summary": "3-0-0"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "3",
+            "athlete": {
+             "shortName": "A. Mac Allister",
+             "displayName": "Alexis Mac Allister"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "3",
+            "athlete": {
+             "shortName": "A. Mac Allister",
+             "displayName": "Alexis Mac Allister"
+            }
+           }
+          ]
          }
         ]
        }
@@ -9319,6 +13549,32 @@
           "type": "total",
           "summary": "2-0-1"
          }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "4",
+            "athlete": {
+             "shortName": "S. Guirassy",
+             "displayName": "Serhou Guirassy"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "4",
+            "athlete": {
+             "shortName": "S. Guirassy",
+             "displayName": "Serhou Guirassy"
+            }
+           }
+          ]
+         }
         ]
        },
        {
@@ -9344,6 +13600,32 @@
           "name": "All Splits",
           "type": "total",
           "summary": "3-0-0"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "M. Bartra",
+             "displayName": "Marc Bartra"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "M. Bartra",
+             "displayName": "Marc Bartra"
+            }
+           }
+          ]
          }
         ]
        }
@@ -9416,6 +13698,32 @@
           "type": "total",
           "summary": "0-0-3"
          }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "G. Veiga",
+             "displayName": "Gabri Veiga"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "G. Veiga",
+             "displayName": "Gabri Veiga"
+            }
+           }
+          ]
+         }
         ]
        },
        {
@@ -9441,6 +13749,32 @@
           "name": "All Splits",
           "type": "total",
           "summary": "1-0-2"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "S. McTominay",
+             "displayName": "Scott McTominay"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "S. McTominay",
+             "displayName": "Scott McTominay"
+            }
+           }
+          ]
          }
         ]
        }
@@ -9513,6 +13847,32 @@
           "type": "total",
           "summary": "1-0-2"
          }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "F. Thauvin",
+             "displayName": "Florian Thauvin"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "F. Thauvin",
+             "displayName": "Florian Thauvin"
+            }
+           }
+          ]
+         }
         ]
        },
        {
@@ -9538,6 +13898,32 @@
           "name": "All Splits",
           "type": "total",
           "summary": "2-0-1"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "3",
+            "athlete": {
+             "shortName": "A. Douvikas",
+             "displayName": "Anastasios Douvikas"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "3",
+            "athlete": {
+             "shortName": "A. Douvikas",
+             "displayName": "Anastasios Douvikas"
+            }
+           }
+          ]
          }
         ]
        }
@@ -9610,6 +13996,32 @@
           "type": "total",
           "summary": "1-1-1"
          }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "G. Til",
+             "displayName": "Guus Til"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "G. Til",
+             "displayName": "Guus Til"
+            }
+           }
+          ]
+         }
         ]
        },
        {
@@ -9635,6 +14047,32 @@
           "name": "All Splits",
           "type": "total",
           "summary": "2-0-1"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "4",
+            "athlete": {
+             "shortName": "N. Tresoldi",
+             "displayName": "Nicolo Tresoldi"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "4",
+            "athlete": {
+             "shortName": "N. Tresoldi",
+             "displayName": "Nicolo Tresoldi"
+            }
+           }
+          ]
          }
         ]
        }
@@ -9707,6 +14145,32 @@
           "type": "total",
           "summary": "1-0-2"
          }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "B. Gruda",
+             "displayName": "Brajan Gruda"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "B. Gruda",
+             "displayName": "Brajan Gruda"
+            }
+           }
+          ]
+         }
         ]
        },
        {
@@ -9732,6 +14196,32 @@
           "name": "All Splits",
           "type": "total",
           "summary": "2-0-1"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "4",
+            "athlete": {
+             "shortName": "E. Haaland",
+             "displayName": "Erling Haaland"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "4",
+            "athlete": {
+             "shortName": "E. Haaland",
+             "displayName": "Erling Haaland"
+            }
+           }
+          ]
          }
         ]
        }
@@ -9804,6 +14294,32 @@
           "type": "total",
           "summary": "0-1-2"
          }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "D. Sturm",
+             "displayName": "Danijel Sturm"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "D. Sturm",
+             "displayName": "Danijel Sturm"
+            }
+           }
+          ]
+         }
         ]
        },
        {
@@ -9829,6 +14345,32 @@
           "name": "All Splits",
           "type": "total",
           "summary": "2-1-0"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "E. Eze",
+             "displayName": "Eberechi Eze"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "E. Eze",
+             "displayName": "Eberechi Eze"
+            }
+           }
+          ]
          }
         ]
        }
@@ -9901,6 +14443,32 @@
           "type": "total",
           "summary": "0-1-2"
          }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "P. Christiansen",
+             "displayName": "Peter Christiansen"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "P. Christiansen",
+             "displayName": "Peter Christiansen"
+            }
+           }
+          ]
+         }
         ]
        },
        {
@@ -9926,6 +14494,32 @@
           "name": "All Splits",
           "type": "total",
           "summary": "1-0-2"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "A. McCarthy",
+             "displayName": "Aden McCarthy"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "A. McCarthy",
+             "displayName": "Aden McCarthy"
+            }
+           }
+          ]
          }
         ]
        }
@@ -9998,6 +14592,32 @@
           "type": "total",
           "summary": "1-1-2"
          }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "F. Sj\u00f8vold",
+             "displayName": "Fredrik Sj\u00f8vold"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "F. Sj\u00f8vold",
+             "displayName": "Fredrik Sj\u00f8vold"
+            }
+           }
+          ]
+         }
         ]
        },
        {
@@ -10023,6 +14643,32 @@
           "name": "All Splits",
           "type": "total",
           "summary": "2-0-2"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "F. Flecker",
+             "displayName": "Florian Flecker"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "F. Flecker",
+             "displayName": "Florian Flecker"
+            }
+           }
+          ]
          }
         ]
        }
@@ -10095,6 +14741,32 @@
           "type": "total",
           "summary": "2-0-2"
          }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "A. Batrakov",
+             "displayName": "Alexey Batrakov"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "A. Batrakov",
+             "displayName": "Alexey Batrakov"
+            }
+           }
+          ]
+         }
         ]
        },
        {
@@ -10120,6 +14792,32 @@
           "name": "All Splits",
           "type": "total",
           "summary": "3-0-1"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "3",
+            "athlete": {
+             "shortName": "N. Jackson",
+             "displayName": "Nicolas Jackson"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "3",
+            "athlete": {
+             "shortName": "N. Jackson",
+             "displayName": "Nicolas Jackson"
+            }
+           }
+          ]
          }
         ]
        }
@@ -10192,6 +14890,32 @@
           "type": "total",
           "summary": "2-1-0"
          }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "E. Eze",
+             "displayName": "Eberechi Eze"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "E. Eze",
+             "displayName": "Eberechi Eze"
+            }
+           }
+          ]
+         }
         ]
        },
        {
@@ -10217,6 +14941,32 @@
           "name": "All Splits",
           "type": "total",
           "summary": "2-0-1"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "4",
+            "athlete": {
+             "shortName": "S. Guirassy",
+             "displayName": "Serhou Guirassy"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "4",
+            "athlete": {
+             "shortName": "S. Guirassy",
+             "displayName": "Serhou Guirassy"
+            }
+           }
+          ]
          }
         ]
        }
@@ -10289,6 +15039,32 @@
           "type": "total",
           "summary": "2-0-1"
          }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "3",
+            "athlete": {
+             "shortName": "A. Douvikas",
+             "displayName": "Anastasios Douvikas"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "3",
+            "athlete": {
+             "shortName": "A. Douvikas",
+             "displayName": "Anastasios Douvikas"
+            }
+           }
+          ]
+         }
         ]
        },
        {
@@ -10314,6 +15090,32 @@
           "name": "All Splits",
           "type": "total",
           "summary": "1-0-2"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "S. Pilios",
+             "displayName": "Stavros Pilios"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "S. Pilios",
+             "displayName": "Stavros Pilios"
+            }
+           }
+          ]
          }
         ]
        }
@@ -10386,6 +15188,32 @@
           "type": "total",
           "summary": "1-0-3"
          }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "G. Zechi\u00ebl",
+             "displayName": "Gjivai Zechi\u00ebl"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "G. Zechi\u00ebl",
+             "displayName": "Gjivai Zechi\u00ebl"
+            }
+           }
+          ]
+         }
         ]
        },
        {
@@ -10411,6 +15239,32 @@
           "name": "All Splits",
           "type": "total",
           "summary": "0-0-3"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "G. Veiga",
+             "displayName": "Gabri Veiga"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "G. Veiga",
+             "displayName": "Gabri Veiga"
+            }
+           }
+          ]
          }
         ]
        }
@@ -10483,6 +15337,32 @@
           "type": "total",
           "summary": "2-0-1"
          }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "4",
+            "athlete": {
+             "shortName": "E. Haaland",
+             "displayName": "Erling Haaland"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "4",
+            "athlete": {
+             "shortName": "E. Haaland",
+             "displayName": "Erling Haaland"
+            }
+           }
+          ]
+         }
         ]
        },
        {
@@ -10508,6 +15388,32 @@
           "name": "All Splits",
           "type": "total",
           "summary": "1-0-2"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "S. McTominay",
+             "displayName": "Scott McTominay"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "S. McTominay",
+             "displayName": "Scott McTominay"
+            }
+           }
+          ]
          }
         ]
        }
@@ -10580,6 +15486,32 @@
           "type": "total",
           "summary": "1-0-2"
          }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "B. Gruda",
+             "displayName": "Brajan Gruda"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "B. Gruda",
+             "displayName": "Brajan Gruda"
+            }
+           }
+          ]
+         }
         ]
        },
        {
@@ -10605,6 +15537,32 @@
           "name": "All Splits",
           "type": "total",
           "summary": "1-0-2"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "F. Thauvin",
+             "displayName": "Florian Thauvin"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "F. Thauvin",
+             "displayName": "Florian Thauvin"
+            }
+           }
+          ]
          }
         ]
        }
@@ -10677,6 +15635,32 @@
           "type": "total",
           "summary": "3-0-0"
          }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "3",
+            "athlete": {
+             "shortName": "K. Mbapp\u00e9",
+             "displayName": "Kylian Mbapp\u00e9"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "3",
+            "athlete": {
+             "shortName": "K. Mbapp\u00e9",
+             "displayName": "Kylian Mbapp\u00e9"
+            }
+           }
+          ]
+         }
         ]
        },
        {
@@ -10702,6 +15686,32 @@
           "name": "All Splits",
           "type": "total",
           "summary": "1-1-1"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "G. Til",
+             "displayName": "Guus Til"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "G. Til",
+             "displayName": "Guus Til"
+            }
+           }
+          ]
          }
         ]
        }
@@ -10774,6 +15784,32 @@
           "type": "total",
           "summary": "0-0-4"
          }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "S. Camara",
+             "displayName": "Suleiman Camara"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "S. Camara",
+             "displayName": "Suleiman Camara"
+            }
+           }
+          ]
+         }
         ]
        },
        {
@@ -10799,6 +15835,32 @@
           "name": "All Splits",
           "type": "total",
           "summary": "3-0-0"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "M. Bartra",
+             "displayName": "Marc Bartra"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "M. Bartra",
+             "displayName": "Marc Bartra"
+            }
+           }
+          ]
          }
         ]
        }
@@ -10871,6 +15933,32 @@
           "type": "total",
           "summary": "1-0-2"
          }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "A. McCarthy",
+             "displayName": "Aden McCarthy"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "A. McCarthy",
+             "displayName": "Aden McCarthy"
+            }
+           }
+          ]
+         }
         ]
        },
        {
@@ -10896,6 +15984,32 @@
           "name": "All Splits",
           "type": "total",
           "summary": "3-0-1"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "L. Yamal",
+             "displayName": "Lamine Yamal"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "L. Yamal",
+             "displayName": "Lamine Yamal"
+            }
+           }
+          ]
          }
         ]
        }
@@ -10968,6 +16082,32 @@
           "type": "total",
           "summary": "0-1-2"
          }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "D. Sturm",
+             "displayName": "Danijel Sturm"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "D. Sturm",
+             "displayName": "Danijel Sturm"
+            }
+           }
+          ]
+         }
         ]
        },
        {
@@ -10993,6 +16133,32 @@
           "name": "All Splits",
           "type": "total",
           "summary": "1-0-3"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "S. Mouri\u00f1o",
+             "displayName": "Santiago Mouri\u00f1o"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "S. Mouri\u00f1o",
+             "displayName": "Santiago Mouri\u00f1o"
+            }
+           }
+          ]
          }
         ]
        }
@@ -11065,6 +16231,32 @@
           "type": "total",
           "summary": "1-1-2"
          }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "M. Llorente",
+             "displayName": "Marcos Llorente"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "M. Llorente",
+             "displayName": "Marcos Llorente"
+            }
+           }
+          ]
+         }
         ]
        },
        {
@@ -11090,6 +16282,32 @@
           "name": "All Splits",
           "type": "total",
           "summary": "0-1-2"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "P. Christiansen",
+             "displayName": "Peter Christiansen"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "P. Christiansen",
+             "displayName": "Peter Christiansen"
+            }
+           }
+          ]
          }
         ]
        }
@@ -11162,6 +16380,32 @@
           "type": "total",
           "summary": "2-0-1"
          }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "4",
+            "athlete": {
+             "shortName": "N. Tresoldi",
+             "displayName": "Nicolo Tresoldi"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "4",
+            "athlete": {
+             "shortName": "N. Tresoldi",
+             "displayName": "Nicolo Tresoldi"
+            }
+           }
+          ]
+         }
         ]
        },
        {
@@ -11187,6 +16431,32 @@
           "name": "All Splits",
           "type": "total",
           "summary": "3-0-0"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "3",
+            "athlete": {
+             "shortName": "A. Mac Allister",
+             "displayName": "Alexis Mac Allister"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "3",
+            "athlete": {
+             "shortName": "A. Mac Allister",
+             "displayName": "Alexis Mac Allister"
+            }
+           }
+          ]
          }
         ]
        }
@@ -11259,6 +16529,32 @@
           "type": "total",
           "summary": "2-0-2"
          }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "L. Mart\u00ednez",
+             "displayName": "Lautaro Mart\u00ednez"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "L. Mart\u00ednez",
+             "displayName": "Lautaro Mart\u00ednez"
+            }
+           }
+          ]
+         }
         ]
        },
        {
@@ -11284,6 +16580,32 @@
           "name": "All Splits",
           "type": "total",
           "summary": "2-1-1"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "4",
+            "athlete": {
+             "shortName": "E. Demirovic",
+             "displayName": "Ermedin Demirovic"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "4",
+            "athlete": {
+             "shortName": "E. Demirovic",
+             "displayName": "Ermedin Demirovic"
+            }
+           }
+          ]
          }
         ]
        }
@@ -11356,6 +16678,32 @@
           "type": "total",
           "summary": "0-1-3"
          }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "S. Diaoune",
+             "displayName": "Soriba Diaoune"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "S. Diaoune",
+             "displayName": "Soriba Diaoune"
+            }
+           }
+          ]
+         }
         ]
        },
        {
@@ -11381,6 +16729,32 @@
           "name": "All Splits",
           "type": "total",
           "summary": "2-2-0"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "4",
+            "athlete": {
+             "shortName": "H. Kane",
+             "displayName": "Harry Kane"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "4",
+            "athlete": {
+             "shortName": "H. Kane",
+             "displayName": "Harry Kane"
+            }
+           }
+          ]
          }
         ]
        }
@@ -11453,6 +16827,32 @@
           "type": "total",
           "summary": "4-0-0"
          }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "3",
+            "athlete": {
+             "shortName": "O. Demb\u00e9l\u00e9",
+             "displayName": "Ousmane Demb\u00e9l\u00e9"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "3",
+            "athlete": {
+             "shortName": "O. Demb\u00e9l\u00e9",
+             "displayName": "Ousmane Demb\u00e9l\u00e9"
+            }
+           }
+          ]
+         }
         ]
        },
        {
@@ -11478,6 +16878,32 @@
           "name": "All Splits",
           "type": "total",
           "summary": "1-1-2"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "3",
+            "athlete": {
+             "shortName": "D. Malen",
+             "displayName": "Donyell Malen"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "3",
+            "athlete": {
+             "shortName": "D. Malen",
+             "displayName": "Donyell Malen"
+            }
+           }
+          ]
          }
         ]
        }
@@ -11550,6 +16976,32 @@
           "type": "total",
           "summary": "1-1-2"
          }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "G. Mendoza",
+             "displayName": "Gleiker Mendoza"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "2",
+            "athlete": {
+             "shortName": "G. Mendoza",
+             "displayName": "Gleiker Mendoza"
+            }
+           }
+          ]
+         }
         ]
        },
        {
@@ -11575,6 +17027,32 @@
           "name": "All Splits",
           "type": "total",
           "summary": "0-2-1"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "A. Brown",
+             "displayName": "Archie Brown"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "A. Brown",
+             "displayName": "Archie Brown"
+            }
+           }
+          ]
          }
         ]
        }
@@ -11647,6 +17125,32 @@
           "type": "total",
           "summary": "3-0-1"
          }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "4",
+            "athlete": {
+             "shortName": "L. Su\u00e1rez",
+             "displayName": "Luis Su\u00e1rez"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "4",
+            "athlete": {
+             "shortName": "L. Su\u00e1rez",
+             "displayName": "Luis Su\u00e1rez"
+            }
+           }
+          ]
+         }
         ]
        },
        {
@@ -11672,6 +17176,32 @@
           "name": "All Splits",
           "type": "total",
           "summary": "2-0-2"
+         }
+        ],
+        "leaders": [
+         {
+          "name": "goals",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "B. Fernandes",
+             "displayName": "Bruno Fernandes"
+            }
+           }
+          ]
+         },
+         {
+          "name": "goalsLeaders",
+          "leaders": [
+           {
+            "displayValue": "1",
+            "athlete": {
+             "shortName": "B. Fernandes",
+             "displayName": "Bruno Fernandes"
+            }
+           }
+          ]
          }
         ]
        }

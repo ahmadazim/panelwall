@@ -76,7 +76,7 @@ def _tournament_tag(name: str) -> str:
     return " ".join(n.split())[:9] or name.upper()[:9]
 
 
-SECTIONS = ("boston", "nfl", "ucl", "f1", "tennis")
+SECTIONS = ("boston", "nfl", "nba", "ucl", "f1", "tennis")
 CARD_W = 128
 CREST = 22
 WALL_MAX_SLIDES = 3            # per section in the cycling wall; the dedicated panels show everything
@@ -152,11 +152,13 @@ class SportsChannel(Channel):
     def _section_slides(self, sec: str) -> list[tuple]:
         f = self.feed
         if sec == "live":
-            return [("live", self._slide_live, g, 10.0) for g in f.games if g.live]
+            return [("live", self._slide_team, key, 10.0) for key in self._live_teams()]
         if sec == "boston":
-            return [("boston", self._slide_week, None, 10.0)] if self._week_rows() else []
+            return [("boston", self._slide_team, key, 9.0) for key in self._active_teams()]
         if sec == "nfl":
             return [("nfl", self._slide_pair, p, PAIR_SECONDS) for p in _pairs(self._nfl_order())]
+        if sec == "nba":
+            return [("nba", self._slide_pair, p, PAIR_SECONDS) for p in _pairs(self._nba_order())]
         if sec == "ucl":
             return [("ucl", self._slide_pair, p, PAIR_SECONDS) for p in _pairs(self._ucl_day())]
         if sec == "f1":
@@ -164,6 +166,71 @@ class SportsChannel(Channel):
         if sec == "tennis":
             return [("tennis", self._slide_tennis, p, PAIR_SECONDS) for p in _pairs(self._tennis_rows())]
         return []
+
+    # ---- Boston: one screen per team in season ------------------------------------------------
+    def _team_games(self, key: tuple) -> tuple[Game | None, Game | None]:
+        """(last-or-live, next) for a tracked team."""
+        lg, ab = key
+        gs = self.feed.team_games(lg, ab)
+        live = [g for g in gs if g.live]
+        done = [g for g in gs if g.state == "post"]
+        nxt = [g for g in gs if g.state == "pre" and not g.cancelled]
+        last = live[0] if live else (max(done, key=lambda g: g.start) if done else None)
+        return last, (min(nxt, key=lambda g: g.start) if nxt else None)
+
+    def _active_teams(self) -> list[tuple]:
+        """Tracked teams in season: a game in the last 10 days or the next 14."""
+        now = self.feed.now()
+        out = []
+        for lg, ab, _ in self.feed.teams:
+            last, nxt = self._team_games((lg, ab))
+            recent = last is not None and (last.live or now - last.start <= timedelta(days=10))
+            soon = nxt is not None and nxt.start - now <= timedelta(days=14)
+            if recent or soon:
+                out.append((lg, ab))
+        return out
+
+    def _live_teams(self) -> list[tuple]:
+        return [(lg, ab) for lg, ab, _ in self.feed.teams if any(g.live for g in self.feed.team_games(lg, ab))]
+
+    def _slide_team(self, frame: Frame, key: tuple) -> None:
+        lg, ab = key
+        info = self.feed.team_info.get(key, {})
+        last, nxt = self._team_games(key)
+        sample = last or nxt
+        team = sample.team(ab) if sample else None
+        # header: colour chip, NAME (white), LEAGUE (dim), record (amber) ... standing (grey, right)
+        x = 2
+        if team is not None:
+            team_mark(frame.draw, x, 1, hex_color(team.color), hex_color(team.alt_color, None) if team.alt_color else None, size=7)
+            x += 11
+        name = (info.get("name") or (team.nickname if team else ab)).upper()
+        frame.text(x, 0, name, fonts.SMALL, WHITE)
+        x += fonts.width(name + " ") + 2
+        frame.text(x, 0, lg.upper(), fonts.SMALL, GREY)
+        x += fonts.width(lg.upper() + " ") + 2
+        rec = info.get("record") or (team.record if team else "")
+        if rec:
+            frame.text(x, 0, rec, fonts.SMALL, AMBER)
+            x += fonts.width(rec + " ") + 4
+        standing = info.get("standing", "").upper().replace(" DIVISION", "").replace(" CONFERENCE", " CONF")
+        if standing:
+            frame.text_right(W - 2, 0, standing, fonts.SMALL, GREY, max_w=W - 2 - x)
+        rows = (39, 47, 55)
+        if last is not None:
+            self._match_card(frame, 0, last, y0=9, rows=rows[:2], show_day=True)   # 2 detail rows; the 3rd is WIN/LOSS
+            if last.state == "post":
+                us, them = last.team(ab), last.opponent(ab)
+                if us is not None and us.score is not None and them.score is not None:
+                    word, col = ("WIN", GREEN) if us.score > them.score else (("LOSS", RED) if us.score < them.score else ("TIE", GREY))
+                    frame.text_center(CARD_W // 2, rows[-1], word, fonts.SMALL, col)
+        if nxt is not None:
+            self._match_card(frame, CARD_W, nxt, y0=9, rows=())                    # the countdown is the only detail
+            days = (nxt.start.astimezone(self.feed.now().tzinfo).date() - self.feed.now().date()).days
+            when = "TODAY" if days == 0 else ("TOMORROW" if days == 1 else f"IN {days} DAYS")
+            frame.text_center(CARD_W + CARD_W // 2, rows[-1], when, fonts.SMALL, AMBER)
+        if last is not None and nxt is not None:
+            frame.draw.line([(CARD_W - 1, 11), (CARD_W - 1, H - 3)], fill=(28, 28, 32))
 
     def slides(self) -> list[tuple]:
         if self.fixed_page:
@@ -192,7 +259,8 @@ class SportsChannel(Channel):
         if self.feed.event_game and time.time() < self.feed.event_until and "boston" in self.sections:
             g = next((g for g in self.feed.games if g.id == self.feed.event_game), None)
             if g is not None:
-                return ("live", self._slide_live, g, 15.0)
+                ab = self.feed.tracked_abbr(g)
+                return ("live", self._slide_team, (g.league, ab), 15.0)
         slides = self.slides()
         if not slides:
             return None
@@ -220,10 +288,11 @@ class SportsChannel(Channel):
     def render(self, frame: Frame) -> None:
         sl = self.current_slide()
         if sl is None:
-            title = {"nfl": "NFL", "ucl": "CHAMPIONS LEAGUE", "f1": "F1", "tennis": "TENNIS"}.get(self.name, CONFIG.sports.city.upper())
+            title = {"nfl": "NFL", "nba": "NBA", "ucl": "CHAMPIONS LEAGUE", "f1": "F1", "tennis": "TENNIS"}.get(self.name, CONFIG.sports.city.upper())
             self._header(frame, title, "")
             err = self.feed.last_error
-            frame.text_center(W // 2, 26, "NO DATA" if err else ("NOTHING ON" if self.feed.updated_at else "LOADING..."),
+            loaded = all(sec in self.feed.fetched for sec in self.sections)
+            frame.text_center(W // 2, 26, "NO DATA" if err else ("NOTHING ON" if loaded else "LOADING..."),
                               fonts.MEDIUM, RED if err else GREY)
             if err:
                 frame.text_center(W // 2, 38, err.upper()[:40], fonts.SMALL, RED)
@@ -288,26 +357,29 @@ class SportsChannel(Channel):
         alt = hex_color(t.alt_color, None) if t.alt_color else None
         team_mark(frame.draw, x + 3, y + 3, col, alt, size=16)        # placeholder until the crest arrives
 
-    def _match_card(self, frame: Frame, x0: int, g: Game) -> None:
+    def _match_card(self, frame: Frame, x0: int, g: Game, y0: int = 0, rows: tuple = (31, 39, 47, 55),
+                    show_day: bool = False) -> None:
+        """One 128 px game card. y0 shifts it down (the Boston screens put a header above it);
+        show_day adds the weekday to a final ('FINAL MON') so a 'last game' card reads on its own."""
         now = self.feed.now()
         soccer = g.league == "ucl"
         left, right = (g.home, g.away) if soccer else (g.away, g.home)      # soccer lists home first; US sports away @ home
-        self._crest(frame, x0 + 3, 1, left)
-        self._crest(frame, x0 + CARD_W - 3 - CREST, 1, right)
+        self._crest(frame, x0 + 3, y0 + 1, left)
+        self._crest(frame, x0 + CARD_W - 3 - CREST, y0 + 1, right)
         cx = x0 + CARD_W // 2
         post, pre, live = g.state == "post", g.state == "pre", g.state == "in"
         ls, rs = left.score or 0, right.score or 0
+        local = g.start.astimezone(now.tzinfo)
         if pre:
-            local = g.start.astimezone(now.tzinfo)
-            frame.text_center(cx, 4, _clock_text(local), fonts.MEDIUM, WHITE)
+            frame.text_center(cx, y0 + 8, _clock_text(local), fonts.MEDIUM, WHITE)
             day = "TODAY" if local.date() == now.date() else f"{DAYS[local.weekday()]} {local.month}/{local.day}"
             status, scol = day, GREY
         else:
             score = f"{ls}-{rs}"
             if fonts.width(score, fonts.LARGE) <= CARD_W - 2 * CREST - 14:
-                frame.text_center(cx, 4, score, fonts.LARGE, WHITE)
+                frame.text_center(cx, y0 + 4, score, fonts.LARGE, WHITE)
             else:
-                frame.text_center(cx, 8, score, fonts.MEDIUM, WHITE)
+                frame.text_center(cx, y0 + 8, score, fonts.MEDIUM, WHITE)
             if live:
                 if soccer:
                     status = (g.short_detail if g.short_detail.upper() in ("HT", "HALFTIME") else g.clock or g.short_detail).upper()
@@ -316,19 +388,53 @@ class SportsChannel(Channel):
                 scol = GREEN
             else:
                 status = "FT" if soccer else ("FINAL OT" if "OT" in g.short_detail.upper() else "FINAL")
+                if show_day and local.date() != now.date():
+                    status += " " + DAYS[local.weekday()]
                 scol = GREY
         lcol = WHITE if not post or ls >= rs else GREY
         rcol = WHITE if not post or rs >= ls else GREY
-        frame.text(x0 + 3, 22, left.abbreviation[:4], fonts.SMALL, lcol)
-        frame.text_right(x0 + CARD_W - 3, 22, right.abbreviation[:4], fonts.SMALL, rcol)
-        frame.text_center(cx, 22, status[:10], fonts.SMALL, scol)
-        rows = (31, 39, 47, 55)
+        frame.text(x0 + 3, y0 + 22, left.abbreviation[:4], fonts.SMALL, lcol)
+        frame.text_right(x0 + CARD_W - 3, y0 + 22, right.abbreviation[:4], fonts.SMALL, rcol)
+        frame.text_center(cx, y0 + 22, status[:12], fonts.SMALL, scol)
         if soccer:
             self._goal_rows(frame, x0, g, left, rows)
+        elif g.league == "nba":
+            self._nba_rows(frame, x0, g, left, right, rows)
         else:
             self._us_rows(frame, x0, g, left, right, rows)
 
+    def _nba_rows(self, frame: Frame, x0: int, g: Game, left: Team, right: Team, rows: tuple) -> None:
+        """Each side's points / rebounds / assists leader: 'TATUM 32P' (game) or 'TATUM 27.0P' (season, pre-game)."""
+        half = CARD_W // 2 - 4
+        tags = {"points": "P", "rebounds": "R", "assists": "A", "pointsPerGame": "P", "reboundsPerGame": "R", "assistsPerGame": "A"}
+        for team, right_side in ((left, False), (right, True)):
+            lines = []
+            for cat, name, value in team.leaders:
+                tag = tags.get(cat)
+                if tag is None or not name:
+                    continue
+                if cat.endswith("PerGame"):                       # season averages: whole numbers read better
+                    try:
+                        value = str(round(float(value)))
+                    except ValueError:
+                        pass
+                tail = f"{value}{tag}"
+                last = _last_name(name)
+                while last and fonts.width(f"{last} {tail}") > half:
+                    last = last[:-1]
+                lines.append(f"{last} {tail}")
+            col = DIM if g.state == "pre" else GREY
+            for y, txt in zip(rows, lines):
+                if right_side:
+                    frame.text_right(x0 + CARD_W - 3, y, txt, fonts.SMALL, col)
+                else:
+                    frame.text(x0 + 3, y, txt, fonts.SMALL, col)
+        if g.state == "pre" and (left.leaders or right.leaders) and len(rows) > 3:
+            frame.text_center(x0 + CARD_W // 2, rows[-1], "SEASON AVG", fonts.SMALL, DIM)
+
     def _goal_rows(self, frame: Frame, x0: int, g: Game, left: Team, rows: tuple) -> None:
+        if not rows:
+            return
         if g.state == "pre":
             if left.record or g.opponent(left.abbreviation).record:
                 frame.text(x0 + 3, rows[0], left.record, fonts.SMALL, DIM)
@@ -363,6 +469,8 @@ class SportsChannel(Channel):
             frame.text_center(x0 + CARD_W // 2, rows[0], "NO GOALS", fonts.SMALL, DIM)
 
     def _us_rows(self, frame: Frame, x0: int, g: Game, left: Team, right: Team, rows: tuple) -> None:
+        if not rows:
+            return
         cx = x0 + CARD_W // 2
         if g.state == "pre":
             if left.record or right.record:
@@ -370,12 +478,26 @@ class SportsChannel(Channel):
                 frame.text_right(x0 + CARD_W - 3, rows[0], right.record, fonts.SMALL, DIM)
             return
         i = 0
+        if g.live and g.league == "mlb":
+            d = frame.draw
+            sit = g.situation
+            bx, by = cx - 18, rows[0] + 3
+            for (dx, dy), key in (((4, 0), "onSecond"), ((0, 3), "onThird"), ((8, 3), "onFirst")):
+                on = bool(sit.get(key))
+                d.rectangle([bx + dx, by + dy, bx + dx + 2, by + dy + 2], fill=AMBER if on else None, outline=AMBER if on else DIM)
+            if sit.get("outs") is not None:
+                frame.text(cx - 4, rows[0], f"{sit['outs']} OUT", fonts.SMALL, WHITE)
+            i = 1
         if g.live and g.situation.get("downDistanceText"):
             frame.text_center(cx, rows[0], g.situation["downDistanceText"].upper()[:20], fonts.SMALL, AMBER, max_w=CARD_W - 6)
             i = 1
         for cat, name, value in g.leaders[: len(rows) - i]:
             frame.text(x0 + 3, rows[i], _compact_leader(cat, name, value), fonts.SMALL, GREY, max_w=CARD_W - 6)
             i += 1
+
+    def _nba_order(self) -> list[Game]:
+        rank = {"in": 0, "pre": 1, "post": 2}
+        return sorted(self.feed.nba_day, key=lambda g: (rank.get(g.state, 3), g.start))
 
     def _nfl_order(self) -> list[Game]:
         rank = {"in": 0, "pre": 1, "post": 2}                 # live first, then upcoming, then finals

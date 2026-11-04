@@ -29,8 +29,9 @@ web         the control server (standard library http.server, no build step)
 | `greenc`, `greend` | Green Line C and D strips (home Kenmore by default; `PW_GREEN_HOME_C` / `PW_GREEN_HOME_D` to change) | 5 |
 | `green` | all three Green branches on one screen (termini labelled, trains moving, home in amber) with Washington Street's next trains and the 65 bus | 5 |
 | `sports` | the cycling sports wall: every section below in turn (max 3 slides each), with a live Boston game card returning after each section | 25 for 15 s after a Boston score, 12 Boston live, 4 otherwise |
-| `boston` | Boston's week (last results, next games) and the live game card when one is on | same as above |
+| `boston` | one screen per Boston team in season (out-of-season teams skipped): team, league, record and standing on top; the last game (or the live one) on the left with crests, score and WIN/LOSS; the next game on the right with kickoff and a countdown | same as above |
 | `nfl` | NFL week, two games per screen: team crests, big score or kickoff, quarter and clock, down and distance, passing/rushing/receiving leaders | 4 |
+| `nba` | today's NBA games (yesterday's on off days), two per screen: crests, score or tip-off, quarter and clock, each team's points / rebounds / assists leaders (season averages before tip-off) | 4 |
 | `ucl` | Champions League matchday, two matches per screen: crests, score, live minute, goal scorers with minutes (P penalty, OG own goal), red cards | 4 |
 | `f1` | host-country flag beside each Grand Prix name, last race podium (P2, P1, P3 with team colours), next race countdown, the winner's car in livery lapping the bottom of the wall | 4 |
 | `tennis` | ATP/WTA, two TV-style scorebugs per screen: tournament, round, names, set boxes, the winner's ball | 4 |
@@ -56,7 +57,7 @@ python -m panelwall demo-flights                         # fixture data, live py
 python -m panelwall demo-radar | demo-silhouette | demo-mbta | demo-sports
 python -m panelwall demo-forecast --view week|hourly     # omit --view to alternate
 python -m panelwall demo-meadow --sky rain --hour 19      # force a sky / local hour for review
-python -m panelwall demo-sports --page boston|nfl|ucl|f1|tennis|live   # or demo-ucl, demo-f1, ...
+python -m panelwall demo-sports --page boston|nfl|nba|ucl|f1|tennis   # or demo-ucl, demo-f1, ...
 python tools/capture_espn_fixture.py                     # refresh the sports fixture + crest tiles from live ESPN
 python -m panelwall probe-sports | probe-forecast        # hit every ESPN source / Open-Meteo and summarise
 python -m panelwall run                                  # live data + control UI on :8080
@@ -117,7 +118,7 @@ All optional. The app runs with none of them set.
 | `PW_GREEN_HOME_C`, `PW_GREEN_HOME_D` | `place-kencl` (Kenmore) | home station for the C and D panels |
 | `PW_TEAMS` | `mlb:BOS:SOX,nfl:NE:PATS,nba:BOS:CELTS,nhl:BOS:B'S` | tracked teams as `league:ESPN-abbreviation:label`; labels <= 5 chars fit next to any status |
 | `PW_CITY` | `BOSTON` | header of the sports channel |
-| `PW_SPORTS` | `boston,nfl,ucl,f1,tennis` | sections of the `sports` wall, in rotation order |
+| `PW_SPORTS` | `boston,nfl,nba,ucl,f1,tennis` | sections of the `sports` wall, in rotation order |
 | `PW_LOGO_CACHE` | `~/.panelwall/logos` | where downloaded team crests are cached (each is fetched once, ever) |
 | `PW_TZ` | `America/New_York` | timezone for Open-Meteo timestamps and prayer-time calculation |
 | `PW_PRAYERS_URL` | your fiveprayers.org display page | the page has no API: it is fetched every 6 h for its parameters and fixed iqama times, and the athan times are computed locally with the same algorithm its JavaScript uses (verified against it) |

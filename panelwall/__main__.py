@@ -28,7 +28,7 @@ def _sink(args):
     return make_sink("sim", png_path=args.png, window=None if not args.no_window else False)
 
 
-DEFAULT_CHANNELS = ["flightwall", "flights", "radar", "silhouette", "mbta", "greenb", "greenc", "greend", "green", "sports", "boston", "nfl", "ucl", "f1", "tennis", "forecast", "prayers", "meadow"]
+DEFAULT_CHANNELS = ["flightwall", "flights", "radar", "silhouette", "mbta", "greenb", "greenc", "greend", "green", "sports", "boston", "nfl", "nba", "ucl", "f1", "tennis", "forecast", "prayers", "meadow"]
 AIRCRAFT_CHANNELS = {"flightwall", "flights", "radar", "silhouette"}
 
 
@@ -67,7 +67,7 @@ def build_channels(names: list[str]):
             out.append(ch.MbtaChannel(feed=transit[name]))
         elif name == "green":
             out.append(ch.GreenOverviewChannel({k: transit[k] for k in ("greenb", "greenc", "greend")}))
-        elif name in ("sports", "boston", "nfl", "ucl", "f1", "tennis"):
+        elif name in ("sports", "boston", "nfl", "nba", "ucl", "f1", "tennis"):
             if sports_feed is None:
                 from .data.espn import SportsFeed
                 sports_feed = SportsFeed()
@@ -178,7 +178,7 @@ def fixture_channel(name: str, **kw):
         if name == "green":
             return ch.GreenOverviewChannel(feeds)
         return ch.MbtaChannel(feed=feeds[name])
-    if name in ("sports", "boston", "nfl", "ucl", "f1", "tennis"):
+    if name in ("sports", "boston", "nfl", "nba", "ucl", "f1", "tennis"):
         from .data.espn import SportsFeed
         return ch.SportsChannel(feed=SportsFeed(static=json.loads((FIXTURES / "espn_board.json").read_text())),
                                 page=kw.get("page"), name=name)
@@ -201,7 +201,7 @@ def fixture_channel(name: str, **kw):
     raise ValueError(f"no fixture demo for {name!r}")
 
 
-DEMO_CHANNELS = ["flightwall", "flights", "radar", "silhouette", "mbta", "greenb", "greenc", "greend", "green", "sports", "boston", "nfl", "ucl", "f1", "tennis", "forecast", "prayers", "meadow", "testpattern"]
+DEMO_CHANNELS = ["flightwall", "flights", "radar", "silhouette", "mbta", "greenb", "greenc", "greend", "green", "sports", "boston", "nfl", "nba", "ucl", "f1", "tennis", "forecast", "prayers", "meadow", "testpattern"]
 
 
 def cmd_demo(args):
@@ -248,9 +248,9 @@ def cmd_sheet(args):
             for case in "abcd":
                 tiles.append((f"flightwall (case {case})", led_image(render_channel_frame(n, case=case), scale)))
         elif n == "sports":
-            for pg in ("boston", "nfl", "ucl", "f1", "tennis"):
+            for pg in ("boston", "nfl", "nba", "ucl", "f1", "tennis"):
                 tiles.append((f"sports ({pg})", led_image(render_channel_frame(n, page=pg), scale)))
-        elif n in ("boston", "nfl", "ucl", "f1", "tennis"):
+        elif n in ("boston", "nfl", "nba", "ucl", "f1", "tennis"):
             continue                                  # same art as the sports pages above
         elif n == "forecast":
             for v in ("week", "hourly"):
@@ -438,7 +438,7 @@ def main(argv=None):
         if name == "forecast":
             sp.add_argument("--view", choices=["week", "hourly"], default=None, help="pin one view (default: alternate)")
         if name == "sports":
-            sp.add_argument("--page", choices=["live", "boston", "nfl", "ucl", "f1", "tennis"], default=None,
+            sp.add_argument("--page", choices=["live", "boston", "nfl", "nba", "ucl", "f1", "tennis"], default=None,
                             help="pin one page of the board (default: rotate)")
         if name == "meadow":
             sp.add_argument("--sky", choices=["sun", "partly", "cloud", "fog", "rain", "snow", "storm"], default=None,

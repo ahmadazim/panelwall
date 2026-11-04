@@ -53,6 +53,7 @@ class Team:
     id: str = ""
     logo: str = ""       # ESPN crest URL (data/logos.py turns it into an LED tile)
     record: str = ""     # "5-3" (overall), when ESPN sends it
+    leaders: list = field(default_factory=list)   # [(category, "J. Tatum", "27.0")] - NBA: per-team leaders
 
 
 @dataclass
@@ -117,14 +118,26 @@ def _parse_team(c: dict) -> Team:
     if not logo and isinstance(t.get("logos"), list) and t["logos"]:
         logo = (t["logos"][0] or {}).get("href") or ""
     rec = ""
-    for r in c.get("records") or []:
+    recs = c.get("records") if isinstance(c.get("records"), list) else []
+    rec_alt = c.get("record")
+    if isinstance(rec_alt, str):                                       # some feeds send record as a plain "5-2"
+        rec_alt = [{"type": "total", "displayValue": rec_alt}]
+    for r in recs + (rec_alt if isinstance(rec_alt, list) else []):    # scoreboard: records[].summary; schedule: record[].displayValue
         if isinstance(r, dict) and (r.get("type") in (None, "total") or r.get("name") in ("overall", "All Splits")):
-            rec = str(r.get("summary") or "")
+            rec = str(r.get("summary") or r.get("displayValue") or "")
             break
+    tl = []
+    for cat in (c.get("leaders") if isinstance(c.get("leaders"), list) else []):
+        try:
+            top = (cat.get("leaders") or [{}])[0]
+            ath = top.get("athlete") or {}
+            tl.append((str(cat.get("name") or ""), str(ath.get("shortName") or ath.get("displayName") or ""), str(top.get("displayValue") or "")))
+        except (TypeError, AttributeError, IndexError):
+            continue
     return Team(abbreviation=str(t["abbreviation"]).upper(), name=name, nickname=nick,
                 color=t.get("color") or "", alt_color=t.get("alternateColor") or "",
                 score=_int(c.get("score")), home=c.get("homeAway") == "home", id=str(t.get("id", "")),
-                logo=logo, record=rec)
+                logo=logo, record=rec, leaders=tl)
 
 
 def _details(comp: dict, teams: list) -> tuple[list, list]:
@@ -151,7 +164,7 @@ def _details(comp: dict, teams: list) -> tuple[list, list]:
 
 def _leaders(comp: dict) -> list:
     out = []
-    for cat in comp.get("leaders") or []:
+    for cat in (comp.get("leaders") if isinstance(comp.get("leaders"), list) else []):
         try:
             top = (cat.get("leaders") or [{}])[0]
             ath = top.get("athlete") or {}
@@ -488,6 +501,8 @@ class SportsFeed(DemandPoller):
         self.sections = list(sections or CONFIG.sports.sections)
         self.games: list[Game] = []                   # tracked teams' games (schedule + live merge)
         self.team_colors: dict[tuple, tuple] = {}     # (league, abbr) -> (color, alt)
+        self.team_info: dict[tuple, dict] = {}        # (league, abbr) -> {name, logo, record, standing}
+        self.nba_day: list[Game] = []
         self.nfl_week: list[Game] = []
         self.nfl_week_number: int | None = None
         self.ucl: list[Game] = []
@@ -500,11 +515,13 @@ class SportsFeed(DemandPoller):
         self._scores: dict[tuple[str, str], int] = {}
         self._fixed_now: datetime | None = None
         self._next: dict[str, float] = {}             # source -> epoch of the next fetch
+        self.fetched: set[str] = set()                # sections that have completed at least one fetch
         self._init_demand()
         self._thread = None
         if static is not None:
             self._fixed_now = datetime.fromisoformat(static["_now"]) if static.get("_now") else None
             self._ingest_static(static)
+            self.fetched = set(self.sections)
             self.updated_at = time.time()
         else:
             self._thread = threading.Thread(target=self._poll_loop, daemon=True, name="espn-poll")
@@ -550,12 +567,19 @@ class SportsFeed(DemandPoller):
         team = doc.get("team") or {}
         if team.get("color"):
             self.team_colors[(league, abbr)] = (team.get("color"), team.get("alternateColor") or "")
+        if team:
+            self.team_info[(league, abbr)] = {"name": str(team.get("name") or team.get("displayName") or abbr),
+                                              "logo": str(team.get("logo") or ""), "record": str(team.get("recordSummary") or ""),
+                                              "standing": str(team.get("standingSummary") or "")}
         fresh = [g for g in parse_scoreboard(doc, league) if g.team(abbr) is not None]
         col, alt = self.team_colors.get((league, abbr), ("", ""))
+        logo = self.team_info.get((league, abbr), {}).get("logo", "")
         for g in fresh:
             t = g.team(abbr)
             if t is not None and not t.color:
                 t.color, t.alt_color = col, alt
+            if t is not None and not t.logo:
+                t.logo = logo
         keep = [g for g in self.games if not (g.league == league and g.team(abbr) is not None)]
         self.games = sorted(keep + fresh, key=lambda g: g.start)
 
@@ -586,6 +610,8 @@ class SportsFeed(DemandPoller):
             self._ingest_schedule(lg, ab, doc)
         for lg, doc in (static.get("scoreboards") or {}).items():
             self._ingest_live(lg, doc)
+        if static.get("nba_day"):
+            self.nba_day = parse_scoreboard(static["nba_day"], "nba")
         if static.get("nfl_week"):
             self.nfl_week = parse_scoreboard(static["nfl_week"], "nfl")
             self.nfl_week_number = ((static["nfl_week"].get("week") or {}).get("number"))
@@ -635,6 +661,7 @@ class SportsFeed(DemandPoller):
                 for lg, ab, _ in self.teams:
                     self._ingest_schedule(lg, ab, self.client.schedule(lg, ab))
                 self._schedule_next("schedules", t, cfg.schedule_seconds)
+                self.fetched.add("boston")
             near = self._near_live_leagues()
             for lg in near:
                 if self._due(f"live:{lg}", t):
@@ -647,18 +674,32 @@ class SportsFeed(DemandPoller):
                 self.nfl_week_number = ((doc.get("week") or {}).get("number"))
             live = any(g.live for g in self.nfl_week)
             self._schedule_next("nfl", t, cfg.live_seconds if live else cfg.nfl_seconds)
+            self.fetched.add("nfl")
+        if "nba" in want and self._due("nba", t):
+            doc = self.client.scoreboard("nba")
+            games = parse_scoreboard(doc, "nba") if doc is not None else None
+            if games is not None and not games:                       # off day: show yesterday's results
+                prev = self.client.scoreboard("nba", (self.now() - timedelta(days=1)).strftime("%Y%m%d"))
+                games = parse_scoreboard(prev, "nba") if prev is not None else []
+            if games is not None:
+                self.nba_day = games
+            live = any(g.live for g in self.nba_day)
+            self._schedule_next("nba", t, cfg.live_seconds if live else cfg.nfl_seconds)
+            self.fetched.add("nba")
         if "ucl" in want and self._due("ucl", t):
             doc = self.client.scoreboard("ucl", self.now().strftime("%Y%m"))
             if doc is not None:
                 self.ucl = parse_scoreboard(doc, "ucl")
             live = any(g.live for g in self.ucl)
             self._schedule_next("ucl", t, cfg.live_seconds if live else cfg.ucl_seconds)
+            self.fetched.add("ucl")
         if "f1" in want and self._due("f1", t):
             doc = self.client.f1(self.now().year)
             if doc is not None:
                 self.races = parse_f1(doc)
             live = any(r.state == "in" for r in self.races)
             self._schedule_next("f1", t, 120.0 if live else cfg.f1_seconds)
+            self.fetched.add("f1")
         if "tennis" in want and self._due("tennis", t):
             for tour in ("atp", "wta"):
                 doc = self.client.tennis(tour)
@@ -668,19 +709,32 @@ class SportsFeed(DemandPoller):
                     self.matches = sorted([m for m in self.matches if m.tour != tour.upper()] + ms,
                                           key=lambda m: (m.round_no, m.start), reverse=True)
             self._schedule_next("tennis", t, cfg.tennis_seconds)
+            self.fetched.add("tennis")
         self.updated_at = time.time()
+
+    def _anything_due(self) -> bool:
+        """A section some on-screen panel wants that is due now - e.g. one just picked on the phone."""
+        t = time.time()
+        keys = {"boston": "schedules"}
+        return any(self._due(keys.get(sec, sec), t) for sec in self.wanted_sections())
 
     def _poll_loop(self):
         self._startup_grace()
         self._wait_wanted()
         while not self._stop.is_set():
             self._poll_once()
-            # wake every 30 s to see whether any source is due (live cadences are 60 s)
-            self._sleep_or_pause(max(30.0, self.client.backoff.remaining()))
+            # sleep up to 30 s, but wake within 2 s when a newly selected sport needs its first fetch
+            deadline = time.time() + max(30.0, self.client.backoff.remaining())
+            while not self._stop.is_set() and time.time() < deadline:
+                self._stop.wait(2.0)
+                self.paused = not self.wanted()
+                if self.client.backoff.remaining() == 0 and self._anything_due():
+                    break
+            self._wait_wanted()
 
     def status(self) -> dict:
         return {"updated_at": self.updated_at or None, "last_error": self.last_error, "paused": self.paused,
-                "games": len(self.games), "live": self.any_live(), "nfl": len(self.nfl_week), "ucl": len(self.ucl),
+                "games": len(self.games), "live": self.any_live(), "nfl": len(self.nfl_week), "nba": len(self.nba_day), "ucl": len(self.ucl),
                 "f1": len(self.races), "tennis": len(self.matches)}
 
     def close(self):

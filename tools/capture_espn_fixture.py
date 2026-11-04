@@ -50,6 +50,14 @@ def slim_team(t: dict) -> dict:
     out["score"] = sc if not isinstance(sc, dict) else {"value": sc.get("value"), "displayValue": sc.get("displayValue")}
     if t.get("records"):
         out["records"] = [{k: r.get(k) for k in ("name", "type", "summary")} for r in t["records"][:1]]
+    if isinstance(t.get("record"), list):
+        out["record"] = [{k: r.get(k) for k in ("type", "displayValue")} for r in t["record"][:1] if isinstance(r, dict)]
+    elif isinstance(t.get("record"), str):
+        out["record"] = t["record"]
+    if isinstance(t.get("leaders"), list):
+        out["leaders"] = [{"name": cat.get("name"), "leaders": [{"displayValue": (cat.get("leaders") or [{}])[0].get("displayValue"),
+                           "athlete": {k: ((cat.get("leaders") or [{}])[0].get("athlete") or {}).get(k) for k in ("shortName", "displayName")}}]}
+                          for cat in t["leaders"][:3]]
     if t.get("athlete"):
         out["athlete"] = {k: t["athlete"].get(k) for k in ("displayName", "shortName", "fullName")}
     if t.get("linescores"):
@@ -71,7 +79,7 @@ def slim_comp(c: dict) -> dict:
                           "redCard": d.get("redCard"), "penaltyKick": d.get("penaltyKick"), "ownGoal": d.get("ownGoal"),
                           "athletesInvolved": [{k: a.get(k) for k in ("displayName", "shortName")} for a in d.get("athletesInvolved", [])[:1]]}
                          for d in c["details"] if d.get("scoringPlay") or d.get("redCard")]
-    if c.get("leaders"):
+    if isinstance(c.get("leaders"), list):
         cc["leaders"] = [{"name": cat.get("name"), "leaders": [{"displayValue": (cat.get("leaders") or [{}])[0].get("displayValue"),
                           "athlete": {k: ((cat.get("leaders") or [{}])[0].get("athlete") or {}).get(k) for k in ("shortName", "displayName")}}]}
                          for cat in c["leaders"][:3]]
@@ -101,9 +109,12 @@ def main() -> None:
         idx = next((i for i, e in enumerate(evs) if e["date"] >= now.strftime("%Y-%m-%dT%H:%MZ")), len(evs))
         team = d.get("team") or {}
         fx["schedules"][f"{league}:{abbr.upper()}"] = {
-            "team": {k: team.get(k) for k in ("abbreviation", "displayName", "color", "alternateColor")},
+            "team": {k: team.get(k) for k in ("abbreviation", "displayName", "name", "color", "alternateColor", "logo",
+                                              "recordSummary", "standingSummary")},
             "events": [slim_event(e) for e in evs[max(0, idx - 6):idx + 6]]}
         fx["scoreboards"][league] = {"events": [slim_event(e) for e in get(f"{sport}/{league}/scoreboard").get("events", [])[:6]]}
+    nba = get("basketball/nba/scoreboard")
+    fx["nba_day"] = {"events": [slim_event(e) for e in nba.get("events", [])]}
     nfl = get("football/nfl/scoreboard")
     fx["nfl_week"] = {"week": {"number": (nfl.get("week") or {}).get("number")}, "events": [slim_event(e) for e in nfl["events"]]}
     ucl = get("soccer/uefa.champions/scoreboard?dates=" + now.strftime("%Y%m"))
@@ -157,7 +168,7 @@ def main() -> None:
         elif isinstance(o, list):
             for v in o:
                 walk(v)
-    walk({k: fx[k] for k in ("ucl", "nfl_week", "scoreboards", "schedules")})
+    walk({k: fx[k] for k in ("ucl", "nfl_week", "nba_day", "scoreboards", "schedules")})
     logo_dir = ROOT / "fixtures" / "logos"
     logo_dir.mkdir(parents=True, exist_ok=True)
     ok = 0

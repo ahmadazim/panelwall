@@ -103,8 +103,8 @@ class SportsConfig:
     city: str = _env("PW_CITY", "BOSTON")
     teams: list = field(default_factory=lambda: _teams([
         ("mlb", "BOS", "SOX"), ("nfl", "NE", "PATS"), ("nba", "BOS", "CELTS"), ("nhl", "BOS", "B'S")]))
-    # pages of the board, in rotation order: boston (tracked teams), nfl, ucl (Champions League), f1, tennis
-    sections: list = field(default_factory=lambda: [x.strip() for x in _env("PW_SPORTS", "boston,nfl,ucl,f1,tennis").split(",") if x.strip()])
+    # pages of the board, in rotation order: boston (tracked teams), nfl, nba, ucl (Champions League), f1, tennis
+    sections: list = field(default_factory=lambda: [x.strip() for x in _env("PW_SPORTS", "boston,nfl,nba,ucl,f1,tennis").split(",") if x.strip()])
     page_seconds: float = 10.0           # time on each page when nothing tracked is live
     # request cadence per source (seconds); 'live' applies while that source has a game in progress
     schedule_seconds: float = 3600.0     # /teams/<abbr>/schedule, one per tracked team

@@ -160,7 +160,7 @@ def test_f1_and_tennis_parsers():
 def test_wall_rotates_through_every_section_and_renders():
     ch = SportsChannel(feed=SportsFeed(static=BOARD))
     pages = ch.pages()
-    assert [p for p in pages if p != "live"] == ["boston", "nfl", "ucl", "f1", "tennis"]
+    assert [p for p in pages if p != "live"] == ["boston", "nfl", "nba", "ucl", "f1", "tennis"]
     assert sum(1 for sl in ch.slides() if sl[0] == "nfl") <= 3                  # the wall caps each section
     total = sum(sl[3] for sl in ch.slides())
     seen = set()
@@ -171,7 +171,7 @@ def test_wall_rotates_through_every_section_and_renders():
         ch.render(f)
         assert f.to_array().max() > 0
     assert seen == set(pages)
-    for page in ("boston", "nfl", "ucl", "f1", "tennis", "live"):
+    for page in ("boston", "nfl", "nba", "ucl", "f1", "tennis"):
         c = SportsChannel(feed=SportsFeed(static=BOARD), page=page)
         f = Frame()
         c.tick(0.05)
@@ -181,9 +181,9 @@ def test_wall_rotates_through_every_section_and_renders():
 
 def test_per_sport_panels_share_one_feed_and_poll_only_what_is_on_screen():
     feed = SportsFeed(static=BOARD)
-    panels = {n: SportsChannel(feed=feed, name=n) for n in ("sports", "boston", "nfl", "ucl", "f1", "tennis")}
+    panels = {n: SportsChannel(feed=feed, name=n) for n in ("sports", "boston", "nfl", "nba", "ucl", "f1", "tennis")}
     assert panels["ucl"].sections == ["ucl"] and panels["sports"].sections == list(feed.sections)
-    assert len(feed.users) == 6
+    assert len(feed.users) == 7
     assert feed.wanted_sections() == set()                                       # nothing on screen -> nothing polled
     panels["ucl"].active = True
     assert feed.wanted_sections() == {"ucl"}
@@ -321,3 +321,71 @@ def test_f1_host_country_flags():
     x = 2 + fonts.width("F1 ") + 2
     assert (arr[0:FLAG_H, x:x + FLAG_W] == mex).all()                            # the host flag beside the GP name
     assert (arr[18:18 + FLAG_H, 158:158 + FLAG_W] == np.asarray(flag("BRA").convert("RGB"))).all()   # and the next race's
+
+
+def test_boston_screens_one_per_team_in_season():
+    ch = SportsChannel(feed=SportsFeed(static=BOARD), name="boston")
+    teams = ch._active_teams()
+    assert ("nba", "BOS") in teams and ("nhl", "BOS") in teams and ("nfl", "NE") in teams
+    assert ("mlb", "BOS") not in teams                                          # out of season (last game in September)
+    assert [sl[2] for sl in ch.slides()] == teams and all(sl[0] == "boston" for sl in ch.slides())
+    info = ch.feed.team_info[("nba", "BOS")]
+    assert info["name"] == "Celtics" and info["record"] and "Atlantic" in info["standing"]
+    last, nxt = ch._team_games(("nba", "BOS"))
+    assert last.state == "post" and nxt.state == "pre" and last.start < nxt.start
+    f = Frame()
+    ch._slide_team(f, ("nba", "BOS"))
+    arr = f.to_array()
+    assert arr[0:9, 13:60].max() > 0                                            # header: name / league / record
+    assert arr[10:32, 3:25].max() > 0 and arr[10:32, 131:153].max() > 0         # crests on both cards
+    assert arr[59:64, 40:90, 0].max() > 150 or arr[59:64, 40:90, 1].max() > 150  # WIN / LOSS on the last-game card
+    assert arr[59:64, 160:230].max() > 0                                         # countdown on the next-game card
+
+
+def test_boston_screen_follows_a_live_game_and_mlb_bases():
+    import copy
+    feed = SportsFeed(static=BOARD)
+    g = next(g for g in feed.team_games("nba", "BOS") if g.state == "pre")
+    g.state, g.period, g.clock = "in", 3, "4:12"
+    ch = SportsChannel(feed=feed, name="boston")
+    assert ch._live_teams() == [("nba", "BOS")] and ch._team_games(("nba", "BOS"))[0] is g
+    assert ch.priority() == 12
+    wall = SportsChannel(feed=feed)
+    assert sum(1 for sl in wall.slides() if sl[0] == "live") >= 2                  # live team returns after sections
+    f = Frame()
+    ch._slide_team(f, ("nba", "BOS"))
+    assert f.to_array()[35:40, 40:90, 1].max() > 150                              # green Q3 4:12
+    mlb = copy.deepcopy(g)
+    mlb.league, mlb.situation = "mlb", {"onFirst": True, "onSecond": False, "onThird": True, "outs": 2}
+    f = Frame()
+    ch._match_card(f, 0, mlb)
+    assert f.to_array()[34:41, 40:60, 0].max() > 200                             # lit amber bases
+
+
+def test_nba_panel_cards_with_team_leaders():
+    feed = SportsFeed(static=BOARD)
+    assert len(feed.nba_day) >= 2 and all(g.league == "nba" for g in feed.nba_day)
+    assert any(t.leaders for g in feed.nba_day for t in (g.home, g.away))
+    ch = SportsChannel(feed=feed, name="nba")
+    slides = ch.slides()
+    assert slides and all(sl[0] == "nba" for sl in slides) and len(slides) == (len(feed.nba_day) + 1) // 2
+    f = Frame()
+    slides[0][1](f, slides[0][2])
+    arr = f.to_array()
+    assert arr[35:40, :60].max() > 0 and arr[35:40, 70:128].max() > 0              # leaders on both sides
+
+
+def test_newly_selected_sport_is_fetched_without_waiting_out_the_sleep():
+    feed = SportsFeed(static={"_now": BOARD["_now"]})
+    feed.fetched.clear()
+    nba = SportsChannel(feed=feed, name="nba")
+    ucl = SportsChannel(feed=feed, name="ucl")
+    ucl.active = True
+    feed._next = {"ucl": 1e18}                    # UCL was fetched; nothing else wanted -> nothing due
+    assert not feed._anything_due()
+    ucl.active, nba.active = False, True          # the user picks NBA on the phone
+    assert feed._anything_due()                   # -> the poll loop wakes within 2 s
+    f = Frame()
+    nba.render(f)                                 # never fetched yet -> LOADING, not NOTHING ON
+    feed.fetched.add("nba")
+    nba.render(Frame())

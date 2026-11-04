@@ -218,11 +218,13 @@ panelwall/
   channels/
     base.py            Channel: tick(dt), priority() (<=0 = don't show), render(frame), status(), close();
                        `active` flag set by the scheduler each frame (feeds pause when False)
-    sports.py          SportsChannel(name) — six panels on ONE SportsFeed: sports (the wall: every section, <=3 slides
-                       each, live Boston card after each section), boston, nfl, ucl, f1, tennis (that sport, every
-                       slide). Slides: live card; Boston week rows; nfl/ucl two 128 px match cards per screen (22 px
+    sports.py          SportsChannel(name) — seven panels on ONE SportsFeed: sports (the wall: every section, <=3 slides
+                       each, the live Boston team's screen after each section), boston, nfl, nba, ucl, f1, tennis.
+                       Boston: one screen per team in season (game in last 10 d / next 14 d): header (chip, NAME,
+                       league, record, standing) + last/live card left (WIN/LOSS) + next card right (countdown).
+                       nba/nfl/ucl: two 128 px match cards per screen (22 px
                        crests, LARGE score / kickoff, live minute or Q+clock; soccer goal scorers + minutes + red
-                       cards, NFL down&distance + leaders); f1 podium + next race + car in livery lapping y 50-62;
+                       cards, NFL down&distance + leaders, NBA per-team PTS/REB/AST leaders, MLB bases + outs); f1 podium + next race + car in livery lapping y 50-62;
                        tennis two scorebugs (MEDIUM names, set boxes). prio 25/12 (boston & sports only) / 4 / 0
     prayers.py         PrayersChannel — athan/iqama table (5 rows, 9 px pitch, athan right@104, iqama right@160,
                        next prayer amber, past grey) + right block "NEXT ATHAN IN / ASR / 0:45:12" + sunrise/Jumu'ah.
@@ -286,7 +288,11 @@ panelwall/
                        tennis atp/wta (30 min). Parsers: parse_scoreboard (per-event defensive; schedule shape too),
                        parse_f1, parse_tennis, format_status / week_status / game_row / match_row. Team carries
                        logo + record; Game carries goals (scorer, minute, penalty, own goal), red_cards, leaders.
-                       wanted_sections(): only sections of ON-SCREEN panels are polled.
+                       wanted_sections(): only sections of ON-SCREEN panels are polled; the loop wakes within 2 s
+                       when a newly selected sport is due (it used to wait out a 30 s sleep and show NOTHING ON).
+                       NBA: today's scoreboard, yesterday's on an off day. team_info from /schedule: name, crest,
+                       recordSummary, standingSummary. ESPN sometimes sends `record` as a string and `leaders`
+                       as a dict - both guarded.
                        !! dates=YYYYMMDD-YYYYMMDD RANGES return HTTP 400 since ~Nov 2026 - that broke the board.
                        Single days and dates=YYYYMM still work. Responses may be gzip (handled).
     prayers.py         fiveprayers.org display page scraper + a line-for-line port of its ptScript_calcs.js
@@ -520,6 +526,10 @@ spec-driven (config.MBTA_LINES). VERIFIED live: Green-B/C/D stops, vehicles (par
 at place-wascm / place-kencl, /routes direction_destinations, bus 65 predictions with filter[stop]=1295,1273 in
 one request. Keyless budget: one panel on screen = 3 req / 30 s; the overview = 7 req / 30 s = 14/min, still
 under 20/min but get a free MBTA key if more panels poll at once.
+
+4 Nov: NBA panel + Boston panel redesign (Ahmad: "the Boston one ... ugly as fuck" - the week list is gone).
+VERIFIED live: NBA scoreboard with per-team leaders and crests; Boston team headers (Celtics 5-2, 2nd in
+Atlantic; Bruins 11-4-1, 1st); switching panels on the phone fetches the new sport within seconds.
 
 3 Nov (later): sports art (Ahmad: "more art ... team logos ... two at a time ... the minute ... who scored ...
 different panels for each sport"). Per-sport panels + crest cards + F1 podium/car + tennis scorebugs. VERIFIED live:
