@@ -51,6 +51,17 @@ class Team:
     score: int | None
     home: bool
     id: str = ""
+    logo: str = ""       # ESPN crest URL (data/logos.py turns it into an LED tile)
+    record: str = ""     # "5-3" (overall), when ESPN sends it
+
+
+@dataclass
+class Goal:
+    home: bool           # scored FOR the home side (own goals already credited correctly by ESPN's team id)
+    scorer: str          # "A. Batrakov"
+    minute: str          # "45'+3'"
+    penalty: bool = False
+    own_goal: bool = False
 
 
 @dataclass
@@ -66,6 +77,9 @@ class Game:
     home: Team
     away: Team
     situation: dict = field(default_factory=dict)
+    goals: list = field(default_factory=list)       # [Goal] - soccer
+    red_cards: list = field(default_factory=list)   # [(home: bool, player)]
+    leaders: list = field(default_factory=list)     # [(category, "J. Love", "288 YDS 3 TD")] - NFL
 
     def team(self, abbreviation: str) -> Team | None:
         for t in (self.home, self.away):
@@ -99,9 +113,53 @@ def _parse_team(c: dict) -> Team:
     t = c["team"]
     name = t.get("displayName") or t.get("name") or t["abbreviation"]
     nick = t.get("name") or name.split()[-1]
+    logo = t.get("logo") or ""
+    if not logo and isinstance(t.get("logos"), list) and t["logos"]:
+        logo = (t["logos"][0] or {}).get("href") or ""
+    rec = ""
+    for r in c.get("records") or []:
+        if isinstance(r, dict) and (r.get("type") in (None, "total") or r.get("name") in ("overall", "All Splits")):
+            rec = str(r.get("summary") or "")
+            break
     return Team(abbreviation=str(t["abbreviation"]).upper(), name=name, nickname=nick,
                 color=t.get("color") or "", alt_color=t.get("alternateColor") or "",
-                score=_int(c.get("score")), home=c.get("homeAway") == "home", id=str(t.get("id", "")))
+                score=_int(c.get("score")), home=c.get("homeAway") == "home", id=str(t.get("id", "")),
+                logo=logo, record=rec)
+
+
+def _details(comp: dict, teams: list) -> tuple[list, list]:
+    """Soccer: competitions[0].details -> goals and red cards, in match order."""
+    side = {t.id: t.home for t in teams}
+    goals, reds = [], []
+    for d in comp.get("details") or []:
+        try:
+            home = side.get(str((d.get("team") or {}).get("id")))
+            if home is None:
+                continue
+            who = (d.get("athletesInvolved") or [{}])[0]
+            name = str(who.get("shortName") or who.get("displayName") or "")
+            minute = str((d.get("clock") or {}).get("displayValue") or "")
+            if d.get("scoringPlay"):
+                goals.append(Goal(home=home, scorer=name, minute=minute,
+                                  penalty=bool(d.get("penaltyKick")), own_goal=bool(d.get("ownGoal"))))
+            elif d.get("redCard"):
+                reds.append((home, name))
+        except (TypeError, AttributeError, IndexError):
+            continue
+    return goals, reds
+
+
+def _leaders(comp: dict) -> list:
+    out = []
+    for cat in comp.get("leaders") or []:
+        try:
+            top = (cat.get("leaders") or [{}])[0]
+            ath = top.get("athlete") or {}
+            out.append((str(cat.get("name") or cat.get("abbreviation") or ""),
+                        str(ath.get("shortName") or ath.get("displayName") or ""), str(top.get("displayValue") or "")))
+        except (TypeError, AttributeError, IndexError):
+            continue
+    return out
 
 
 def parse_event(e: dict, league: str) -> Game | None:
@@ -119,10 +177,11 @@ def parse_event(e: dict, league: str) -> Game | None:
                      if sit.get(k) is not None}
         if "possession" in situation:   # team id -> abbreviation
             situation["possession"] = next((t.abbreviation for t in teams if t.id == str(situation["possession"])), None)
+        goals, reds = _details(comp, teams)
         return Game(league=league, id=str(e.get("id", "") or comp.get("id", "")), start=start, state=str(stype.get("state", "pre")),
                     short_detail=str(stype.get("shortDetail") or ""), status_name=str(stype.get("name") or ""),
                     period=_int(st.get("period")) or 0, clock=str(st.get("displayClock") or ""),
-                    home=home, away=away, situation=situation)
+                    home=home, away=away, situation=situation, goals=goals, red_cards=reds, leaders=_leaders(comp))
     except (KeyError, IndexError, TypeError, ValueError, StopIteration):
         return None
 
@@ -550,12 +609,23 @@ class SportsFeed(DemandPoller):
                 out.add(g.league)
         return out
 
+    def wanted_sections(self) -> set[str]:
+        """Sections some on-screen panel shows (all of them when no panel is registered: demos/tests)."""
+        active = [u for u in self.users if getattr(u, "active", False)]
+        if not self.users:
+            return set(self.sections)
+        out = set()
+        for u in active:
+            out |= set(getattr(u, "sections", self.sections))
+        return out & set(self.sections) if out else set()
+
     def _poll_once(self) -> None:
         cfg = CONFIG.sports
         t = time.time()
         if self.client.backoff.remaining() > 0:
             return
-        if "boston" in self.sections or self.teams:
+        want = self.wanted_sections()
+        if "boston" in want:
             if self._due("schedules", t):
                 for lg, ab, _ in self.teams:
                     self._ingest_schedule(lg, ab, self.client.schedule(lg, ab))
@@ -565,26 +635,26 @@ class SportsFeed(DemandPoller):
                 if self._due(f"live:{lg}", t):
                     self._ingest_live(lg, self.client.scoreboard(lg))
                     self._schedule_next(f"live:{lg}", t, cfg.live_seconds)
-        if "nfl" in self.sections and self._due("nfl", t):
+        if "nfl" in want and self._due("nfl", t):
             doc = self.client.scoreboard("nfl")
             if doc is not None:
                 self.nfl_week = parse_scoreboard(doc, "nfl")
                 self.nfl_week_number = ((doc.get("week") or {}).get("number"))
             live = any(g.live for g in self.nfl_week)
             self._schedule_next("nfl", t, cfg.live_seconds if live else cfg.nfl_seconds)
-        if "ucl" in self.sections and self._due("ucl", t):
+        if "ucl" in want and self._due("ucl", t):
             doc = self.client.scoreboard("ucl", self.now().strftime("%Y%m"))
             if doc is not None:
                 self.ucl = parse_scoreboard(doc, "ucl")
             live = any(g.live for g in self.ucl)
             self._schedule_next("ucl", t, cfg.live_seconds if live else cfg.ucl_seconds)
-        if "f1" in self.sections and self._due("f1", t):
+        if "f1" in want and self._due("f1", t):
             doc = self.client.f1(self.now().year)
             if doc is not None:
                 self.races = parse_f1(doc)
             live = any(r.state == "in" for r in self.races)
             self._schedule_next("f1", t, 120.0 if live else cfg.f1_seconds)
-        if "tennis" in self.sections and self._due("tennis", t):
+        if "tennis" in want and self._due("tennis", t):
             for tour in ("atp", "wta"):
                 doc = self.client.tennis(tour)
                 if doc is not None:

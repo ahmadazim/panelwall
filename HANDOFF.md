@@ -208,17 +208,20 @@ panelwall/
   web.py               ControlServer: GET / (inline mobile UI, iOS home-screen installable), /api/state,
                        /preview.png (led_image 3x, <=1/s), /manifest.webmanifest, /icon.png;
                        POST /api/channels, /api/show, /api/brightness, /api/location. Port 80 -> 8080.
+  f1art.py             F1 car sprite (46x13, side view, rotating wheels) + DRIVER_TEAM livery table for the 2026 grid
+                       (ASSUMED from pre-season knowledge; ESPN gives no constructor - edit when seats change)
   glyphs.py            shared pixel art: draw_glyph(d, sun|cloud|partly|rain|snow|storm|fog, x, y, scale 1|2) 12x10,
                        team_mark(d, x, y, color, alt) 8x8 two-tone badge, hex_color(). Used by channels AND design/mockups2.py
     polling.py         DemandPoller mixin (register/wanted/paused, pause while no active channel) + Backoff
   channels/
     base.py            Channel: tick(dt), priority() (<=0 = don't show), render(frame), status(), close();
                        `active` flag set by the scheduler each frame (feeds pause when False)
-    sports.py          SportsChannel — rotating board, pages per CONFIG.sports.sections (10 s each): live (the original
-                       Boston game card, every other slot while a tracked game is on), boston (week: last 3 results +
-                       next games, one row each), nfl (week, 2 cols x 6), ucl (matchday nearest now, 2 x 5), f1 (last
-                       race top 6 + next race countdown), tennis (latest ATP/WTA matches with known players).
-                       prio 25 (15 s after a score) / 12 live / 4 with any data / 0
+    sports.py          SportsChannel(name) — six panels on ONE SportsFeed: sports (the wall: every section, <=3 slides
+                       each, live Boston card after each section), boston, nfl, ucl, f1, tennis (that sport, every
+                       slide). Slides: live card; Boston week rows; nfl/ucl two 128 px match cards per screen (22 px
+                       crests, LARGE score / kickoff, live minute or Q+clock; soccer goal scorers + minutes + red
+                       cards, NFL down&distance + leaders); f1 podium + next race + car in livery lapping y 50-62;
+                       tennis two scorebugs (MEDIUM names, set boxes). prio 25/12 (boston & sports only) / 4 / 0
     prayers.py         PrayersChannel — athan/iqama table (5 rows, 9 px pitch, athan right@104, iqama right@160,
                        next prayer amber, past grey) + right block "NEXT ATHAN IN / ASR / 0:45:12" + sunrise/Jumu'ah.
                        prio 20 in a window around each athan/iqama (alert), else 4
@@ -271,11 +274,17 @@ panelwall/
     airports.py        OurAirports-backed (assets/data/airports.csv, 8,802 IATA airports): lookup(), coords(),
                        display_name() with the FlightWall wording rule + NAME_OVERRIDES (OAK/DFW/DCA/...);
                        route_progress() for the silhouette dot. The old ~150-entry table is the fallback.
+    logos.py           LogoCache: crest URL -> 22 px LED tile (crop, Lanczos, binary alpha, light ring for dark crests),
+                       fetched on a background thread on first use, cached in ~/.panelwall/logos (PW_LOGO_CACHE);
+                       fixtures/logos/ also searched so demos/tests show crests offline. Render never waits: badge
+                       until the tile arrives
     espn.py            ESPN site API (UNOFFICIAL, keyless). Sources: /teams/<abbr>/schedule per tracked team (hourly),
                        today's /scoreboard for a league only while a tracked game is on or <30 min away (60 s,
                        situation details), NFL week (10 min), UCL ?dates=YYYYMM (15 min), F1 ?dates=YYYY (1 h),
                        tennis atp/wta (30 min). Parsers: parse_scoreboard (per-event defensive; schedule shape too),
-                       parse_f1, parse_tennis, format_status / week_status / game_row / match_row.
+                       parse_f1, parse_tennis, format_status / week_status / game_row / match_row. Team carries
+                       logo + record; Game carries goals (scorer, minute, penalty, own goal), red_cards, leaders.
+                       wanted_sections(): only sections of ON-SCREEN panels are polled.
                        !! dates=YYYYMMDD-YYYYMMDD RANGES return HTTP 400 since ~Nov 2026 - that broke the board.
                        Single days and dates=YYYYMM still work. Responses may be gzip (handled).
     prayers.py         fiveprayers.org display page scraper + a line-for-line port of its ptScript_calcs.js
@@ -292,7 +301,8 @@ tools/                 build_fw_font.py, build_logos.py — regenerate the font 
 fixtures/bos_point.json  hand-built readsb-shaped Boston traffic + `_routes` sidecar (test only)
 fixtures/mbta_red.json   trimmed LIVE capture of the MBTA V3 API (stops, vehicles+included, predictions), 14 Sep
 fixtures/mbta_green.json trimmed LIVE capture for Green-B/C/D (+ /routes, + bus 65 predictions), 26 Oct
-fixtures/espn_board.json  trimmed LIVE capture, 3 Nov: 4 team schedules, today's scoreboards, NFL week, UCL month,
+fixtures/logos/          128 processed crest tiles for the fixture's teams (tools/capture_espn_fixture.py writes both)
+fixtures/espn_board.json  trimmed LIVE capture, 3 Nov (re-captured with crests, goals, leaders): 4 team schedules, today's scoreboards, NFL week, UCL month,
                          F1 (2 past + 2 next races), ATP/WTA (completed + upcoming known matches). Drives demo-sports.
 fixtures/espn_scoreboards.json  (parser tests only) trimmed LIVE ESPN capture, 15 Sep, 4 leagues; ONE substitution (MIA->BOS on the live
                          MLB game so the fixture has a live Boston card) - see its _comment
@@ -508,6 +518,12 @@ spec-driven (config.MBTA_LINES). VERIFIED live: Green-B/C/D stops, vehicles (par
 at place-wascm / place-kencl, /routes direction_destinations, bus 65 predictions with filter[stop]=1295,1273 in
 one request. Keyless budget: one panel on screen = 3 req / 30 s; the overview = 7 req / 30 s = 14/min, still
 under 20/min but get a free MBTA key if more panels poll at once.
+
+3 Nov (later): sports art (Ahmad: "more art ... team logos ... two at a time ... the minute ... who scored ...
+different panels for each sport"). Per-sport panels + crest cards + F1 podium/car + tennis scorebugs. VERIFIED live:
+goal details/red cards/crest URLs/records/leaders parse; with ucl pinned ONLY the UCL source is fetched; an uncached
+crest downloads in 0.4 s and persists. UNVERIFIED: live minute and live scorers during an actual match (shapes from
+finished matches); F1 liveries rest on the assumed 2026 grid.
 
 3 Nov: sports board fixed + widened (Ahmad: "HTTP 400 NHL scoreboard"; wants a week summary when nothing is
 live, and Champions League, NFL, tennis, F1). Cause: ESPN now rejects the dates=A-B range form the feed used for

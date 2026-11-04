@@ -1,11 +1,13 @@
 import json
+
+import numpy as np
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 from panelwall.data.espn import (parse_scoreboard, parse_event, format_status, live_detail, pick_game, SportsFeed,
                                  Game, Team, MAX_STATUS)
 from panelwall.channels.sports import SportsChannel, fit_name
-from panelwall.framebuffer import Frame
+from panelwall.framebuffer import Frame, H
 from panelwall import fonts
 
 FX = json.loads((Path(__file__).resolve().parent.parent / "fixtures" / "espn_scoreboards.json").read_text())
@@ -155,28 +157,121 @@ def test_f1_and_tennis_parsers():
     assert parse_tennis({}, "wta") == ([], [])
 
 
-def test_board_pages_rotate_and_render():
+def test_wall_rotates_through_every_section_and_renders():
     ch = SportsChannel(feed=SportsFeed(static=BOARD))
     pages = ch.pages()
-    assert pages[:5] == ["boston", "nfl", "ucl", "f1", "tennis"] or "live" in pages
-    assert ch.priority() in (4, 12)
+    assert [p for p in pages if p != "live"] == ["boston", "nfl", "ucl", "f1", "tennis"]
+    assert sum(1 for sl in ch.slides() if sl[0] == "nfl") <= 3                  # the wall caps each section
+    total = sum(sl[3] for sl in ch.slides())
+    seen = set()
+    for _ in range(int(total / 0.5) + 2):
+        ch.tick(0.5)
+        seen.add(ch.page())
+        f = Frame()
+        ch.render(f)
+        assert f.to_array().max() > 0
+    assert seen == set(pages)
     for page in ("boston", "nfl", "ucl", "f1", "tennis", "live"):
         c = SportsChannel(feed=SportsFeed(static=BOARD), page=page)
         f = Frame()
         c.tick(0.05)
         c.render(f)
-        assert f.to_array()[8:].max() > 0, page                                # each page draws below the header
-    seen = set()
-    for _ in range(int(len(pages) * 10 / 0.5) + 1):
-        ch.tick(0.5)
-        seen.add(ch.page())
-    assert seen == set(pages)                                                   # every page shown on its timer
+        assert f.to_array()[8:].max() > 0, page
+
+
+def test_per_sport_panels_share_one_feed_and_poll_only_what_is_on_screen():
+    feed = SportsFeed(static=BOARD)
+    panels = {n: SportsChannel(feed=feed, name=n) for n in ("sports", "boston", "nfl", "ucl", "f1", "tennis")}
+    assert panels["ucl"].sections == ["ucl"] and panels["sports"].sections == list(feed.sections)
+    assert len(feed.users) == 6
+    assert feed.wanted_sections() == set()                                       # nothing on screen -> nothing polled
+    panels["ucl"].active = True
+    assert feed.wanted_sections() == {"ucl"}
+    panels["f1"].active = True
+    assert feed.wanted_sections() == {"ucl", "f1"}
+    panels["sports"].active = True
+    assert feed.wanted_sections() == set(feed.sections)
+    nfl = SportsChannel(feed=SportsFeed(static=BOARD), name="nfl")
+    assert {sl[0] for sl in nfl.slides()} == {"nfl"} and len(nfl.slides()) == (len(nfl.feed.nfl_week) + 1) // 2   # every game
+    assert nfl.priority() == 4                                                    # Boston live boost only on boston/sports
+
+
+def test_soccer_goals_red_cards_and_cards_render():
+    from panelwall.channels.sports import _goal_text, _last_name
+    feed = SportsFeed(static=BOARD)
+    scored = [g for g in feed.ucl if g.goals]
+    assert scored
+    g = scored[0]
+    assert sum(1 for x in g.goals if x.home) == g.home.score and sum(1 for x in g.goals if not x.home) == g.away.score
+    assert g.home.logo.startswith("https://") and g.home.record
+    text = _goal_text(g.goals[0], 60)
+    assert fonts.width(text) <= 60 and text.endswith(g.goals[0].minute.replace("'+", "+"))
+    assert _last_name("D. Doué") == "DOUE" and _last_name("J. Cook III") == "COOK" and _last_name("Raphinha") == "RAPHINHA"
+    reds = [g for g in feed.ucl if g.red_cards]
+    ch = SportsChannel(feed=feed, page="ucl")
+    for game in (reds or scored)[:1]:
+        f = Frame()
+        ch._match_card(f, 0, game)
+        arr = f.to_array()
+        assert arr[1:23, 3:25].max() > 0 and arr[1:23, 103:125].max() > 0          # both crests (fixture tiles)
+        assert arr[35:40, :64].max() > 0 or arr[35:40, 64:128].max() > 0          # a goal row
+
+
+def test_nfl_leaders_compact():
+    from panelwall.channels.sports import _compact_leader
+    assert _compact_leader("passingYards", "J. Love", "30/41, 288 YDS, 3 TD, 1 INT") == "PASS LOVE 288Y 3TD"
+    assert _compact_leader("rushingYards", "J. Cook III", "17 CAR, 80 YDS, 1 TD") == "RUSH COOK 80Y 1TD"
+    assert _compact_leader("receivingYards", "C. Watson", "8 REC, 113 YDS") == "REC WATSON 113Y"
+    feed = SportsFeed(static=BOARD)
+    assert any(g.leaders for g in feed.nfl_week)
+
+
+def test_f1_art_and_livery():
+    from panelwall.f1art import car_sprite, livery, GREY_CAR, CAR_W, CAR_H
+    assert livery("LECLERC")[0] == (215, 25, 32) and livery("NOBODY") == GREY_CAR
+    a, b = car_sprite(*livery("NORRIS"), 0), car_sprite(*livery("NORRIS"), 1)
+    assert a.size == (CAR_W, CAR_H) and a.tobytes() != b.tobytes()               # wheels turn
+    ch = SportsChannel(feed=SportsFeed(static=BOARD), page="f1")
+    xs = []
+    for _ in range(3):
+        ch.tick(1.0)
+        f = Frame()
+        ch.render(f)
+        cols = np.nonzero(f.to_array()[H - CAR_H - 1:H - 1].max(axis=(0, 2)) > 60)[0]
+        xs.append(cols.mean() if len(cols) else -1)
+    assert len(set(xs)) == 3                                                      # the car moves
+
+
+def test_logo_processing_and_cache(tmp_path):
+    import io
+    from PIL import Image as PILImage
+    from panelwall.data.logos import LogoCache, process, cache_name
+    big = PILImage.new("RGBA", (500, 300), (0, 0, 0, 0))
+    big.paste((200, 20, 30, 255), (100, 50, 400, 250))
+    buf = io.BytesIO()
+    big.save(buf, "PNG")
+    tile = process(buf.getvalue(), 22)
+    a = np.asarray(tile)
+    assert tile.size == (22, 22) and set(np.unique(a[:, :, 3])) <= {0, 255}      # alpha is binary on the LEDs
+    assert a[11, 11, 0] > 150                                                    # crest centred
+    dark = PILImage.new("RGBA", (100, 100), (10, 10, 10, 255))
+    buf = io.BytesIO()
+    dark.save(buf, "PNG")
+    assert np.asarray(process(buf.getvalue(), 22))[0, 0, 0] > 100                # dark crest gets a light ring
+    lc = LogoCache(fetch=False, cache_dir=tmp_path)
+    assert lc.get("https://example.invalid/x.png") is None and lc.get(None) is None
+    url = SportsFeed(static=BOARD).ucl[0].home.logo
+    assert lc.get(url, 22) is not None                                           # fixtures/logos is searched
+    tile.save(tmp_path / cache_name("https://example.invalid/y.png", 22))
+    assert lc.get("https://example.invalid/y.png", 22) is not None
 
 
 def test_board_sections_are_configurable_and_empty_board_degrades():
     feed = SportsFeed(static=BOARD, sections=["f1"])
     ch = SportsChannel(feed=feed)
     assert ch.pages() == ["f1"]
+    lone = SportsChannel(feed=SportsFeed(static={"_now": BOARD["_now"]}), name="ucl")
+    lone.render(Frame())                                                         # 'LOADING' / 'NOTHING ON' path
     empty = SportsChannel(feed=SportsFeed(static={"_now": BOARD["_now"]}))
     assert empty.pages() == [] and empty.priority() == 0
     empty.render(Frame())

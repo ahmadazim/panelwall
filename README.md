@@ -28,7 +28,12 @@ web         the control server (standard library http.server, no build step)
 | `greenb` | Green Line B strip, home Washington Street, next trains both ways, plus the 65 bus at the stops outside the station | 5 |
 | `greenc`, `greend` | Green Line C and D strips (home Kenmore by default; `PW_GREEN_HOME_C` / `PW_GREEN_HOME_D` to change) | 5 |
 | `green` | all three Green branches on one screen (termini labelled, trains moving, home in amber) with Washington Street's next trains and the 65 bus | 5 |
-| `sports` | rotating sports board: a live Boston game card whenever one is on; otherwise the Boston week (last results + next games), this week's NFL scores, Champions League matchday, F1 last result + next race, ATP/WTA latest matches. ESPN's unofficial keyless API | 25 for 15 s after a Boston score, 12 live, 4 otherwise |
+| `sports` | the cycling sports wall: every section below in turn (max 3 slides each), with a live Boston game card returning after each section | 25 for 15 s after a Boston score, 12 Boston live, 4 otherwise |
+| `boston` | Boston's week (last results, next games) and the live game card when one is on | same as above |
+| `nfl` | NFL week, two games per screen: team crests, big score or kickoff, quarter and clock, down and distance, passing/rushing/receiving leaders | 4 |
+| `ucl` | Champions League matchday, two matches per screen: crests, score, live minute, goal scorers with minutes (P penalty, OG own goal), red cards | 4 |
+| `f1` | last race podium (P2, P1, P3 with team colours), next race countdown, the winner's car in livery lapping the bottom of the wall | 4 |
+| `tennis` | ATP/WTA, two TV-style scorebugs per screen: tournament, round, names, set boxes, the winner's ball | 4 |
 | `prayers` | today's athan and iqama times from your fiveprayers.org display page, next-prayer countdown, sunrise and Jumu'ah | 20 from 10 min before to 3 min after each athan / iqama, else 4 |
 | `meadow` | screensaver: an orange tabby and Kuromi wander a looping parallax meadow. The sky follows the real time and weather from the shared forecast feed: sun on an east-left to west-right arc, dawn/dusk glow on the sun's side, moon and stars at night, clouds, rain, snow, lightning, fog | 2 (idle) |
 | `forecast` | Open-Meteo (keyless): WEEK view (7 days, glyphs, hi/lo, precip %) and HOURLY view (next 12 h temperature line) alternating every 20 s | 3, or 8 for 60 s when the current weather turns to precipitation |
@@ -51,7 +56,8 @@ python -m panelwall demo-flights                         # fixture data, live py
 python -m panelwall demo-radar | demo-silhouette | demo-mbta | demo-sports
 python -m panelwall demo-forecast --view week|hourly     # omit --view to alternate
 python -m panelwall demo-meadow --sky rain --hour 19      # force a sky / local hour for review
-python -m panelwall demo-sports --page boston|nfl|ucl|f1|tennis|live
+python -m panelwall demo-sports --page boston|nfl|ucl|f1|tennis|live   # or demo-ucl, demo-f1, ...
+python tools/capture_espn_fixture.py                     # refresh the sports fixture + crest tiles from live ESPN
 python -m panelwall probe-sports | probe-forecast        # hit every ESPN source / Open-Meteo and summarise
 python -m panelwall run                                  # live data + control UI on :8080
 python -m panelwall run --channels flights,mbta          # load only some channels
@@ -82,7 +88,8 @@ in hzeller/rpi-rgb-led-matrix), converted to a Pillow bitmap font by `tools/buil
 with the colon and period patched to single-pixel dots. Compared side by side with the product
 photos it matches the letterforms (pointed A, hooked t, 7 px caps on a 6 px advance). Airport
 names come from [OurAirports](https://ourairports.com) (public domain), trimmed into
-`assets/data/airports.csv`. The 28x28 airline logos in `assets/logos/` are hand-drawn pixel-art
+`assets/data/airports.csv`. Team crests on the sports cards are ESPN's own logo images, downloaded once per team in the
+background and shrunk to 22 px LED tiles for personal display use. The 28x28 airline logos in `assets/logos/` are hand-drawn pixel-art
 approximations of the real marks for personal, non-commercial use on this one display, generated
 by `tools/build_logos.py`; `python -m panelwall logos` renders them at 6x to
 `design/logos_sheet.png` for review.
@@ -110,7 +117,8 @@ All optional. The app runs with none of them set.
 | `PW_GREEN_HOME_C`, `PW_GREEN_HOME_D` | `place-kencl` (Kenmore) | home station for the C and D panels |
 | `PW_TEAMS` | `mlb:BOS:SOX,nfl:NE:PATS,nba:BOS:CELTS,nhl:BOS:B'S` | tracked teams as `league:ESPN-abbreviation:label`; labels <= 5 chars fit next to any status |
 | `PW_CITY` | `BOSTON` | header of the sports channel |
-| `PW_SPORTS` | `boston,nfl,ucl,f1,tennis` | pages of the sports board, in rotation order (10 s each) |
+| `PW_SPORTS` | `boston,nfl,ucl,f1,tennis` | sections of the `sports` wall, in rotation order |
+| `PW_LOGO_CACHE` | `~/.panelwall/logos` | where downloaded team crests are cached (each is fetched once, ever) |
 | `PW_TZ` | `America/New_York` | timezone for Open-Meteo timestamps and prayer-time calculation |
 | `PW_PRAYERS_URL` | your fiveprayers.org display page | the page has no API: it is fetched every 6 h for its parameters and fixed iqama times, and the athan times are computed locally with the same algorithm its JavaScript uses (verified against it) |
 
