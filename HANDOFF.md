@@ -214,10 +214,11 @@ panelwall/
   channels/
     base.py            Channel: tick(dt), priority() (<=0 = don't show), render(frame), status(), close();
                        `active` flag set by the scheduler each frame (feeds pause when False)
-    sports.py          SportsChannel — "BOSTON TONIGHT": featured game card left (live > next > last final; badges,
-                       LARGE scores right-aligned at x=92, MLB bases+outs / NFL down&distance+possession) + one row per
-                       other tracked team right (label + <=13-char status). prio 25 (15 s after a score) / 12 live /
-                       4 game today / 0
+    sports.py          SportsChannel — rotating board, pages per CONFIG.sports.sections (10 s each): live (the original
+                       Boston game card, every other slot while a tracked game is on), boston (week: last 3 results +
+                       next games, one row each), nfl (week, 2 cols x 6), ucl (matchday nearest now, 2 x 5), f1 (last
+                       race top 6 + next race countdown), tennis (latest ATP/WTA matches with known players).
+                       prio 25 (15 s after a score) / 12 live / 4 with any data / 0
     prayers.py         PrayersChannel — athan/iqama table (5 rows, 9 px pitch, athan right@104, iqama right@160,
                        next prayer amber, past grey) + right block "NEXT ATHAN IN / ASR / 0:45:12" + sunrise/Jumu'ah.
                        prio 20 in a window around each athan/iqama (alert), else 4
@@ -270,10 +271,13 @@ panelwall/
     airports.py        OurAirports-backed (assets/data/airports.csv, 8,802 IATA airports): lookup(), coords(),
                        display_name() with the FlightWall wording rule + NAME_OVERRIDES (OAK/DFW/DCA/...);
                        route_progress() for the silhouette dot. The old ~150-entry table is the fallback.
-    espn.py            ESPN public scoreboard (UNOFFICIAL, keyless): EspnClient (scoreboard?dates=yesterday-+7d),
-                       parse_scoreboard (per-event defensive), format_status (<=13 chars), live_detail, pick_game,
-                       SportsFeed (30 s while live else 5 min; score-change -> event_until). NOTE: the MLB week window
-                       is ~1.9 MB of JSON per poll - fine in the background thread, don't shorten the interval.
+    espn.py            ESPN site API (UNOFFICIAL, keyless). Sources: /teams/<abbr>/schedule per tracked team (hourly),
+                       today's /scoreboard for a league only while a tracked game is on or <30 min away (60 s,
+                       situation details), NFL week (10 min), UCL ?dates=YYYYMM (15 min), F1 ?dates=YYYY (1 h),
+                       tennis atp/wta (30 min). Parsers: parse_scoreboard (per-event defensive; schedule shape too),
+                       parse_f1, parse_tennis, format_status / week_status / game_row / match_row.
+                       !! dates=YYYYMMDD-YYYYMMDD RANGES return HTTP 400 since ~Nov 2026 - that broke the board.
+                       Single days and dates=YYYYMM still work. Responses may be gzip (handled).
     prayers.py         fiveprayers.org display page scraper + a line-for-line port of its ptScript_calcs.js
                        (parse_page: #parms/#fat/fixed iqama tds; compute_athan_hours/board_time; day_times; next_event;
                        PrayersFeed polls the PAGE every 6 h, computes times per day). VERIFIED against the original
@@ -288,7 +292,9 @@ tools/                 build_fw_font.py, build_logos.py — regenerate the font 
 fixtures/bos_point.json  hand-built readsb-shaped Boston traffic + `_routes` sidecar (test only)
 fixtures/mbta_red.json   trimmed LIVE capture of the MBTA V3 API (stops, vehicles+included, predictions), 14 Sep
 fixtures/mbta_green.json trimmed LIVE capture for Green-B/C/D (+ /routes, + bus 65 predictions), 26 Oct
-fixtures/espn_scoreboards.json  trimmed LIVE ESPN capture, 15 Sep, 4 leagues; ONE substitution (MIA->BOS on the live
+fixtures/espn_board.json  trimmed LIVE capture, 3 Nov: 4 team schedules, today's scoreboards, NFL week, UCL month,
+                         F1 (2 past + 2 next races), ATP/WTA (completed + upcoming known matches). Drives demo-sports.
+fixtures/espn_scoreboards.json  (parser tests only) trimmed LIVE ESPN capture, 15 Sep, 4 leagues; ONE substitution (MIA->BOS on the live
                          MLB game so the fixture has a live Boston card) - see its _comment
 fixtures/openmeteo.json  unmodified LIVE Open-Meteo capture, 15 Sep 00:15, Doylestown
 fixtures/fiveprayers.html  unmodified LIVE capture of Ahmad's fiveprayers.org display page (id=ahmadazim), 17 Sep.
@@ -503,6 +509,13 @@ at place-wascm / place-kencl, /routes direction_destinations, bus 65 predictions
 one request. Keyless budget: one panel on screen = 3 req / 30 s; the overview = 7 req / 30 s = 14/min, still
 under 20/min but get a free MBTA key if more panels poll at once.
 
+3 Nov: sports board fixed + widened (Ahmad: "HTTP 400 NHL scoreboard"; wants a week summary when nothing is
+live, and Champions League, NFL, tennis, F1). Cause: ESPN now rejects the dates=A-B range form the feed used for
+every league. Rebuilt on per-team /schedule (1 small request per team per hour) + today's scoreboard only around
+live games. VERIFIED live: every source via probe-sports and a 30 s run (183 tracked games, 14 NFL, 36 UCL, 25 F1
+races, 233 tennis matches, no errors). UNVERIFIED: a live Boston game / live UCL match / F1 race in progress on the
+wall (none on at test time; paths covered by fixture + synthetic tests).
+
 Verified vs. unverified for the earlier channels:
 - **Changed 15 Sep ~01:00 (Ahmad's request):** the wall no longer cycles by default. Manual mode pins the
   panel picked on the phone; Auto cycle is opt-in with a tickable panel list, a dwell slider (5–120 s) and
@@ -547,6 +560,9 @@ Verified vs. unverified for the earlier channels:
   idle feeds must show `paused: true` and NO `updated_at`.
 - The FlightWall card cycled "nearest 5" regardless of who was flying, so N-numbers crowded out the airlines
   Ahmad wants to see. Cycle order is now known airline > unknown airline-style callsign > private.
+- The sports feed used ESPN's dates=YYYYMMDD-YYYYMMDD range query for every league; ESPN started answering it
+  with HTTP 400 and the whole board went to "NO DATA". Undocumented APIs change; `probe-sports` hits every
+  source so the next breakage is one command to diagnose. A regression test asserts no range form is requested.
 - Open-Meteo integers (precipitation %) came through a float-cast helper and rendered "45.0%". Cast per field.
 - A last-resort `[:13]` slice on status strings chopped "@TOR" to "@TO". Shorten by dropping parts, never slice.
 - Silkscreen (SMALL) drawn at `y` lights rows `y+4..y+8`, not `y..y+4`. Lay out with that offset

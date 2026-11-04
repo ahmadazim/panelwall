@@ -36,8 +36,8 @@ OUT = os.path.join(os.path.dirname(__file__), "round2")
 def sports():
     from panelwall.data.espn import SportsFeed
     from panelwall.channels.sports import SportsChannel
-    fx = json.load(open(os.path.join(ROOT, "fixtures", "espn_scoreboards.json")))
-    ch = SportsChannel(feed=SportsFeed(static=fx))
+    fx = json.load(open(os.path.join(ROOT, "fixtures", "espn_board.json")))
+    ch = SportsChannel(feed=SportsFeed(static=fx), page="boston")
     f = Frame(); ch.tick(0.05); ch.render(f)
     return f.img
 

@@ -28,7 +28,7 @@ web         the control server (standard library http.server, no build step)
 | `greenb` | Green Line B strip, home Washington Street, next trains both ways, plus the 65 bus at the stops outside the station | 5 |
 | `greenc`, `greend` | Green Line C and D strips (home Kenmore by default; `PW_GREEN_HOME_C` / `PW_GREEN_HOME_D` to change) | 5 |
 | `green` | all three Green branches on one screen (termini labelled, trains moving, home in amber) with Washington Street's next trains and the 65 bus | 5 |
-| `sports` | "BOSTON TONIGHT": featured game card (live > next > last final) + one row per other tracked team, from ESPN's public scoreboard JSON (unofficial, keyless) | 25 for 15 s after a tracked team scores, 12 live, 4 game today, else 0 |
+| `sports` | rotating sports board: a live Boston game card whenever one is on; otherwise the Boston week (last results + next games), this week's NFL scores, Champions League matchday, F1 last result + next race, ATP/WTA latest matches. ESPN's unofficial keyless API | 25 for 15 s after a Boston score, 12 live, 4 otherwise |
 | `prayers` | today's athan and iqama times from your fiveprayers.org display page, next-prayer countdown, sunrise and Jumu'ah | 20 from 10 min before to 3 min after each athan / iqama, else 4 |
 | `meadow` | screensaver: an orange tabby and Kuromi wander a looping parallax meadow. The sky follows the real time and weather from the shared forecast feed: sun on an east-left to west-right arc, dawn/dusk glow on the sun's side, moon and stars at night, clouds, rain, snow, lightning, fog | 2 (idle) |
 | `forecast` | Open-Meteo (keyless): WEEK view (7 days, glyphs, hi/lo, precip %) and HOURLY view (next 12 h temperature line) alternating every 20 s | 3, or 8 for 60 s when the current weather turns to precipitation |
@@ -51,7 +51,8 @@ python -m panelwall demo-flights                         # fixture data, live py
 python -m panelwall demo-radar | demo-silhouette | demo-mbta | demo-sports
 python -m panelwall demo-forecast --view week|hourly     # omit --view to alternate
 python -m panelwall demo-meadow --sky rain --hour 19      # force a sky / local hour for review
-python -m panelwall probe-sports | probe-forecast        # raw JSON from ESPN / Open-Meteo
+python -m panelwall demo-sports --page boston|nfl|ucl|f1|tennis|live
+python -m panelwall probe-sports | probe-forecast        # hit every ESPN source / Open-Meteo and summarise
 python -m panelwall run                                  # live data + control UI on :8080
 python -m panelwall run --channels flights,mbta          # load only some channels
 python -m panelwall sheet                                # all channels -> design/channels_sheet.png
@@ -109,6 +110,7 @@ All optional. The app runs with none of them set.
 | `PW_GREEN_HOME_C`, `PW_GREEN_HOME_D` | `place-kencl` (Kenmore) | home station for the C and D panels |
 | `PW_TEAMS` | `mlb:BOS:SOX,nfl:NE:PATS,nba:BOS:CELTS,nhl:BOS:B'S` | tracked teams as `league:ESPN-abbreviation:label`; labels <= 5 chars fit next to any status |
 | `PW_CITY` | `BOSTON` | header of the sports channel |
+| `PW_SPORTS` | `boston,nfl,ucl,f1,tennis` | pages of the sports board, in rotation order (10 s each) |
 | `PW_TZ` | `America/New_York` | timezone for Open-Meteo timestamps and prayer-time calculation |
 | `PW_PRAYERS_URL` | your fiveprayers.org display page | the page has no API: it is fetched every 6 h for its parameters and fixed iqama times, and the athan times are computed locally with the same algorithm its JavaScript uses (verified against it) |
 

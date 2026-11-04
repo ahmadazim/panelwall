@@ -176,7 +176,7 @@ def fixture_channel(name: str, **kw):
         return ch.MbtaChannel(feed=feeds[name])
     if name == "sports":
         from .data.espn import SportsFeed
-        return ch.SportsChannel(feed=SportsFeed(static=json.loads((FIXTURES / "espn_scoreboards.json").read_text())))
+        return ch.SportsChannel(feed=SportsFeed(static=json.loads((FIXTURES / "espn_board.json").read_text())), page=kw.get("page"))
     if name == "prayers":
         from datetime import datetime
         return ch.PrayersChannel(static_html=(FIXTURES / "fiveprayers.html").read_text(),
@@ -205,6 +205,8 @@ def cmd_demo(args):
     kw = {"view": args.view} if getattr(args, "view", None) else {}
     if getattr(args, "case", None):
         kw["case"] = args.case
+    if getattr(args, "page", None):
+        kw["page"] = args.page
     if getattr(args, "sky", None):
         kw["sky"] = args.sky
     if getattr(args, "hour", None) is not None:
@@ -240,6 +242,9 @@ def cmd_sheet(args):
         if n == "flightwall":
             for case in "abcd":
                 tiles.append((f"flightwall (case {case})", led_image(render_channel_frame(n, case=case), scale)))
+        elif n == "sports":
+            for pg in ("boston", "nfl", "ucl", "f1", "tennis"):
+                tiles.append((f"sports ({pg})", led_image(render_channel_frame(n, page=pg), scale)))
         elif n == "forecast":
             for v in ("week", "hourly"):
                 tiles.append((f"forecast ({v})", led_image(render_channel_frame(n, view=v), scale)))
@@ -287,24 +292,39 @@ def cmd_test(args):
 
 
 def cmd_probe_sports(args):
-    """Print the ESPN scoreboard URL and raw JSON (head) for each tracked league."""
-    from datetime import datetime, timedelta
-    from .data.espn import EspnClient, parse_scoreboard
+    """Hit every ESPN source the board uses and print what came back (URL, status, a parsed summary)."""
+    from datetime import datetime
+    from .data.espn import EspnClient, game_row, match_row, parse_f1, parse_scoreboard, parse_tennis
 
     c = EspnClient()
-    today = datetime.now().astimezone().date()
-    start, end = datetime.combine(today - timedelta(days=1), datetime.min.time()), datetime.combine(today + timedelta(days=CONFIG.sports.days_ahead), datetime.min.time())
-    leagues = sorted({t[0] for t in CONFIG.sports.teams})
-    for lg in leagues:
-        print("GET", c.url(lg, start, end))
-        doc = c.scoreboard(lg, start, end)
-        if doc is None:
-            print("  ", c.last_error)
-            continue
-        raw = json.dumps(doc)
-        print(f"  {len(raw)} bytes, {len(doc.get('events', []))} events. Raw head:\n  {raw[:args.n]}")
-        for g in parse_scoreboard(doc, lg):
-            print(f"  {g.start:%m-%d %H:%MZ} {g.state:4} {g.away.abbreviation:>4} {g.away.score!s:>3} @ {g.home.abbreviation:<4} {g.home.score!s:>3}  {g.short_detail!r}  {g.situation or ''}")
+    now = datetime.now().astimezone()
+    for lg, ab, _ in CONFIG.sports.teams:
+        doc = c.schedule(lg, ab)
+        print(f"{lg} {ab} schedule:", c.last_error or f"{len((doc or {}).get('events', []))} events")
+        if doc:
+            gs = [g for g in parse_scoreboard(doc, lg) if abs((g.start - now).days) <= 7]
+            for g in gs[:4]:
+                print("   ", g.start.astimezone(now.tzinfo).strftime("%a %m-%d %H:%M"), *game_row(g, now))
+    doc = c.scoreboard("nfl")
+    print("nfl week:", c.last_error or f"{len((doc or {}).get('events', []))} games, week {((doc or {}).get('week') or {}).get('number')}")
+    doc = c.scoreboard("ucl", now.strftime("%Y%m"))
+    print("champions league (month):", c.last_error or f"{len((doc or {}).get('events', []))} matches")
+    if doc:
+        for g in parse_scoreboard(doc, "ucl")[:3]:
+            print("   ", g.start.strftime("%m-%d"), *game_row(g, now))
+    doc = c.f1(now.year)
+    print("f1:", c.last_error or f"{len((doc or {}).get('events', []))} races")
+    if doc:
+        for r in [r for r in parse_f1(doc) if r.state == "post"][-1:] + [r for r in parse_f1(doc) if r.state == "pre"][:1]:
+            print("   ", r.short, r.state, r.start.astimezone(now.tzinfo).strftime("%a %m-%d %H:%M"), r.results[:3])
+    for tour in ("atp", "wta"):
+        doc = c.tennis(tour)
+        print(f"tennis {tour}:", c.last_error or f"{len((doc or {}).get('events', []))} tournaments")
+        if doc:
+            ts, ms = parse_tennis(doc, tour)
+            print("   ", [(t.name, t.state) for t in ts][:3])
+            for m in [m for m in ms if m.state == "post"][:2]:
+                print("   ", m.round, match_row(m))
 
 
 def cmd_probe_forecast(args):
@@ -410,6 +430,9 @@ def main(argv=None):
         common(sp)
         if name == "forecast":
             sp.add_argument("--view", choices=["week", "hourly"], default=None, help="pin one view (default: alternate)")
+        if name == "sports":
+            sp.add_argument("--page", choices=["live", "boston", "nfl", "ucl", "f1", "tennis"], default=None,
+                            help="pin one page of the board (default: rotate)")
         if name == "meadow":
             sp.add_argument("--sky", choices=["sun", "partly", "cloud", "fog", "rain", "snow", "storm"], default=None,
                             help="force the weather (default: the forecast fixture's current code)")
@@ -421,9 +444,7 @@ def main(argv=None):
     sub.add_parser("sheet", help="render every channel's fixture demo to design/channels_sheet.png").set_defaults(fn=cmd_sheet)
     sub.add_parser("logos", help="regenerate the airline logo tiles and design/logos_sheet.png (6x)").set_defaults(fn=cmd_logos)
     sub.add_parser("sprites", help="render every aircraft sprite to design/sprites_sheet.png").set_defaults(fn=cmd_sprites)
-    sp = sub.add_parser("probe-sports", help="raw ESPN scoreboard JSON for the tracked leagues")
-    sp.add_argument("-n", type=int, default=600, help="bytes of raw JSON to print per league")
-    sp.set_defaults(fn=cmd_probe_sports)
+    sub.add_parser("probe-sports", help="hit every ESPN source the sports board uses and print a summary").set_defaults(fn=cmd_probe_sports)
     sub.add_parser("probe-prayers", help="fetch the fiveprayers.org page and print the parsed config + times").set_defaults(fn=cmd_probe_prayers)
     sp = sub.add_parser("probe-forecast", help="raw Open-Meteo JSON for CONFIG.location")
     sp.add_argument("-n", type=int, default=600, help="bytes of raw JSON to print")

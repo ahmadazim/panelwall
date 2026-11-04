@@ -97,15 +97,22 @@ def _teams(default):
 
 @dataclass
 class SportsConfig:
-    # ESPN's public scoreboard JSON (undocumented, keyless, long-stable). Tracked teams:
+    # ESPN's public site API (undocumented, keyless, long-stable). Tracked teams:
     # (league, ESPN abbreviation, <=6-char label for the display). Any city works.
     base: str = _env("PW_ESPN_BASE", "https://site.api.espn.com/apis/site/v2/sports")
     city: str = _env("PW_CITY", "BOSTON")
     teams: list = field(default_factory=lambda: _teams([
         ("mlb", "BOS", "SOX"), ("nfl", "NE", "PATS"), ("nba", "BOS", "CELTS"), ("nhl", "BOS", "B'S")]))
-    poll_live_seconds: float = 60.0      # while a tracked game is in progress (one request per league)
-    poll_idle_seconds: float = 600.0
-    days_ahead: int = 7                  # scoreboard window: yesterday .. today+days_ahead
+    # pages of the board, in rotation order: boston (tracked teams), nfl, ucl (Champions League), f1, tennis
+    sections: list = field(default_factory=lambda: [x.strip() for x in _env("PW_SPORTS", "boston,nfl,ucl,f1,tennis").split(",") if x.strip()])
+    page_seconds: float = 10.0           # time on each page when nothing tracked is live
+    # request cadence per source (seconds); 'live' applies while that source has a game in progress
+    schedule_seconds: float = 3600.0     # /teams/<abbr>/schedule, one per tracked team
+    live_seconds: float = 60.0           # today's scoreboard while a tracked game is on (situation details)
+    nfl_seconds: float = 600.0
+    ucl_seconds: float = 900.0
+    f1_seconds: float = 3600.0
+    tennis_seconds: float = 1800.0
 
 
 @dataclass

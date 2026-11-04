@@ -1,27 +1,30 @@
-"""ESPN public scoreboard JSON (undocumented, keyless, stable for years).
+"""ESPN public site API (undocumented, keyless, stable for years) - the sports board's data.
 
-  GET {base}/{sport}/{league}/scoreboard?dates=YYYYMMDD-YYYYMMDD&limit=300
-      -> {"events": [{"id", "date" (ISO, Z), "status": {"type": {"state": "pre"|"in"|"post",
-                      "shortDetail": "Top 9th" | "Final" | "Final/OT" | "9/15 - 8:05 PM EDT",
-                      "name": "STATUS_SCHEDULED"|...}, "period": int, "displayClock": "4:12"},
-                      "competitions": [{"competitors": [{"homeAway", "score": "7",
-                          "team": {"abbreviation", "displayName", "name", "color", "alternateColor"}}],
-                          "situation": {"onFirst","onSecond","onThird","outs","downDistanceText","possession"}}]}]}
-
-Verified live 15 Sep 2026 for mlb/nfl/nba/nhl (fixtures/espn_scoreboards.json is a
-trimmed capture). Notes: NHL alternateColor can be null; `possession` is a team id
-string; an empty User-Agent is refused (403); a 403 was once seen transiently and is
-treated like any other error (kept data, retry next poll).
+Endpoints (all verified live 3 Nov 2026; fixtures/espn_board.json is a trimmed capture):
+  /{sport}/{league}/teams/{abbr}/schedule   -> a team's whole season: results + upcoming (small, 1 request)
+  /{sport}/{league}/scoreboard              -> TODAY's games with live `situation` (bases/outs, down & distance);
+                                              NFL returns the whole current week
+  /soccer/uefa.champions/scoreboard?dates=YYYYMM -> a month of Champions League fixtures/results
+  /racing/f1/scoreboard?dates=YYYY          -> the season's races; the "Race" competition's competitors are
+                                              drivers in finishing order (`order`, `athlete.shortName`)
+  /tennis/{atp|wta}/scoreboard              -> current tournaments; matches under groupings[].competitions
+                                              (round.displayName, competitors[].athlete, winner, linescores)
+NOTE the `dates=YYYYMMDD-YYYYMMDD` RANGE form that worked in September now returns 400 on every
+league ("Failed to get events endpoint") - that is what broke the board. Single days and
+`dates=YYYYMM` still work. Responses may be gzip-encoded.
 
 Parsing is per-event defensive: a malformed event is skipped, never the whole reply.
 """
 
 from __future__ import annotations
 
+import gzip
 import json
+import unicodedata
 import threading
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
@@ -30,8 +33,10 @@ from ..config import CONFIG
 from .polling import Backoff, DemandPoller, retry_after_seconds
 
 SPORT_OF = {"mlb": "baseball", "nfl": "football", "nba": "basketball", "nhl": "hockey",
-            "wnba": "basketball", "mls": "soccer", "ncaaf": "football", "ncaab": "basketball"}
-REGULATION_PERIODS = {"mlb": 9, "nfl": 4, "nba": 4, "nhl": 3}
+            "wnba": "basketball", "mls": "soccer", "ncaaf": "football", "ncaab": "basketball",
+            "ucl": "soccer"}
+LEAGUE_PATH = {"ucl": "uefa.champions"}        # league id in the URL when it differs from our short name
+REGULATION_PERIODS = {"mlb": 9, "nfl": 4, "nba": 4, "nhl": 3, "ucl": 2}
 MAX_STATUS = 13
 DAYS = ("MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN")
 
@@ -82,8 +87,10 @@ class Game:
 
 # ---- parsing ---------------------------------------------------------------------------
 def _int(v) -> int | None:
+    if isinstance(v, dict):                       # schedule endpoint: {"value": 3.0, "displayValue": "3"}
+        v = v.get("value", v.get("displayValue"))
     try:
-        return int(v)
+        return int(float(v))
     except (TypeError, ValueError):
         return None
 
@@ -104,15 +111,15 @@ def parse_event(e: dict, league: str) -> Game | None:
         teams = [_parse_team(c) for c in comp["competitors"]]
         home = next(t for t in teams if t.home)
         away = next(t for t in teams if not t.home)
-        st = e["status"]
-        stype = st["type"]
+        st = e.get("status") or comp.get("status") or {}
+        stype = st.get("type") or {}
         start = datetime.fromisoformat(e["date"].replace("Z", "+00:00"))
         sit = comp.get("situation") or {}
         situation = {k: sit.get(k) for k in ("onFirst", "onSecond", "onThird", "outs", "downDistanceText", "possession")
                      if sit.get(k) is not None}
         if "possession" in situation:   # team id -> abbreviation
             situation["possession"] = next((t.abbreviation for t in teams if t.id == str(situation["possession"])), None)
-        return Game(league=league, id=str(e.get("id", "")), start=start, state=str(stype.get("state", "pre")),
+        return Game(league=league, id=str(e.get("id", "") or comp.get("id", "")), start=start, state=str(stype.get("state", "pre")),
                     short_detail=str(stype.get("shortDetail") or ""), status_name=str(stype.get("name") or ""),
                     period=_int(st.get("period")) or 0, clock=str(st.get("displayClock") or ""),
                     home=home, away=away, situation=situation)
@@ -142,6 +149,8 @@ def live_detail(g: Game) -> str:
     reg = REGULATION_PERIODS.get(g.league, 4)
     if g.league == "mlb":
         return g.short_detail.upper()[:MAX_STATUS] or f"INN {g.period}"
+    if g.league == "ucl":
+        return (g.clock or g.short_detail).upper()[:MAX_STATUS]       # "45'+2'", "HT", "FT"
     if g.period > reg:
         label = "OT" if g.period == reg + 1 else f"{g.period - reg}OT"
     else:
@@ -201,6 +210,154 @@ def pick_game(games: list[Game], now: datetime) -> Game | None:
 
 
 # ---- client + feed -------------------------------------------------------------------
+def week_status(g: Game, us_abbr: str, now: datetime) -> str:
+    """Status for a row that already shows the day: '7:30P VS MIL' / '7P @PIT' / 'W 3-2 OT' / '98-95 Q3'."""
+    if g.state != "pre" or g.cancelled:
+        return format_status(g, us_abbr, now)
+    us, them = g.team(us_abbr), g.opponent(us_abbr)
+    t = _clock_text(g.start.astimezone(now.tzinfo))
+    return f"{t} VS {them.abbreviation}" if us is not None and us.home else f"{t} @{them.abbreviation}"
+
+
+def game_row(g: Game, now: datetime, width_chars: int = 21) -> tuple[str, str]:
+    """Compact one-line form for league lists: ('DEN 10 @KC 31', 'F') / ('LIV @FEN', 'WED 12:45P') /
+    ('GAL 2 VFB 0', "45'"). Returns (teams part, status part)."""
+    a, h = g.away, g.home
+    if g.state == "pre":
+        local = g.start.astimezone(now.tzinfo)
+        day = "" if local.date() == now.astimezone(now.tzinfo).date() else DAYS[local.weekday()] + " "
+        return f"{a.abbreviation} @{h.abbreviation}", f"{day}{_clock_text(local)}"
+    sa, sh = a.score if a.score is not None else 0, h.score if h.score is not None else 0
+    teams = f"{a.abbreviation} {sa} @{h.abbreviation} {sh}" if g.league != "ucl" else f"{a.abbreviation} {sa}-{sh} {h.abbreviation}"
+    if g.state == "in":
+        return teams, live_detail(g)
+    ot = "/OT" if "OT" in g.short_detail.upper() else ""
+    return teams, ("FT" if g.league == "ucl" else "F") + ot
+
+
+@dataclass
+class Race:
+    name: str
+    short: str                  # "MEXICO CITY GP"
+    start: datetime             # race session start, UTC
+    state: str                  # pre | in | post
+    results: list               # [(position, driver short name)] top N, finishing order
+    circuit: str = ""
+
+
+def parse_f1(doc: dict) -> list[Race]:
+    out = []
+    for e in (doc or {}).get("events", []) or []:
+        try:
+            comps = e.get("competitions") or []
+            race = next((c for c in comps if (c.get("type") or {}).get("abbreviation", "").lower() == "race"), comps[-1] if comps else {})
+            start = datetime.fromisoformat((race.get("date") or e["date"]).replace("Z", "+00:00"))
+            stype = ((e.get("status") or race.get("status") or {}).get("type") or {})
+            comps_sorted = sorted(race.get("competitors") or [], key=lambda c: c.get("order") or 99)
+            results = [(int(c.get("order") or i + 1), str((c.get("athlete") or {}).get("shortName") or (c.get("athlete") or {}).get("displayName") or "?"))
+                       for i, c in enumerate(comps_sorted)]
+            name = str(e.get("name") or "")
+            short = name.upper()
+            for junk in ("MSC CRUISES ", "QATAR AIRWAYS ", "HEINEKEN ", "ARAMCO ", "PIRELLI ", "LENOVO ", "ROLEX ", "FORMULA 1 ", "LOUIS VUITTON ", "CRYPTO.COM ", "AWS ", "STC ", "ETIHAD AIRWAYS ", "SINGAPORE AIRLINES "):
+                short = short.replace(junk, "")
+            short = short.replace("GRAND PRIX", "GP").strip()
+            short = "".join(ch for ch in unicodedata.normalize("NFKD", short) if not unicodedata.combining(ch))
+            out.append(Race(name=name, short=short, start=start, state=str(stype.get("state") or "pre"),
+                            results=results, circuit=str((e.get("circuit") or {}).get("fullName") or "")))
+        except (KeyError, TypeError, ValueError, IndexError):
+            continue
+    out.sort(key=lambda r: r.start)
+    return out
+
+
+@dataclass
+class Match:
+    tour: str                   # ATP | WTA
+    tournament: str
+    round: str                  # "Final", "Semifinals", ...
+    round_no: int
+    start: datetime
+    state: str
+    short_detail: str
+    players: list               # [(short name, winner: bool, [set scores as ints])] - 2 entries
+
+
+@dataclass
+class Tournament:
+    tour: str
+    name: str
+    state: str
+    short_detail: str
+    start: datetime | None
+    end: datetime | None
+
+
+def parse_tennis(doc: dict, tour: str) -> tuple[list[Tournament], list[Match]]:
+    tournaments, matches = [], []
+    for e in (doc or {}).get("events", []) or []:
+        try:
+            stype = ((e.get("status") or {}).get("type") or {})
+            t = Tournament(tour=tour.upper(), name=str(e.get("name") or ""), state=str(stype.get("state") or ""),
+                           short_detail=str(stype.get("shortDetail") or ""),
+                           start=datetime.fromisoformat(e["date"].replace("Z", "+00:00")) if e.get("date") else None,
+                           end=datetime.fromisoformat(e["endDate"].replace("Z", "+00:00")) if e.get("endDate") else None)
+            tournaments.append(t)
+            groups = e.get("groupings") or []
+            singles = next((g for g in groups if "singles" in str((g.get("grouping") or {}).get("slug", "")).lower()), groups[0] if groups else {})
+            for c in singles.get("competitions") or []:
+                try:
+                    r = c.get("round") or {}
+                    rname = str(r.get("displayName") if isinstance(r, dict) else r or "")
+                    rno = int((r.get("number") if isinstance(r, dict) else 0) or 0)
+                    cst = ((c.get("status") or {}).get("type") or {})
+                    players = []
+                    for pc in (c.get("competitors") or [])[:2]:
+                        ath = pc.get("athlete") or {}
+                        sets = [int(float(ls.get("value"))) for ls in (pc.get("linescores") or []) if ls.get("value") is not None]
+                        players.append((str(ath.get("shortName") or ath.get("displayName") or "?"), bool(pc.get("winner")), sets))
+                    if len(players) != 2:
+                        continue
+                    matches.append(Match(tour=tour.upper(), tournament=t.name, round=rname, round_no=rno,
+                                         start=datetime.fromisoformat(c["date"].replace("Z", "+00:00")),
+                                         state=str(cst.get("state") or ""), short_detail=str(cst.get("shortDetail") or ""), players=players))
+                except (KeyError, TypeError, ValueError):
+                    continue
+        except (KeyError, TypeError, ValueError):
+            continue
+    matches.sort(key=lambda m: (m.round_no, m.start), reverse=True)
+    return tournaments, matches
+
+
+def match_row(m: Match) -> str:
+    """'SINNER d. ZVEREV 6-3 7-6' or, in progress, 'SINNER-ZVEREV 6-3 2-1' """
+    (n1, w1, s1), (n2, w2, s2) = m.players
+    last = lambda n: n.replace(".", " ").split()[-1].upper()[:10] if n.strip() else "?"  # noqa: E731  'J. Sinner' -> 'SINNER'
+    a, b = last(n1), last(n2)
+    sets = " ".join(f"{x}-{y}" for x, y in zip(s1, s2))
+    if m.state == "post":
+        win, lose = (a, b) if w1 or not w2 else (b, a)
+        if not w1 and w2:
+            sets = " ".join(f"{y}-{x}" for x, y in zip(s1, s2))
+        return f"{win} d. {lose} {sets}".strip()
+    return f"{a}-{b} {sets}".strip()
+
+
+def round_short(r: str) -> str:
+    r = r.lower()
+    if "final" in r and "semi" not in r and "quarter" not in r:
+        return "F"
+    if "semi" in r:
+        return "SF"
+    if "quarter" in r:
+        return "QF"
+    if "round of 16" in r or "4th" in r:
+        return "R16"
+    if "qualifying" in r:
+        return "Q"
+    return "".join(w[0] for w in r.split()[:2]).upper() or "R"
+
+
+# ---- client + feed -------------------------------------------------------------------
 class EspnClient:
     def __init__(self, base: str | None = None, timeout: float | None = None):
         self.base = (base or CONFIG.sports.base).rstrip("/")
@@ -208,19 +365,19 @@ class EspnClient:
         self.last_error: str | None = None
         self.backoff = Backoff()
 
-    def url(self, league: str, start: datetime | None = None, end: datetime | None = None) -> str:
-        sport = SPORT_OF.get(league, league)
-        u = f"{self.base}/{sport}/{league}/scoreboard"
-        if start is not None and end is not None:
-            u += f"?dates={start:%Y%m%d}-{end:%Y%m%d}&limit=300"
-        return u
+    def url(self, path: str, params: dict | None = None) -> str:
+        u = f"{self.base}/{path.lstrip('/')}"
+        return u + ("?" + urllib.parse.urlencode(params) if params else "")
 
-    def scoreboard(self, league: str, start: datetime | None = None, end: datetime | None = None) -> dict | None:
-        req = urllib.request.Request(self.url(league, start, end),
-                                     headers={"User-Agent": "panelwall/0.1", "Accept": "application/json"})
+    def get(self, path: str, params: dict | None = None) -> dict | None:
+        req = urllib.request.Request(self.url(path, params), headers={"User-Agent": "panelwall/0.1", "Accept": "application/json",
+                                                                       "Accept-Encoding": "gzip"})
         try:
             with urllib.request.urlopen(req, timeout=self.timeout) as r:
-                doc = json.loads(r.read().decode("utf-8", "replace"))
+                raw = r.read()
+                if r.headers.get("Content-Encoding") == "gzip":
+                    raw = gzip.decompress(raw)
+                doc = json.loads(raw.decode("utf-8", "replace"))
             self.last_error = None
             self.backoff.reset()
             return doc
@@ -229,39 +386,67 @@ class EspnClient:
                 wait = self.backoff.note(retry_after_seconds(e.headers))
                 self.last_error = f"HTTP {e.code} from ESPN; retrying in {int(wait)} s"
             else:
-                self.last_error = f"HTTP {e.code} {league} scoreboard"
+                self.last_error = f"HTTP {e.code} {path}"
         except Exception as e:
             self.last_error = f"{type(e).__name__}: {e}"
         return None
 
+    # the endpoints the feed uses
+    def schedule(self, league: str, abbr: str) -> dict | None:
+        return self.get(f"{SPORT_OF.get(league, league)}/{LEAGUE_PATH.get(league, league)}/teams/{abbr.lower()}/schedule")
+
+    def scoreboard(self, league: str, dates: str | None = None) -> dict | None:
+        return self.get(f"{SPORT_OF.get(league, league)}/{LEAGUE_PATH.get(league, league)}/scoreboard", {"dates": dates} if dates else None)
+
+    def f1(self, year: int) -> dict | None:
+        return self.get("racing/f1/scoreboard", {"dates": str(year)})
+
+    def tennis(self, tour: str) -> dict | None:
+        return self.get(f"tennis/{tour}/scoreboard")
+
 
 class SportsFeed(DemandPoller):
-    """Background poller for every tracked league. Snapshot: `games` = tracked games
-    (any competitor is one of CONFIG.sports.teams), sorted by start. `event_until`
-    is set 15 s into the future when a tracked team's score changes."""
+    """Background poller for the whole board. Each source has its own cadence (CONFIG.sports):
+      schedules  - one /teams/<abbr>/schedule per tracked team, hourly: season results + upcoming
+      live       - today's scoreboard for a league while one of its tracked games is on / about to
+                   start (situation: bases, outs, down & distance); the live game replaces the
+                   schedule's copy
+      nfl / ucl / f1 / tennis - league pages, only if enabled in sections
+    Snapshot attributes are replaced whole, never mutated, so render() can read them freely.
+    `event_until` is set 15 s into the future when a tracked team's score changes."""
 
     EVENT_SECONDS = 15.0
 
-    def __init__(self, client: EspnClient | None = None, static: dict | None = None, teams: list | None = None):
+    def __init__(self, client: EspnClient | None = None, static: dict | None = None, teams: list | None = None,
+                 sections: list | None = None):
         self.client = client or EspnClient()
         self.teams = [tuple(t) for t in (teams or CONFIG.sports.teams)]
-        self.games: list[Game] = []
+        self.sections = list(sections or CONFIG.sports.sections)
+        self.games: list[Game] = []                   # tracked teams' games (schedule + live merge)
+        self.team_colors: dict[tuple, tuple] = {}     # (league, abbr) -> (color, alt)
+        self.nfl_week: list[Game] = []
+        self.nfl_week_number: int | None = None
+        self.ucl: list[Game] = []
+        self.races: list[Race] = []
+        self.tournaments: list[Tournament] = []
+        self.matches: list[Match] = []
         self.updated_at = 0.0
         self.event_until = 0.0
         self.event_game: str | None = None
         self._scores: dict[tuple[str, str], int] = {}
         self._fixed_now: datetime | None = None
+        self._next: dict[str, float] = {}             # source -> epoch of the next fetch
         self._init_demand()
         self._thread = None
         if static is not None:
             self._fixed_now = datetime.fromisoformat(static["_now"]) if static.get("_now") else None
-            docs = {lg: static.get(lg) for lg in self.leagues()}
-            self._ingest(docs)
+            self._ingest_static(static)
             self.updated_at = time.time()
         else:
             self._thread = threading.Thread(target=self._poll_loop, daemon=True, name="espn-poll")
             self._thread.start()
 
+    # ---- helpers -------------------------------------------------------------------
     def leagues(self) -> list[str]:
         seen = []
         for lg, _, _ in self.teams:
@@ -288,54 +473,140 @@ class SportsFeed(DemandPoller):
                 return ab
         return None
 
-    def _ingest(self, docs: dict[str, dict | None]) -> None:
-        kept = [g for g in self.games if docs.get(g.league) is None]
-        new = []
-        for lg, doc in docs.items():
-            if doc is None:
-                continue
-            for g in parse_scoreboard(doc, lg):
-                if self.tracked_abbr(g) is not None:
-                    new.append(g)
-        games = sorted(kept + new, key=lambda g: g.start)
-        # score-change detection for tracked teams (only meaningful for live games)
-        t = time.time()
-        for g in new:
-            ab = self.tracked_abbr(g)
-            us = g.team(ab) if ab else None
-            if us is None or us.score is None:
-                continue
-            key = (g.league, g.id)
-            prev = self._scores.get(key)
-            if prev is not None and us.score != prev and g.live:
-                self.event_until = t + self.EVENT_SECONDS
-                self.event_game = g.id
-            self._scores[key] = us.score
-        self.games = games
-
     def any_live(self) -> bool:
         return any(g.live for g in self.games)
 
-    def _poll_loop(self):
+    def team_games(self, league: str, abbr: str) -> list[Game]:
+        return [g for g in self.games if g.league == league and g.team(abbr) is not None]
+
+    # ---- ingestion -----------------------------------------------------------------
+    def _ingest_schedule(self, league: str, abbr: str, doc: dict | None) -> None:
+        if doc is None:
+            return
+        team = doc.get("team") or {}
+        if team.get("color"):
+            self.team_colors[(league, abbr)] = (team.get("color"), team.get("alternateColor") or "")
+        fresh = [g for g in parse_scoreboard(doc, league) if g.team(abbr) is not None]
+        col, alt = self.team_colors.get((league, abbr), ("", ""))
+        for g in fresh:
+            t = g.team(abbr)
+            if t is not None and not t.color:
+                t.color, t.alt_color = col, alt
+        keep = [g for g in self.games if not (g.league == league and g.team(abbr) is not None)]
+        self.games = sorted(keep + fresh, key=lambda g: g.start)
+
+    def _ingest_live(self, league: str, doc: dict | None) -> None:
+        """Today's scoreboard: replace tracked games by id (brings live scores + situation)."""
+        if doc is None:
+            return
+        live = {g.id: g for g in parse_scoreboard(doc, league) if self.tracked_abbr(g) is not None}
+        if not live:
+            return
+        t = time.time()
+        for g in live.values():
+            ab = self.tracked_abbr(g)
+            us = g.team(ab) if ab else None
+            if us is not None and us.score is not None:
+                key = (g.league, g.id)
+                prev = self._scores.get(key)
+                if prev is not None and us.score != prev and g.live:
+                    self.event_until = t + self.EVENT_SECONDS
+                    self.event_game = g.id
+                self._scores[key] = us.score
+        merged = [live.pop(g.id, g) for g in self.games] + list(live.values())
+        self.games = sorted(merged, key=lambda g: g.start)
+
+    def _ingest_static(self, static: dict) -> None:
+        for key, doc in (static.get("schedules") or {}).items():
+            lg, ab = key.split(":")
+            self._ingest_schedule(lg, ab, doc)
+        for lg, doc in (static.get("scoreboards") or {}).items():
+            self._ingest_live(lg, doc)
+        if static.get("nfl_week"):
+            self.nfl_week = parse_scoreboard(static["nfl_week"], "nfl")
+            self.nfl_week_number = ((static["nfl_week"].get("week") or {}).get("number"))
+        if static.get("ucl"):
+            self.ucl = parse_scoreboard(static["ucl"], "ucl")
+        if static.get("f1"):
+            self.races = parse_f1(static["f1"])
+        for tour, doc in (static.get("tennis") or {}).items():
+            ts, ms = parse_tennis(doc, tour)
+            self.tournaments = [t for t in self.tournaments if t.tour != tour.upper()] + ts
+            self.matches = sorted([m for m in self.matches if m.tour != tour.upper()] + ms, key=lambda m: (m.round_no, m.start), reverse=True)
+
+    # ---- polling -------------------------------------------------------------------
+    def _due(self, key: str, t: float) -> bool:
+        return t >= self._next.get(key, 0.0)
+
+    def _schedule_next(self, key: str, t: float, seconds: float) -> None:
+        self._next[key] = t + seconds
+
+    def _near_live_leagues(self) -> set[str]:
+        """Leagues with a tracked game in progress or starting within 30 min."""
+        now = self.now()
+        out = set()
+        for g in self.games:
+            if g.live or (g.state == "pre" and timedelta(0) <= g.start - now <= timedelta(minutes=30)):
+                out.add(g.league)
+        return out
+
+    def _poll_once(self) -> None:
         cfg = CONFIG.sports
+        t = time.time()
+        if self.client.backoff.remaining() > 0:
+            return
+        if "boston" in self.sections or self.teams:
+            if self._due("schedules", t):
+                for lg, ab, _ in self.teams:
+                    self._ingest_schedule(lg, ab, self.client.schedule(lg, ab))
+                self._schedule_next("schedules", t, cfg.schedule_seconds)
+            near = self._near_live_leagues()
+            for lg in near:
+                if self._due(f"live:{lg}", t):
+                    self._ingest_live(lg, self.client.scoreboard(lg))
+                    self._schedule_next(f"live:{lg}", t, cfg.live_seconds)
+        if "nfl" in self.sections and self._due("nfl", t):
+            doc = self.client.scoreboard("nfl")
+            if doc is not None:
+                self.nfl_week = parse_scoreboard(doc, "nfl")
+                self.nfl_week_number = ((doc.get("week") or {}).get("number"))
+            live = any(g.live for g in self.nfl_week)
+            self._schedule_next("nfl", t, cfg.live_seconds if live else cfg.nfl_seconds)
+        if "ucl" in self.sections and self._due("ucl", t):
+            doc = self.client.scoreboard("ucl", self.now().strftime("%Y%m"))
+            if doc is not None:
+                self.ucl = parse_scoreboard(doc, "ucl")
+            live = any(g.live for g in self.ucl)
+            self._schedule_next("ucl", t, cfg.live_seconds if live else cfg.ucl_seconds)
+        if "f1" in self.sections and self._due("f1", t):
+            doc = self.client.f1(self.now().year)
+            if doc is not None:
+                self.races = parse_f1(doc)
+            live = any(r.state == "in" for r in self.races)
+            self._schedule_next("f1", t, 120.0 if live else cfg.f1_seconds)
+        if "tennis" in self.sections and self._due("tennis", t):
+            for tour in ("atp", "wta"):
+                doc = self.client.tennis(tour)
+                if doc is not None:
+                    ts, ms = parse_tennis(doc, tour)
+                    self.tournaments = [x for x in self.tournaments if x.tour != tour.upper()] + ts
+                    self.matches = sorted([m for m in self.matches if m.tour != tour.upper()] + ms,
+                                          key=lambda m: (m.round_no, m.start), reverse=True)
+            self._schedule_next("tennis", t, cfg.tennis_seconds)
+        self.updated_at = time.time()
+
+    def _poll_loop(self):
         self._startup_grace()
         self._wait_wanted()
         while not self._stop.is_set():
-            today = datetime.now().astimezone().date()
-            start = datetime.combine(today - timedelta(days=1), datetime.min.time())
-            end = datetime.combine(today + timedelta(days=cfg.days_ahead), datetime.min.time())
-            docs = {}
-            for lg in self.leagues():
-                docs[lg] = self.client.scoreboard(lg, start, end) if self.client.backoff.remaining() == 0 else None
-            if any(d is not None for d in docs.values()):
-                self._ingest(docs)
-                self.updated_at = time.time()
-            interval = cfg.poll_live_seconds if self.any_live() else cfg.poll_idle_seconds
-            self._sleep_or_pause(max(interval, self.client.backoff.remaining()))
+            self._poll_once()
+            # wake every 30 s to see whether any source is due (live cadences are 60 s)
+            self._sleep_or_pause(max(30.0, self.client.backoff.remaining()))
 
     def status(self) -> dict:
         return {"updated_at": self.updated_at or None, "last_error": self.last_error, "paused": self.paused,
-                "games": len(self.games), "live": self.any_live()}
+                "games": len(self.games), "live": self.any_live(), "nfl": len(self.nfl_week), "ucl": len(self.ucl),
+                "f1": len(self.races), "tennis": len(self.matches)}
 
     def close(self):
         self._stop.set()

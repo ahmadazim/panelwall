@@ -1,29 +1,29 @@
-"""SportsChannel: "BOSTON TONIGHT" - one featured game card + the other tracked teams.
+"""SportsChannel: a rotating sports board - Boston teams first, then the wider sports world.
 
-Layout (256x64; SMALL text at y lights rows y+4..y+8, LARGE rows y..y+15):
-  y 4-8     CITY  TONIGHT|TODAY                                         HH:MM
-  x 0-127   featured card (live game, else next upcoming, else latest final):
-    y 11-26   [badge] AWAY NICKNAME            score (LARGE, right-aligned at x=92)   LIVE (red, right)
-    y 29-44   [badge] HOME NICKNAME            score                                  league (grey)
-    y 50-54   status: pre 'TUE 8:05P' grey | live 'TOP 9TH' (mlb) / 'Q3 4:12' green | post 'FINAL' grey
-    y 59-63   detail: MLB bases diamond + outs | NFL down & distance + possession arrow | pre HOME/AWAY
-  x 132-255  one row per other tracked team: [badge] LABEL        status (<= 13 chars, right at 254)
+Pages (CONFIG.sports.sections, default boston,nfl,ucl,f1,tennis), page_seconds each:
+  live    - only while a tracked Boston game is on: the featured game card (badges, LARGE scores,
+            bases/outs or down & distance) + the other tracked teams. Shown every other page.
+  boston  - the week: the last results and next games of every tracked team, one row each
+            ("SUN [badge] PATS      W 20-3", "THU [badge] CELTS  7:30P VS NY").
+  nfl     - this week's NFL scores, two columns of six (away score / home score / status).
+  ucl     - Champions League: the matchday closest to now (live > today > most recent > next).
+  f1      - last race's top 6 and the next race with its date and countdown.
+  tennis  - ATP + WTA: the latest matches with known players from the current tournaments.
+Pages with no data are skipped. All text via Frame.text*, SMALL font (rows y+4..y+8 lit).
 
-Team nicknames are used when they fit next to the score; otherwise the abbreviation
-(NBA 3-digit scores leave 30 px, so "CELTICS" -> "BOS").
-
-priority(): 25 for 15 s after a tracked team scores, 12 while a tracked game is
-live, 4 when a tracked game is today, else 0.
+priority(): 25 for 15 s after a tracked team scores, 12 while a tracked game is live,
+4 whenever the board has anything to show, else 0.
 """
 
 from __future__ import annotations
 
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from .. import fonts
 from ..config import CONFIG
-from ..data.espn import Game, SportsFeed, Team, format_status, live_detail, pick_game
+from ..data.espn import (DAYS, Game, SportsFeed, Team, format_status, game_row, week_status, live_detail, match_row, pick_game,
+                         round_short, _clock_text)
 from ..framebuffer import Frame, W, AMBER, WHITE, GREY, DIM, GREEN, RED
 from ..glyphs import team_mark, hex_color
 from .base import Channel
@@ -34,6 +34,10 @@ X_LIST = 132
 X_LABEL = 143
 ROW_AWAY, ROW_HOME = 11, 29
 Y_STATUS, Y_DETAIL = 46, 55
+ROW_Y0, ROW_H = 9, 9            # list pages: 6 rows at y = 9, 18, 27, 36, 45, 54
+COL_W = 128                     # two-column pages
+UCL_BLUE = (70, 120, 255)
+F1_RED = (230, 40, 40)
 
 
 def _badge(frame: Frame, x: int, y: int, t: Team | None) -> None:
@@ -48,14 +52,27 @@ def fit_name(t: Team, max_w: int) -> str:
     return nick if fonts.width(nick) <= max_w else t.abbreviation
 
 
+def _last_name(n: str) -> str:
+    """'K. Antonelli' / 'Max Verstappen' -> 'ANTONELLI' / 'VERSTAPPEN'."""
+    return n.replace(".", " ").split()[-1].upper() if n.strip() else "?"
+
+
+def _tournament_tag(name: str) -> str:
+    n = name.upper()
+    for junk in ("ROLEX ", "PRUDENTIAL ", "TENNIS ", " OPEN", " MASTERS", " CHAMPIONSHIPS", " INTERNATIONAL", "AMERICAN ", "BNP PARIBAS "):
+        n = n.replace(junk, " ")
+    return " ".join(n.split())[:9] or name.upper()[:9]
+
+
 class SportsChannel(Channel):
     name = "sports"
 
-    def __init__(self, feed: SportsFeed | None = None, static: dict | None = None):
+    def __init__(self, feed: SportsFeed | None = None, static: dict | None = None, page: str | None = None):
         self.feed = feed or SportsFeed(static=static)
         self._owns_feed = feed is None
         self.feed.register(self)
         self.t = 0.0
+        self.fixed_page = page          # demos / tests: pin one page
 
     def status(self) -> dict:
         s = self.feed.status()
@@ -71,42 +88,223 @@ class SportsChannel(Channel):
 
     # ---- scheduling ----------------------------------------------------------
     def priority(self) -> int:
-        games = self.feed.games
-        if not games:
-            return 0
         if time.time() < self.feed.event_until:
             return 25
-        if any(g.live for g in games):
+        if self.feed.any_live():
             return 12
-        now = self.feed.now()
-        today = now.date()
-        if any(g.start.astimezone(now.tzinfo).date() == today for g in games):
-            return 4
-        return 0
+        return 4 if self.pages() else 0
+
+    # ---- pages ---------------------------------------------------------------
+    def pages(self) -> list[str]:
+        f, out = self.feed, []
+        for sec in f.sections:
+            if sec == "boston" and self._week_rows():
+                out.append("boston")
+            elif sec == "nfl" and f.nfl_week:
+                out.append("nfl")
+            elif sec == "ucl" and self._ucl_day():
+                out.append("ucl")
+            elif sec == "f1" and f.races:
+                out.append("f1")
+            elif sec == "tennis" and self._tennis_rows():
+                out.append("tennis")
+        if f.any_live():                                  # the live card every other slot
+            woven = []
+            for p in out:
+                woven += ["live", p]
+            out = woven or ["live"]
+        return out
+
+    def page(self) -> str | None:
+        if self.fixed_page:
+            return self.fixed_page
+        if self.feed.event_game and time.time() < self.feed.event_until:
+            return "live"
+        pages = self.pages()
+        if not pages:
+            return None
+        return pages[int(self.t // CONFIG.sports.page_seconds) % len(pages)]
 
     # ---- drawing -------------------------------------------------------------
-    def render(self, frame: Frame) -> None:
+    def _header(self, frame: Frame, left: str, sub: str, color=AMBER) -> None:
         now = self.feed.now()
-        frame.text(2, 0, CONFIG.sports.city.upper(), fonts.SMALL, AMBER)
-        when = "TONIGHT" if now.hour >= 17 or now.hour < 4 else "TODAY"
-        frame.text(2 + fonts.width(CONFIG.sports.city.upper() + " ") + 2, 0, when, fonts.SMALL, GREY)
+        frame.text(2, 0, left, fonts.SMALL, color)
+        if sub:
+            frame.text(2 + fonts.width(left + " ") + 2, 0, sub, fonts.SMALL, GREY, max_w=W - 40 - fonts.width(left) - 8)
         clock = now.strftime("%H:%M") if int(self.t) % 2 == 0 else now.strftime("%H %M")
         frame.text_right(W - 2, 0, clock, fonts.SMALL, AMBER)
 
-        games = self.feed.games
-        if not games:
-            msg = "NO GAMES THIS WEEK" if self.feed.last_error is None else "NO DATA"
-            frame.text_center(W // 2, 26, msg, fonts.MEDIUM, GREY if self.feed.last_error is None else RED)
-            if self.feed.last_error:
-                frame.text_center(W // 2, 38, "CHECK NETWORK", fonts.SMALL, RED)
+    def render(self, frame: Frame) -> None:
+        page = self.page()
+        if page is None:
+            self._header(frame, CONFIG.sports.city.upper(), "SPORTS")
+            err = self.feed.last_error
+            frame.text_center(W // 2, 26, "NO DATA" if err else "LOADING...", fonts.MEDIUM, RED if err else GREY)
+            if err:
+                frame.text_center(W // 2, 38, err.upper()[:40], fonts.SMALL, RED)
             return
+        getattr(self, f"_page_{page}")(frame)
 
-        featured = pick_game(games, now)
-        # prefer a game where the event (score change) just happened
+    # ---- live Boston game (the original card) -------------------------------------------
+    def _page_live(self, frame: Frame) -> None:
+        now = self.feed.now()
+        games = self.feed.games
+        live = [g for g in games if g.live]
+        featured = live[0] if live else pick_game(games, now)
         if self.feed.event_game and time.time() < self.feed.event_until:
             featured = next((g for g in games if g.id == self.feed.event_game), featured)
+        when = "TONIGHT" if now.hour >= 17 or now.hour < 4 else "TODAY"
+        self._header(frame, CONFIG.sports.city.upper(), when)
+        if featured is None:
+            return
         self._render_card(frame, featured, now)
         self._render_list(frame, featured, now)
+
+    # ---- the Boston week -------------------------------------------------------------
+    def _week_rows(self) -> list[tuple[Game, str, str]]:
+        """(game, tracked abbr, label): last 3 results + next 3 games, within -7..+10 days, by date."""
+        f = self.feed
+        now = f.now()
+        rows = []
+        for lg, ab, label in f.teams:
+            for g in f.team_games(lg, ab):
+                if timedelta(days=-7) <= g.start - now <= timedelta(days=10):
+                    rows.append((g, ab, label))
+        past = [r for r in rows if r[0].state != "pre"]
+        future = [r for r in rows if r[0].state == "pre"]
+        past = sorted(past, key=lambda r: r[0].start)[-3:]
+        future = sorted(future, key=lambda r: r[0].start)[: 6 - len(past)]
+        return sorted(past + future, key=lambda r: r[0].start)
+
+    def _page_boston(self, frame: Frame) -> None:
+        now = self.feed.now()
+        self._header(frame, CONFIG.sports.city.upper(), "THIS WEEK")
+        for i, (g, ab, label) in enumerate(self._week_rows()):
+            y = ROW_Y0 + i * ROW_H
+            local = g.start.astimezone(now.tzinfo)
+            day = "TODAY" if local.date() == now.date() else DAYS[local.weekday()]
+            frame.text(2, y, day, fonts.SMALL, AMBER if day == "TODAY" else GREY)
+            _badge(frame, 34, y + 4, g.team(ab))
+            frame.text(46, y, label.upper(), fonts.SMALL, WHITE)
+            frame.text(86, y, g.league.upper(), fonts.SMALL, DIM)
+            st = week_status(g, ab, now)
+            col = GREEN if g.live else (WHITE if st.startswith("W ") or g.state == "pre" else GREY)
+            frame.text_right(W - 2, y, st, fonts.SMALL, col)
+
+    # ---- two-column scoreboards (NFL, UCL) ------------------------------------------------
+    def _score_cell(self, frame: Frame, x0: int, y: int, g: Game, now: datetime) -> None:
+        a, h = g.away, g.home
+        post, pre = g.state == "post", g.state == "pre"
+        sa, sh = a.score or 0, h.score or 0
+        ca = WHITE if not post or sa >= sh else GREY
+        ch = WHITE if not post or sh >= sa else GREY
+        frame.text(x0, y, a.abbreviation[:4], fonts.SMALL, ca)
+        if not pre:
+            frame.text_right(x0 + 40, y, str(sa), fonts.SMALL, ca)
+        frame.text(x0 + 46, y, h.abbreviation[:4], fonts.SMALL, ch)
+        if not pre:
+            frame.text_right(x0 + 86, y, str(sh), fonts.SMALL, ch)
+        if pre:
+            local = g.start.astimezone(now.tzinfo)
+            day = "" if local.date() == now.date() else DAYS[local.weekday()] + " "
+            frame.text_right(x0 + COL_W - 6, y, f"{day}{_clock_text(local)}", fonts.SMALL, GREY, max_w=COL_W - 6 - 72)
+        elif g.state == "in":
+            frame.text_right(x0 + COL_W - 6, y, live_detail(g).split(" ")[0][:5], fonts.SMALL, GREEN)
+        else:
+            frame.text_right(x0 + COL_W - 6, y, "F/OT" if "OT" in g.short_detail.upper() else ("FT" if g.league == "ucl" else "F"), fonts.SMALL, DIM)
+
+    def _grid(self, frame: Frame, games: list[Game], per_page: int = 12) -> None:
+        now = self.feed.now()
+        pages = max(1, (len(games) + per_page - 1) // per_page)
+        sub = int(self.t // (CONFIG.sports.page_seconds / pages)) % pages if pages > 1 else 0
+        chunk = games[sub * per_page:(sub + 1) * per_page]
+        rows = per_page // 2
+        for i, g in enumerate(chunk):
+            col, row = divmod(i, rows)
+            self._score_cell(frame, 2 + col * COL_W, ROW_Y0 + row * ROW_H, g, now)
+
+    def _nfl_order(self) -> list[Game]:
+        # live first, then upcoming by kickoff, then finals by kickoff
+        rank = {"in": 0, "pre": 1, "post": 2}
+        return sorted(self.feed.nfl_week, key=lambda g: (rank.get(g.state, 3), g.start))
+
+    def _page_nfl(self, frame: Frame) -> None:
+        wk = self.feed.nfl_week_number
+        self._header(frame, "NFL", f"WEEK {wk}" if wk else "THIS WEEK", (60, 130, 255))
+        self._grid(frame, self._nfl_order())
+
+    def _ucl_day(self) -> list[Game]:
+        """The matchday closest to now: live > today > most recent completed > next."""
+        games = self.feed.ucl
+        if not games:
+            return []
+        now = self.feed.now()
+        by_day: dict = {}
+        for g in games:
+            by_day.setdefault(g.start.astimezone(now.tzinfo).date(), []).append(g)
+        today = now.date()
+        live_days = [d for d, gs in by_day.items() if any(g.live for g in gs)]
+        if live_days:
+            day = live_days[0]
+        elif today in by_day:
+            day = today
+        else:
+            past = [d for d in by_day if d < today]
+            future = [d for d in by_day if d > today]
+            day = max(past) if past and (not future or (today - max(past)).days <= (min(future) - today).days) else min(future)
+        return sorted(by_day[day], key=lambda g: g.start)
+
+    def _page_ucl(self, frame: Frame) -> None:
+        games = self._ucl_day()
+        now = self.feed.now()
+        day = games[0].start.astimezone(now.tzinfo)
+        label = "TODAY" if day.date() == now.date() else f"{DAYS[day.weekday()]} {day.month}/{day.day}"
+        self._header(frame, "CHAMPIONS LEAGUE", label, UCL_BLUE)
+        self._grid(frame, games, per_page=10)
+
+    # ---- F1 ------------------------------------------------------------------------------
+    def _page_f1(self, frame: Frame) -> None:
+        now = self.feed.now()
+        races = self.feed.races
+        live = next((r for r in races if r.state == "in"), None)
+        done = [r for r in races if r.state == "post" and r.results]
+        nxt = next((r for r in races if r.state == "pre"), None)
+        shown = live or (done[-1] if done else None)
+        self._header(frame, "F1", (shown.short + (" - LIVE" if live else " RESULT")) if shown else "", F1_RED)
+        if shown:
+            for i, (pos, driver) in enumerate(shown.results[:6]):
+                col, row = divmod(i, 3)
+                y = ROW_Y0 + row * ROW_H
+                x = 2 + col * COL_W
+                frame.text(x, y, str(pos), fonts.SMALL, AMBER if pos == 1 else GREY)
+                frame.text(x + 12, y, _last_name(driver), fonts.SMALL, WHITE if pos <= 3 else GREY)
+        if nxt:
+            local = nxt.start.astimezone(now.tzinfo)
+            days = (local.date() - now.date()).days
+            when = "TODAY" if days == 0 else ("TOMORROW" if days == 1 else f"IN {days} DAYS")
+            frame.text(2, 40, "NEXT", fonts.SMALL, DIM)
+            frame.text(32, 40, nxt.short, fonts.SMALL, WHITE, max_w=W - 34)
+            frame.text(32, 49, f"{DAYS[local.weekday()]} {local.month}/{local.day} {_clock_text(local)}", fonts.SMALL, GREY)
+            frame.text_right(W - 2, 49, when, fonts.SMALL, AMBER)
+
+    # ---- tennis ----------------------------------------------------------------------------
+    def _tennis_rows(self) -> list:
+        """Latest matches with two known players: live first, then the deepest completed rounds."""
+        ms = [m for m in self.feed.matches
+              if all(p[0] and p[0].upper() not in ("TBD", "?", "BYE") for p in m.players)]
+        live = [m for m in ms if m.state == "in"]
+        done = sorted([m for m in ms if m.state == "post"], key=lambda m: (m.round_no, m.start), reverse=True)
+        nxt = sorted([m for m in ms if m.state == "pre"], key=lambda m: m.start)
+        return (live + done[: 6 - len(live)] + nxt)[:6]
+
+    def _page_tennis(self, frame: Frame) -> None:
+        tours = sorted({m.tour for m in self._tennis_rows()})
+        self._header(frame, "TENNIS", " / ".join(tours), (220, 220, 60))
+        for i, m in enumerate(self._tennis_rows()):
+            y = ROW_Y0 + i * ROW_H
+            frame.text(2, y, _tournament_tag(m.tournament), fonts.SMALL, GREY, max_w=54)
+            frame.text(58, y, round_short(m.round), fonts.SMALL, AMBER if round_short(m.round) == "F" else DIM)
+            frame.text(78, y, match_row(m), fonts.SMALL, GREEN if m.state == "in" else WHITE, max_w=W - 80)
 
     def _render_card(self, frame: Frame, g: Game, now: datetime) -> None:
         for y, t in ((ROW_AWAY, g.away), (ROW_HOME, g.home)):
