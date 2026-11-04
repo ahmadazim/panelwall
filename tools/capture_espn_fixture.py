@@ -86,7 +86,7 @@ def slim_event(e: dict) -> dict:
     if "status" in e:
         out["status"] = status(e)
     if e.get("circuit"):
-        out["circuit"] = {"fullName": e["circuit"].get("fullName")}
+        out["circuit"] = {"fullName": e["circuit"].get("fullName"), "address": e["circuit"].get("address")}
     return out
 
 

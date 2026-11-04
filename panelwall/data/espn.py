@@ -302,6 +302,7 @@ class Race:
     state: str                  # pre | in | post
     results: list               # [(position, driver short name)] top N, finishing order
     circuit: str = ""
+    country: str = ""           # ESPN circuit.address.country, e.g. "Mexico", "Britain"
 
 
 def parse_f1(doc: dict) -> list[Race]:
@@ -317,12 +318,16 @@ def parse_f1(doc: dict) -> list[Race]:
                        for i, c in enumerate(comps_sorted)]
             name = str(e.get("name") or "")
             short = name.upper()
-            for junk in ("MSC CRUISES ", "QATAR AIRWAYS ", "HEINEKEN ", "ARAMCO ", "PIRELLI ", "LENOVO ", "ROLEX ", "FORMULA 1 ", "LOUIS VUITTON ", "CRYPTO.COM ", "AWS ", "STC ", "ETIHAD AIRWAYS ", "SINGAPORE AIRLINES "):
+            for junk in ("MSC CRUISES ", "QATAR AIRWAYS ", "HEINEKEN ", "ARAMCO ", "PIRELLI ", "LENOVO ", "ROLEX ", "FORMULA 1 ",
+                         "LOUIS VUITTON ", "CRYPTO.COM ", "AWS ", "STC ", "ETIHAD AIRWAYS ", "SINGAPORE AIRLINES ", "GULF AIR ",
+                         "MOËT & CHANDON ", "MOET & CHANDON ", "TAG HEUER "):
                 short = short.replace(junk, "")
             short = short.replace("GRAND PRIX", "GP").strip()
             short = "".join(ch for ch in unicodedata.normalize("NFKD", short) if not unicodedata.combining(ch))
+            circuit = e.get("circuit") or {}
             out.append(Race(name=name, short=short, start=start, state=str(stype.get("state") or "pre"),
-                            results=results, circuit=str((e.get("circuit") or {}).get("fullName") or "")))
+                            results=results, circuit=str(circuit.get("fullName") or ""),
+                            country=str((circuit.get("address") or {}).get("country") or "")))
         except (KeyError, TypeError, ValueError, IndexError):
             continue
     out.sort(key=lambda r: r.start)

@@ -208,7 +208,9 @@ panelwall/
   web.py               ControlServer: GET / (inline mobile UI, iOS home-screen installable), /api/state,
                        /preview.png (led_image 3x, <=1/s), /manifest.webmanifest, /icon.png;
                        POST /api/channels, /api/show, /api/brightness, /api/location. Port 80 -> 8080.
-  f1art.py             F1 car sprite (46x13, side view, rotating wheels) + DRIVER_TEAM livery table for the 2026 grid
+  f1art.py             F1 car sprite (46x13, side view, rotating wheels), 22 hand-drawn 14x9 host-country flags keyed
+                       by ESPN's circuit.address.country (country_code falls back to a country named in the title),
+                       and the DRIVER_TEAM livery table for the 2026 grid
                        (ASSUMED from pre-season knowledge; ESPN gives no constructor - edit when seats change)
   glyphs.py            shared pixel art: draw_glyph(d, sun|cloud|partly|rain|snow|storm|fog, x, y, scale 1|2) 12x10,
                        team_mark(d, x, y, color, alt) 8x8 two-tone badge, hex_color(). Used by channels AND design/mockups2.py

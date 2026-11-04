@@ -32,7 +32,7 @@ web         the control server (standard library http.server, no build step)
 | `boston` | Boston's week (last results, next games) and the live game card when one is on | same as above |
 | `nfl` | NFL week, two games per screen: team crests, big score or kickoff, quarter and clock, down and distance, passing/rushing/receiving leaders | 4 |
 | `ucl` | Champions League matchday, two matches per screen: crests, score, live minute, goal scorers with minutes (P penalty, OG own goal), red cards | 4 |
-| `f1` | last race podium (P2, P1, P3 with team colours), next race countdown, the winner's car in livery lapping the bottom of the wall | 4 |
+| `f1` | host-country flag beside each Grand Prix name, last race podium (P2, P1, P3 with team colours), next race countdown, the winner's car in livery lapping the bottom of the wall | 4 |
 | `tennis` | ATP/WTA, two TV-style scorebugs per screen: tournament, round, names, set boxes, the winner's ball | 4 |
 | `prayers` | today's athan and iqama times from your fiveprayers.org display page, next-prayer countdown, sunrise and Jumu'ah | 20 from 10 min before to 3 min after each athan / iqama, else 4 |
 | `meadow` | screensaver: an orange tabby and Kuromi wander a looping parallax meadow. The sky follows the real time and weather from the shared forecast feed: sun on an east-left to west-right arc, dawn/dusk glow on the sun's side, moon and stars at night, clouds, rain, snow, lightning, fog | 2 (idle) |

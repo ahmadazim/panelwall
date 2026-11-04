@@ -12566,7 +12566,12 @@
      }
     },
     "circuit": {
-     "fullName": "Circuit of the Americas"
+     "fullName": "Circuit of the Americas",
+     "address": {
+      "city": "Austin",
+      "state": "TX",
+      "country": "USA"
+     }
     }
    },
    {
@@ -13426,7 +13431,11 @@
      }
     },
     "circuit": {
-     "fullName": "Autodromo Hermanos Rodriguez"
+     "fullName": "Autodromo Hermanos Rodriguez",
+     "address": {
+      "city": "Mexico city",
+      "country": "Mexico"
+     }
     }
    },
    {
@@ -13561,7 +13570,11 @@
      }
     },
     "circuit": {
-     "fullName": "Autodromo Jose Carlos Pace"
+     "fullName": "Autodromo Jose Carlos Pace",
+     "address": {
+      "city": "Sao paulo",
+      "country": "Brazil"
+     }
     }
    },
    {
@@ -13696,7 +13709,11 @@
      }
     },
     "circuit": {
-     "fullName": "Las Vegas Street Circuit"
+     "fullName": "Las Vegas Street Circuit",
+     "address": {
+      "city": "Nevada",
+      "country": "USA"
+     }
     }
    }
   ]

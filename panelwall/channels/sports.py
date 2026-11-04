@@ -12,7 +12,8 @@ Slides:
             big score or kickoff time, live minute / quarter, then
               soccer: goal scorers with minutes per side (P = penalty, OG = own goal), red cards
               NFL:    down & distance when live, then passing / rushing / receiving leaders
-  f1      - podium (P2 | P1 | P3 steps with names and team colour) + next race countdown, and the
+  f1      - host-country flag + GP name, podium (P2 | P1 | P3 steps with names and team colour), the next
+            race with its flag and countdown, and the
             winner's car in team livery lapping the bottom of the wall
   tennis  - two TV-style scorebugs: tournament + round, names in MEDIUM, set boxes, winner's ball
 
@@ -30,7 +31,7 @@ from ..config import CONFIG
 from ..data.espn import (DAYS, Game, SportsFeed, Team, format_status, live_detail, pick_game, week_status, _clock_text)
 from ..framebuffer import Frame, W, AMBER, WHITE, GREY, DIM, GREEN, RED
 from ..data.logos import LOGOS
-from ..f1art import CAR_H, CAR_W, car_sprite, livery, tla
+from ..f1art import CAR_H, CAR_W, FLAG_W, car_sprite, country_code, flag, livery, tla
 from ..framebuffer import H
 from ..glyphs import team_mark, hex_color
 from .base import Channel
@@ -410,7 +411,14 @@ class SportsChannel(Channel):
         done = [r for r in races if r.state == "post" and r.results]
         nxt = next((r for r in races if r.state == "pre"), None)
         shown = live or (done[-1] if done else None)
-        self._header(frame, "F1", (shown.short + (" LIVE" if live else "")) if shown else "", F1_RED)
+        self._header(frame, "F1", "", F1_RED)
+        if shown:
+            x = 2 + fonts.width("F1 ") + 2
+            fl = flag(country_code(shown.country, shown.name))
+            if fl is not None:
+                frame.img.paste(fl, (x, 0), fl)
+                x += FLAG_W + 4
+            frame.text(x, 0, shown.short + (" LIVE" if live else ""), fonts.SMALL, GREEN if live else GREY, max_w=W - 40 - x)
         d = frame.draw
         if shown:
             steps = ((0, 52, 30, (150, 118, 30)), (1, 2, 36, (105, 105, 115)), (2, 102, 40, (118, 72, 38)))  # P1 centre, P2 left, P3 right
@@ -430,7 +438,12 @@ class SportsChannel(Channel):
             days = (local.date() - now.date()).days
             when = "TODAY" if days == 0 else ("TOMORROW" if days == 1 else f"IN {days} DAYS")
             frame.text(158, 9, "NEXT RACE", fonts.SMALL, DIM)
-            frame.text(158, 18, nxt.short, fonts.SMALL, WHITE, max_w=W - 160)
+            nx = 158
+            fl = flag(country_code(nxt.country, nxt.name))
+            if fl is not None:
+                frame.img.paste(fl, (nx, 18), fl)
+                nx += FLAG_W + 4
+            frame.text(nx, 18, nxt.short, fonts.SMALL, WHITE, max_w=W - 2 - nx)
             frame.text(158, 27, f"{DAYS[local.weekday()]} {local.month}/{local.day} {_clock_text(local)}", fonts.SMALL, GREY)
             frame.text(158, 36, when, fonts.SMALL, AMBER)
         # the winner's car laps the bottom strip

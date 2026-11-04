@@ -297,3 +297,27 @@ def test_three_digit_score_fits_and_name_falls_back():
     assert fit_name(t, 92 - fonts.width("112", fonts.LARGE) - 4 - 12) == "BOS"
     assert fit_name(t, 92 - fonts.width("7", fonts.LARGE) - 4 - 12) == "CELTICS"
     assert fonts.width("112", fonts.LARGE) <= 92 - 12 - fonts.width("BOS") - 4
+
+
+def test_f1_host_country_flags():
+    from panelwall.f1art import country_code, flag, FLAG_W, FLAG_H, COUNTRY_CODES
+    calendar = ["Australia", "China", "Japan", "Bahrain", "Saudi Arabia", "USA", "Canada", "Monaco", "Spain", "Austria",
+                "Britain", "Belgium", "Hungary", "Netherlands", "Italy", "Azerbaijan", "Malaysia", "Singapore", "Mexico",
+                "Brazil", "Qatar", "United Arab Emirates"]                      # every ESPN country on the 2026 calendar
+    for c in calendar:
+        code = country_code(c)
+        f = flag(code)
+        assert f is not None and f.size == (FLAG_W, FLAG_H), c
+        assert np.asarray(f)[:, :, 3].all(), c                                   # fully opaque rectangle
+    assert country_code("", "Mexico City Grand Prix") == "MEX"                  # falls back to the race title
+    assert country_code("", "Some Other Race") is None and flag(None) is None and flag("XXX") is None
+    races = SportsFeed(static=BOARD).races
+    assert {r.country for r in races} >= {"Mexico", "Brazil"}
+    ch = SportsChannel(feed=SportsFeed(static=BOARD), page="f1")
+    f = Frame()
+    ch.render(f)
+    arr = f.to_array()
+    mex = np.asarray(flag("MEX").convert("RGB"))
+    x = 2 + fonts.width("F1 ") + 2
+    assert (arr[0:FLAG_H, x:x + FLAG_W] == mex).all()                            # the host flag beside the GP name
+    assert (arr[18:18 + FLAG_H, 158:158 + FLAG_W] == np.asarray(flag("BRA").convert("RGB"))).all()   # and the next race's
