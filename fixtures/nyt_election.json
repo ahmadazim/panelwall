@@ -1,0 +1,6979 @@
+{
+"_comment": "Trimmed from the NYT results JSON (static01.nyt.com/elections-assets/pages/data/2026-11-03/results-{senate,governor}.json), captured live on election night 2026-11-03 ~22:05 ET, keys panelwall reads only.",
+"senate": {
+"races": [
+{
+"nyt_id": "AL-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"wess-e": {
+"first_name": "Everett",
+"last_name": "Wess",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"moore-b": {
+"first_name": "Barry",
+"last_name": "Moore",
+"party": {
+"nyt_id": "GOP"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "AL",
+"name": "Alabama",
+"eevp": 41.14,
+"candidates": [
+{
+"nyt_id": "moore-b",
+"votes": {
+"total": 463211
+},
+"leader": true
+},
+{
+"nyt_id": "wess-e",
+"votes": {
+"total": 304301
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "AK-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"sullivan-dan": {
+"first_name": "Dan",
+"last_name": "Sullivan",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"peltola-m": {
+"first_name": "Mary",
+"last_name": "Peltola",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"sullivan-dani": {
+"first_name": "Daniel",
+"last_name": "Sullivan",
+"party": {
+"nyt_id": "UDC"
+}
+},
+"heikes-g": {
+"first_name": "Gerald",
+"last_name": "Heikes",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"total_writeins": {
+"first_name": null,
+"last_name": "Total Write-ins",
+"party": {
+"nyt_id": "OTH"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "AK",
+"name": "Alaska",
+"eevp": 0,
+"candidates": [
+{
+"nyt_id": "sullivan-dan",
+"votes": {
+"total": 0
+},
+"leader": false
+},
+{
+"nyt_id": "peltola-m",
+"votes": {
+"total": 0
+},
+"leader": false
+},
+{
+"nyt_id": "sullivan-dani",
+"votes": {
+"total": 0
+},
+"leader": false
+},
+{
+"nyt_id": "heikes-g",
+"votes": {
+"total": 0
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "AR-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"cotton-t": {
+"first_name": "Tom",
+"last_name": "Cotton",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"shoffner-h": {
+"first_name": "Hallie",
+"last_name": "Shoffner",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"wadlin-j": {
+"first_name": "Jeff",
+"last_name": "Wadlin",
+"party": {
+"nyt_id": "LIB"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "AR",
+"name": "Arkansas",
+"eevp": 71.96,
+"candidates": [
+{
+"nyt_id": "cotton-t",
+"votes": {
+"total": 323553
+},
+"leader": true
+},
+{
+"nyt_id": "shoffner-h",
+"votes": {
+"total": 269088
+},
+"leader": false
+},
+{
+"nyt_id": "wadlin-j",
+"votes": {
+"total": 17922
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "CO-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "called",
+"outcome": {
+"won": [
+"hickenlooper-j"
+],
+"gained": false,
+"winner_accepted_at": [
+"2026-11-04T02:01:00.700309+00:00"
+],
+"called_by": [
+"ap"
+]
+},
+"candidate_metadata": {
+"hickenlooper-j": {
+"first_name": "John",
+"last_name": "Hickenlooper",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"baisley-m": {
+"first_name": "Mark",
+"last_name": "Baisley",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"chew-b": {
+"first_name": "Bob",
+"last_name": "Chew",
+"party": {
+"nyt_id": "FWD"
+}
+},
+"baum-c": {
+"first_name": "Christopher",
+"last_name": "Baum",
+"party": {
+"nyt_id": "AVP"
+}
+},
+"huber-b": {
+"first_name": "Blake",
+"last_name": "Huber",
+"party": {
+"nyt_id": "LIB"
+}
+},
+"withrow-a": {
+"first_name": "Adam",
+"last_name": "Withrow",
+"party": {
+"nyt_id": "UTY"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "CO",
+"name": "Colorado",
+"eevp": 63.83,
+"candidates": [
+{
+"nyt_id": "hickenlooper-j",
+"votes": {
+"total": 1013390
+},
+"leader": true
+},
+{
+"nyt_id": "baisley-m",
+"votes": {
+"total": 582508
+},
+"leader": false
+},
+{
+"nyt_id": "chew-b",
+"votes": {
+"total": 40485
+},
+"leader": false
+},
+{
+"nyt_id": "huber-b",
+"votes": {
+"total": 16474
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "DE-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "called",
+"outcome": {
+"won": [
+"coons-c"
+],
+"gained": false,
+"winner_accepted_at": [
+"2026-11-04T01:00:39.789097+00:00"
+],
+"called_by": [
+"ap"
+]
+},
+"candidate_metadata": {
+"coons-c": {
+"first_name": "Chris",
+"last_name": "Coons",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"katz-m": {
+"first_name": "Mike",
+"last_name": "Katz",
+"party": {
+"nyt_id": "GOP"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "DE",
+"name": "Delaware",
+"eevp": 88.72,
+"candidates": [
+{
+"nyt_id": "coons-c",
+"votes": {
+"total": 218975
+},
+"leader": true
+},
+{
+"nyt_id": "katz-m",
+"votes": {
+"total": 122434
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "FL-S_W-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "called",
+"outcome": {
+"won": [
+"moody-a"
+],
+"gained": false,
+"winner_accepted_at": [
+"2026-11-04T01:35:32.796712+00:00"
+],
+"called_by": [
+"ap"
+]
+},
+"candidate_metadata": {
+"moody-a": {
+"first_name": "Ashley",
+"last_name": "Moody",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"nixon-a": {
+"first_name": "Angie",
+"last_name": "Nixon",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"gillespie-n": {
+"first_name": "Neil",
+"last_name": "Gillespie",
+"party": {
+"nyt_id": "NPA"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "FL",
+"name": "Florida",
+"eevp": 99,
+"candidates": [
+{
+"nyt_id": "moody-a",
+"votes": {
+"total": 4187876
+},
+"leader": true
+},
+{
+"nyt_id": "nixon-a",
+"votes": {
+"total": 3939927
+},
+"leader": false
+},
+{
+"nyt_id": "gillespie-n",
+"votes": {
+"total": 93781
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "GA-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "called",
+"outcome": {
+"won": [
+"ossoff-j"
+],
+"gained": false,
+"winner_accepted_at": [
+"2026-11-04T00:56:37.784+00:00"
+],
+"called_by": [
+"ap"
+]
+},
+"candidate_metadata": {
+"ossoff-j": {
+"first_name": "Jon",
+"last_name": "Ossoff",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"collins-m": {
+"first_name": "Mike",
+"last_name": "Collins",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"total_writeins": {
+"first_name": null,
+"last_name": "Total Write-ins",
+"party": {
+"nyt_id": "OTH"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "GA",
+"name": "Georgia",
+"eevp": 80.93,
+"candidates": [
+{
+"nyt_id": "ossoff-j",
+"votes": {
+"total": 2114063
+},
+"leader": true
+},
+{
+"nyt_id": "collins-m",
+"votes": {
+"total": 1475721
+},
+"leader": false
+},
+{
+"nyt_id": "total_writeins",
+"votes": {
+"total": 2
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "ID-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"risch-j": {
+"first_name": "Jim",
+"last_name": "Risch",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"achilles-t": {
+"first_name": "Todd",
+"last_name": "Achilles",
+"party": {
+"nyt_id": "IND"
+}
+},
+"fleming-n": {
+"first_name": "Natalie",
+"last_name": "Fleming",
+"party": {
+"nyt_id": "IND"
+}
+},
+"loesby-m": {
+"first_name": "Matt",
+"last_name": "Loesby",
+"party": {
+"nyt_id": "LIB"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "ID",
+"name": "Idaho",
+"eevp": 0,
+"candidates": [
+{
+"nyt_id": "risch-j",
+"votes": {
+"total": 0
+},
+"leader": false
+},
+{
+"nyt_id": "achilles-t",
+"votes": {
+"total": 0
+},
+"leader": false
+},
+{
+"nyt_id": "fleming-n",
+"votes": {
+"total": 0
+},
+"leader": false
+},
+{
+"nyt_id": "loesby-m",
+"votes": {
+"total": 0
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "IL-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "called",
+"outcome": {
+"won": [
+"stratton-j"
+],
+"gained": false,
+"winner_accepted_at": [
+"2026-11-04T01:01:05.343166+00:00"
+],
+"called_by": [
+"ap"
+]
+},
+"candidate_metadata": {
+"stratton-j": {
+"first_name": "Juliana",
+"last_name": "Stratton",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"tracy-d": {
+"first_name": "Don",
+"last_name": "Tracy",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"harrington-w": {
+"first_name": "Whitfield",
+"last_name": "Harrington",
+"party": {
+"nyt_id": "ACR"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "IL",
+"name": "Illinois",
+"eevp": 47.29,
+"candidates": [
+{
+"nyt_id": "stratton-j",
+"votes": {
+"total": 1355209
+},
+"leader": true
+},
+{
+"nyt_id": "tracy-d",
+"votes": {
+"total": 766691
+},
+"leader": false
+},
+{
+"nyt_id": "harrington-w",
+"votes": {
+"total": 32397
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "IA-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"turek-j": {
+"first_name": "Josh",
+"last_name": "Turek",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"hinson-a": {
+"first_name": "Ashley",
+"last_name": "Hinson",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"laehn-t": {
+"first_name": "Thomas",
+"last_name": "Laehn",
+"party": {
+"nyt_id": "LIB"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "IA",
+"name": "Iowa",
+"eevp": 30.21,
+"candidates": [
+{
+"nyt_id": "turek-j",
+"votes": {
+"total": 234677
+},
+"leader": true
+},
+{
+"nyt_id": "hinson-a",
+"votes": {
+"total": 172578
+},
+"leader": false
+},
+{
+"nyt_id": "laehn-t",
+"votes": {
+"total": 10972
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "KS-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"marshall-r": {
+"first_name": "Roger",
+"last_name": "Marshall",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"hamilton-a": {
+"first_name": "Adam",
+"last_name": "Hamilton",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"graham-d": {
+"first_name": "David",
+"last_name": "Graham",
+"party": {
+"nyt_id": "LIB"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "KS",
+"name": "Kansas",
+"eevp": 62.8,
+"candidates": [
+{
+"nyt_id": "hamilton-a",
+"votes": {
+"total": 422501
+},
+"leader": true
+},
+{
+"nyt_id": "marshall-r",
+"votes": {
+"total": 307141
+},
+"leader": false
+},
+{
+"nyt_id": "graham-d",
+"votes": {
+"total": 19580
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "KY-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "called",
+"outcome": {
+"won": [
+"barr-a"
+],
+"gained": false,
+"winner_accepted_at": [
+"2026-11-04T02:16:11.684864+00:00"
+],
+"called_by": [
+"ap"
+]
+},
+"candidate_metadata": {
+"booker-c": {
+"first_name": "Charles",
+"last_name": "Booker",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"barr-a": {
+"first_name": "Andy",
+"last_name": "Barr",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"campbell-c": {
+"first_name": "Christopher",
+"last_name": "Campbell",
+"party": {
+"nyt_id": "KYP"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "KY",
+"name": "Kentucky",
+"eevp": 92.46,
+"candidates": [
+{
+"nyt_id": "barr-a",
+"votes": {
+"total": 771035
+},
+"leader": true
+},
+{
+"nyt_id": "booker-c",
+"votes": {
+"total": 605616
+},
+"leader": false
+},
+{
+"nyt_id": "campbell-c",
+"votes": {
+"total": 29469
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "LA-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"davis-j": {
+"first_name": "Jamie",
+"last_name": "Davis",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"letlow-j": {
+"first_name": "Julia",
+"last_name": "Letlow",
+"party": {
+"nyt_id": "GOP"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "LA",
+"name": "Louisiana",
+"eevp": 39.72,
+"candidates": [
+{
+"nyt_id": "letlow-j",
+"votes": {
+"total": 329912
+},
+"leader": true
+},
+{
+"nyt_id": "davis-j",
+"votes": {
+"total": 266441
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "ME-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"collins-s": {
+"first_name": "Susan",
+"last_name": "Collins",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"jackson-t": {
+"first_name": "Troy",
+"last_name": "Jackson",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"olson_writein-s": {
+"first_name": "Sigrid",
+"last_name": "Olson (write-in)",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"webb_writein-a": {
+"first_name": "Ashley",
+"last_name": "Webb (write-in)",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"andrews_writein-b": {
+"first_name": "Brent",
+"last_name": "Andrews (write-in)",
+"party": {
+"nyt_id": "UNA"
+}
+},
+"oswald_writein-g": {
+"first_name": "Gina",
+"last_name": "Oswald (write-in)",
+"party": {
+"nyt_id": "IND"
+}
+},
+"steinberger_writein-j": {
+"first_name": "Joseph",
+"last_name": "Steinberger (write-in)",
+"party": {
+"nyt_id": "OTH"
+}
+},
+"turcotte_writein-m": {
+"first_name": "Michael",
+"last_name": "Turcotte (write-in)",
+"party": {
+"nyt_id": "UNR"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "ME",
+"name": "Maine",
+"eevp": 15.75,
+"candidates": [
+{
+"nyt_id": "jackson-t",
+"votes": {
+"total": 65348
+},
+"leader": true
+},
+{
+"nyt_id": "collins-s",
+"votes": {
+"total": 62593
+},
+"leader": false
+},
+{
+"nyt_id": "andrews_writein-b",
+"votes": {
+"total": 32
+},
+"leader": false
+},
+{
+"nyt_id": "oswald_writein-g",
+"votes": {
+"total": 10
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "MA-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "called",
+"outcome": {
+"won": [
+"markey-e"
+],
+"gained": false,
+"winner_accepted_at": [
+"2026-11-04T01:01:32.549465+00:00"
+],
+"called_by": [
+"ap"
+]
+},
+"candidate_metadata": {
+"markey-e": {
+"first_name": "Edward",
+"last_name": "Markey",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"deaton-j": {
+"first_name": "John",
+"last_name": "Deaton",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"ayyadurai-s": {
+"first_name": "Shiva",
+"last_name": "Ayyadurai",
+"party": {
+"nyt_id": "IND"
+}
+},
+"tache-j": {
+"first_name": "Joe",
+"last_name": "Tache",
+"party": {
+"nyt_id": "SLP"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "MA",
+"name": "Massachusetts",
+"eevp": 17.03,
+"candidates": [
+{
+"nyt_id": "markey-e",
+"votes": {
+"total": 333802
+},
+"leader": true
+},
+{
+"nyt_id": "deaton-j",
+"votes": {
+"total": 131943
+},
+"leader": false
+},
+{
+"nyt_id": "tache-j",
+"votes": {
+"total": 13280
+},
+"leader": false
+},
+{
+"nyt_id": "ayyadurai-s",
+"votes": {
+"total": 10978
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "MI-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"elsayed-a": {
+"first_name": "Abdul",
+"last_name": "El-Sayed",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"rogers-m": {
+"first_name": "Mike",
+"last_name": "Rogers",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"christensen-l": {
+"first_name": "Lydia",
+"last_name": "Christensen",
+"party": {
+"nyt_id": "LIB"
+}
+},
+"long-t": {
+"first_name": "Tim",
+"last_name": "Long",
+"party": {
+"nyt_id": "UST"
+}
+},
+"marsh-d": {
+"first_name": "Douglas",
+"last_name": "Marsh",
+"party": {
+"nyt_id": "GRN"
+}
+},
+"kristy-w": {
+"first_name": "Walter",
+"last_name": "Kristy",
+"party": {
+"nyt_id": "NLP"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "MI",
+"name": "Michigan",
+"eevp": 19.83,
+"candidates": [
+{
+"nyt_id": "elsayed-a",
+"votes": {
+"total": 530777
+},
+"leader": true
+},
+{
+"nyt_id": "rogers-m",
+"votes": {
+"total": 431480
+},
+"leader": false
+},
+{
+"nyt_id": "christensen-l",
+"votes": {
+"total": 8905
+},
+"leader": false
+},
+{
+"nyt_id": "long-t",
+"votes": {
+"total": 4015
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "MN-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"flanagan-p": {
+"first_name": "Peggy",
+"last_name": "Flanagan",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"tafoya-m": {
+"first_name": "Michele",
+"last_name": "Tafoya",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"simonetti-m": {
+"first_name": "Marisa",
+"last_name": "Simonetti",
+"party": {
+"nyt_id": "IND"
+}
+},
+"whiting-r": {
+"first_name": "Rebecca",
+"last_name": "Whiting",
+"party": {
+"nyt_id": "LIB"
+}
+},
+"total_writeins": {
+"first_name": null,
+"last_name": "Total Write-ins",
+"party": {
+"nyt_id": "OTH"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "MN",
+"name": "Minnesota",
+"eevp": 2.4,
+"candidates": [
+{
+"nyt_id": "tafoya-m",
+"votes": {
+"total": 39802
+},
+"leader": true
+},
+{
+"nyt_id": "flanagan-p",
+"votes": {
+"total": 30055
+},
+"leader": false
+},
+{
+"nyt_id": "simonetti-m",
+"votes": {
+"total": 1074
+},
+"leader": false
+},
+{
+"nyt_id": "whiting-r",
+"votes": {
+"total": 798
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "MS-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"hydesmith-c": {
+"first_name": "Cindy",
+"last_name": "Hyde-Smith",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"colom-s": {
+"first_name": "Scott",
+"last_name": "Colom",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"pinkins-t": {
+"first_name": "Ty",
+"last_name": "Pinkins",
+"party": {
+"nyt_id": "IND"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "MS",
+"name": "Mississippi",
+"eevp": 56.94,
+"candidates": [
+{
+"nyt_id": "hydesmith-c",
+"votes": {
+"total": 257360
+},
+"leader": true
+},
+{
+"nyt_id": "colom-s",
+"votes": {
+"total": 235151
+},
+"leader": false
+},
+{
+"nyt_id": "pinkins-t",
+"votes": {
+"total": 10891
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "MT-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"alme-k": {
+"first_name": "Kurt",
+"last_name": "Alme",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"bodnar-s": {
+"first_name": "Seth",
+"last_name": "Bodnar",
+"party": {
+"nyt_id": "IND"
+}
+},
+"bankhead-a": {
+"first_name": "Alani",
+"last_name": "Bankhead",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"austin-k": {
+"first_name": "Kyle",
+"last_name": "Austin",
+"party": {
+"nyt_id": "LIB"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "MT",
+"name": "Montana",
+"eevp": 0,
+"candidates": [
+{
+"nyt_id": "alme-k",
+"votes": {
+"total": 0
+},
+"leader": false
+},
+{
+"nyt_id": "bodnar-s",
+"votes": {
+"total": 0
+},
+"leader": false
+},
+{
+"nyt_id": "bankhead-a",
+"votes": {
+"total": 0
+},
+"leader": false
+},
+{
+"nyt_id": "austin-k",
+"votes": {
+"total": 0
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "NE-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"ricketts-p": {
+"first_name": "Pete",
+"last_name": "Ricketts",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"osborn-d": {
+"first_name": "Dan",
+"last_name": "Osborn",
+"party": {
+"nyt_id": "IND"
+}
+},
+"marvin-m": {
+"first_name": "Mike",
+"last_name": "Marvin",
+"party": {
+"nyt_id": "IND"
+}
+},
+"richards-r": {
+"first_name": "Robin",
+"last_name": "Richards",
+"party": {
+"nyt_id": "NWK"
+}
+},
+"conboy-c": {
+"first_name": "Chuck",
+"last_name": "Conboy",
+"party": {
+"nyt_id": "AFI"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "NE",
+"name": "Nebraska",
+"eevp": 36.64,
+"candidates": [
+{
+"nyt_id": "osborn-d",
+"votes": {
+"total": 163451
+},
+"leader": true
+},
+{
+"nyt_id": "ricketts-p",
+"votes": {
+"total": 125975
+},
+"leader": false
+},
+{
+"nyt_id": "richards-r",
+"votes": {
+"total": 7454
+},
+"leader": false
+},
+{
+"nyt_id": "marvin-m",
+"votes": {
+"total": 5693
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "NH-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "called",
+"outcome": {
+"won": [
+"pappas-c"
+],
+"gained": false,
+"winner_accepted_at": [
+"2026-11-04T01:21:28.872+00:00"
+],
+"called_by": [
+"ap"
+]
+},
+"candidate_metadata": {
+"pappas-c": {
+"first_name": "Chris",
+"last_name": "Pappas",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"sununu-j": {
+"first_name": "John",
+"last_name": "Sununu",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"laplante-e": {
+"first_name": "Edmond",
+"last_name": "Laplante",
+"party": {
+"nyt_id": "CST"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "NH",
+"name": "New Hampshire",
+"eevp": 52.9,
+"candidates": [
+{
+"nyt_id": "pappas-c",
+"votes": {
+"total": 208532
+},
+"leader": true
+},
+{
+"nyt_id": "sununu-j",
+"votes": {
+"total": 149980
+},
+"leader": false
+},
+{
+"nyt_id": "laplante-e",
+"votes": {
+"total": 6528
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "NJ-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "called",
+"outcome": {
+"won": [
+"booker-c"
+],
+"gained": false,
+"winner_accepted_at": [
+"2026-11-04T01:00:55.717106+00:00"
+],
+"called_by": [
+"ap"
+]
+},
+"candidate_metadata": {
+"booker-c": {
+"first_name": "Cory",
+"last_name": "Booker",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"murphy-j": {
+"first_name": "Justin",
+"last_name": "Murphy",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"fernandez-v": {
+"first_name": "Veronica",
+"last_name": "Fernandez",
+"party": {
+"nyt_id": "OTH"
+}
+},
+"kuniansky-j": {
+"first_name": "Joanne",
+"last_name": "Kuniansky",
+"party": {
+"nyt_id": "OTH"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "NJ",
+"name": "New Jersey",
+"eevp": 74.42,
+"candidates": [
+{
+"nyt_id": "booker-c",
+"votes": {
+"total": 1463420
+},
+"leader": true
+},
+{
+"nyt_id": "murphy-j",
+"votes": {
+"total": 787154
+},
+"leader": false
+},
+{
+"nyt_id": "fernandez-v",
+"votes": {
+"total": 36432
+},
+"leader": false
+},
+{
+"nyt_id": "kuniansky-j",
+"votes": {
+"total": 21102
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "NM-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "called",
+"outcome": {
+"won": [
+"lujan-b"
+],
+"gained": false,
+"winner_accepted_at": [
+"2026-11-04T02:01:00.155199+00:00"
+],
+"called_by": [
+"ap"
+]
+},
+"candidate_metadata": {
+"lujan-b": {
+"first_name": "Ben",
+"last_name": "Luj\u00e1n",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"marker-l": {
+"first_name": "Larry",
+"last_name": "Marker",
+"party": {
+"nyt_id": "GOP"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "NM",
+"name": "New Mexico",
+"eevp": 26.48,
+"candidates": [
+{
+"nyt_id": "lujan-b",
+"votes": {
+"total": 125507
+},
+"leader": true
+},
+{
+"nyt_id": "marker-l",
+"votes": {
+"total": 73667
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "NC-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "called",
+"outcome": {
+"won": [
+"cooper-r"
+],
+"gained": true,
+"winner_accepted_at": [
+"2026-11-04T01:24:35.542+00:00"
+],
+"called_by": [
+"ap"
+]
+},
+"candidate_metadata": {
+"cooper-r": {
+"first_name": "Roy",
+"last_name": "Cooper",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"whatley-m": {
+"first_name": "Michael",
+"last_name": "Whatley",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"dublin-m": {
+"first_name": "Michael",
+"last_name": "Dublin",
+"party": {
+"nyt_id": "GRN"
+}
+},
+"bray-s": {
+"first_name": "Shannon",
+"last_name": "Bray",
+"party": {
+"nyt_id": "LIB"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "NC",
+"name": "North Carolina",
+"eevp": 94.21,
+"candidates": [
+{
+"nyt_id": "cooper-r",
+"votes": {
+"total": 2229062
+},
+"leader": true
+},
+{
+"nyt_id": "whatley-m",
+"votes": {
+"total": 1506908
+},
+"leader": false
+},
+{
+"nyt_id": "bray-s",
+"votes": {
+"total": 49058
+},
+"leader": false
+},
+{
+"nyt_id": "dublin-m",
+"votes": {
+"total": 32011
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "OH-S_W-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"husted-j": {
+"first_name": "Jon",
+"last_name": "Husted",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"brown-s": {
+"first_name": "Sherrod",
+"last_name": "Brown",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"levy-g": {
+"first_name": "Greg",
+"last_name": "Levy",
+"party": {
+"nyt_id": "IND"
+}
+},
+"redpath-w": {
+"first_name": "William",
+"last_name": "Redpath",
+"party": {
+"nyt_id": "LIB"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "OH",
+"name": "Ohio",
+"eevp": 72.64,
+"candidates": [
+{
+"nyt_id": "brown-s",
+"votes": {
+"total": 1652383
+},
+"leader": true
+},
+{
+"nyt_id": "husted-j",
+"votes": {
+"total": 1603764
+},
+"leader": false
+},
+{
+"nyt_id": "redpath-w",
+"votes": {
+"total": 95310
+},
+"leader": false
+},
+{
+"nyt_id": "levy-g",
+"votes": {
+"total": 66721
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "OK-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "called",
+"outcome": {
+"won": [
+"hern-k"
+],
+"gained": false,
+"winner_accepted_at": [
+"2026-11-04T02:36:16.920144+00:00"
+],
+"called_by": [
+"ap"
+]
+},
+"candidate_metadata": {
+"hern-k": {
+"first_name": "Kevin",
+"last_name": "Hern",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"thomas-n": {
+"first_name": "N\u2019Kiyla",
+"last_name": "Thomas",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"white-s": {
+"first_name": "Sevier",
+"last_name": "White",
+"party": {
+"nyt_id": "LIB"
+}
+},
+"stinnett-c": {
+"first_name": "Curtis",
+"last_name": "Stinnett",
+"party": {
+"nyt_id": "IND"
+}
+},
+"meinhardt-r": {
+"first_name": "Ron",
+"last_name": "Meinhardt",
+"party": {
+"nyt_id": "IND"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "OK",
+"name": "Oklahoma",
+"eevp": 69.79,
+"candidates": [
+{
+"nyt_id": "hern-k",
+"votes": {
+"total": 514838
+},
+"leader": true
+},
+{
+"nyt_id": "thomas-n",
+"votes": {
+"total": 321607
+},
+"leader": false
+},
+{
+"nyt_id": "meinhardt-r",
+"votes": {
+"total": 11174
+},
+"leader": false
+},
+{
+"nyt_id": "stinnett-c",
+"votes": {
+"total": 11167
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "OR-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"merkley-j": {
+"first_name": "Jeff",
+"last_name": "Merkley",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"smith-d": {
+"first_name": "David",
+"last_name": "Smith",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"dye-g": {
+"first_name": "Gary",
+"last_name": "Dye",
+"party": {
+"nyt_id": "LIB"
+}
+},
+"henry-c": {
+"first_name": "Chris",
+"last_name": "Henry",
+"party": {
+"nyt_id": "PRG"
+}
+},
+"total_writeins": {
+"first_name": null,
+"last_name": "Total Write-ins",
+"party": {
+"nyt_id": "OTH"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "OR",
+"name": "Oregon",
+"eevp": 0,
+"candidates": [
+{
+"nyt_id": "merkley-j",
+"votes": {
+"total": 0
+},
+"leader": false
+},
+{
+"nyt_id": "smith-d",
+"votes": {
+"total": 0
+},
+"leader": false
+},
+{
+"nyt_id": "dye-g",
+"votes": {
+"total": 0
+},
+"leader": false
+},
+{
+"nyt_id": "henry-c",
+"votes": {
+"total": 0
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "RI-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "called",
+"outcome": {
+"won": [
+"reed-j"
+],
+"gained": false,
+"winner_accepted_at": [
+"2026-11-04T01:01:41.345451+00:00"
+],
+"called_by": [
+"ap"
+]
+},
+"candidate_metadata": {
+"reed-j": {
+"first_name": "Jack",
+"last_name": "Reed",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"mckay-r": {
+"first_name": "Raymond",
+"last_name": "McKay",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"bahry-m": {
+"first_name": "Michael",
+"last_name": "Bahry",
+"party": {
+"nyt_id": "IND"
+}
+},
+"total_writeins": {
+"first_name": null,
+"last_name": "Total Write-ins",
+"party": {
+"nyt_id": "OTH"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "RI",
+"name": "Rhode Island",
+"eevp": 92.25,
+"candidates": [
+{
+"nyt_id": "reed-j",
+"votes": {
+"total": 229773
+},
+"leader": true
+},
+{
+"nyt_id": "mckay-r",
+"votes": {
+"total": 101575
+},
+"leader": false
+},
+{
+"nyt_id": "bahry-m",
+"votes": {
+"total": 13036
+},
+"leader": false
+},
+{
+"nyt_id": "total_writeins",
+"votes": {
+"total": 668
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "SC-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"graham-d": {
+"first_name": "Darline",
+"last_name": "Graham",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"andrews-a": {
+"first_name": "Annie",
+"last_name": "Andrews",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"whitener-k": {
+"first_name": "Kasie",
+"last_name": "Whitener",
+"party": {
+"nyt_id": "LIB"
+}
+},
+"hackett-m": {
+"first_name": "Mark",
+"last_name": "Hackett",
+"party": {
+"nyt_id": "CST"
+}
+},
+"total_writeins": {
+"first_name": null,
+"last_name": "Total Write-ins",
+"party": {
+"nyt_id": "OTH"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "SC",
+"name": "South Carolina",
+"eevp": 86.94,
+"candidates": [
+{
+"nyt_id": "andrews-a",
+"votes": {
+"total": 920662
+},
+"leader": true
+},
+{
+"nyt_id": "graham-d",
+"votes": {
+"total": 845785
+},
+"leader": false
+},
+{
+"nyt_id": "whitener-k",
+"votes": {
+"total": 19825
+},
+"leader": false
+},
+{
+"nyt_id": "hackett-m",
+"votes": {
+"total": 14470
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "SD-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"rounds-m": {
+"first_name": "Mike",
+"last_name": "Rounds",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"bengs-b": {
+"first_name": "Brian",
+"last_name": "Bengs",
+"party": {
+"nyt_id": "IND"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "SD",
+"name": "South Dakota",
+"eevp": 14.59,
+"candidates": [
+{
+"nyt_id": "rounds-m",
+"votes": {
+"total": 30841
+},
+"leader": true
+},
+{
+"nyt_id": "bengs-b",
+"votes": {
+"total": 17930
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "TN-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"hagerty-b": {
+"first_name": "Bill",
+"last_name": "Hagerty",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"bradshaw-m": {
+"first_name": "Marquita",
+"last_name": "Bradshaw",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"chandler-t": {
+"first_name": "Tharon",
+"last_name": "Chandler",
+"party": {
+"nyt_id": "IND"
+}
+},
+"gerena-a": {
+"first_name": "Andrew",
+"last_name": "Gerena",
+"party": {
+"nyt_id": "IND"
+}
+},
+"hearn-j": {
+"first_name": "Jeremy",
+"last_name": "Hearn",
+"party": {
+"nyt_id": "IND"
+}
+},
+"jones-r": {
+"first_name": "Robert",
+"last_name": "Jones",
+"party": {
+"nyt_id": "IND"
+}
+},
+"macon-j": {
+"first_name": "James",
+"last_name": "Macon",
+"party": {
+"nyt_id": "IND"
+}
+},
+"matthews-y": {
+"first_name": "Yoshi",
+"last_name": "Matthews",
+"party": {
+"nyt_id": "IND"
+}
+},
+"sutman-d": {
+"first_name": "David",
+"last_name": "Sutman",
+"party": {
+"nyt_id": "IND"
+}
+},
+"whitson-c": {
+"first_name": "Catherine",
+"last_name": "Whitson",
+"party": {
+"nyt_id": "IND"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "TN",
+"name": "Tennessee",
+"eevp": 69.11,
+"candidates": [
+{
+"nyt_id": "hagerty-b",
+"votes": {
+"total": 855797
+},
+"leader": true
+},
+{
+"nyt_id": "bradshaw-m",
+"votes": {
+"total": 701007
+},
+"leader": false
+},
+{
+"nyt_id": "jones-r",
+"votes": {
+"total": 6913
+},
+"leader": false
+},
+{
+"nyt_id": "chandler-t",
+"votes": {
+"total": 5654
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "TX-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"talarico-j": {
+"first_name": "James",
+"last_name": "Talarico",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"paxton-k": {
+"first_name": "Ken",
+"last_name": "Paxton",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"brown-t": {
+"first_name": "Ted",
+"last_name": "Brown",
+"party": {
+"nyt_id": "LIB"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "TX",
+"name": "Texas",
+"eevp": 55.09,
+"candidates": [
+{
+"nyt_id": "talarico-j",
+"votes": {
+"total": 3386055
+},
+"leader": true
+},
+{
+"nyt_id": "paxton-k",
+"votes": {
+"total": 2269156
+},
+"leader": false
+},
+{
+"nyt_id": "brown-t",
+"votes": {
+"total": 88208
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "VA-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "called",
+"outcome": {
+"won": [
+"warner-m"
+],
+"gained": false,
+"winner_accepted_at": [
+"2026-11-04T00:00:31.573829+00:00"
+],
+"called_by": [
+"ap"
+]
+},
+"candidate_metadata": {
+"warner-m": {
+"first_name": "Mark",
+"last_name": "Warner",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"mizusawa-b": {
+"first_name": "Bert",
+"last_name": "Mizusawa",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"total_writeins": {
+"first_name": null,
+"last_name": "Total Write-ins",
+"party": {
+"nyt_id": "OTH"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "VA",
+"name": "Virginia",
+"eevp": 80.06,
+"candidates": [
+{
+"nyt_id": "warner-m",
+"votes": {
+"total": 1752231
+},
+"leader": true
+},
+{
+"nyt_id": "mizusawa-b",
+"votes": {
+"total": 1198112
+},
+"leader": false
+},
+{
+"nyt_id": "total_writeins",
+"votes": {
+"total": 8090
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "WV-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "called",
+"outcome": {
+"won": [
+"capito-s"
+],
+"gained": false,
+"winner_accepted_at": [
+"2026-11-04T01:52:26.920779+00:00"
+],
+"called_by": [
+"ap"
+]
+},
+"candidate_metadata": {
+"capito-s": {
+"first_name": "Shelley",
+"last_name": "Capito",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"anderson-r": {
+"first_name": "Rachel",
+"last_name": "Anderson",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"wilson-s": {
+"first_name": "S.",
+"last_name": "Wilson",
+"party": {
+"nyt_id": "CST"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "WV",
+"name": "West Virginia",
+"eevp": 86.27,
+"candidates": [
+{
+"nyt_id": "capito-s",
+"votes": {
+"total": 259656
+},
+"leader": true
+},
+{
+"nyt_id": "anderson-r",
+"votes": {
+"total": 169928
+},
+"leader": false
+},
+{
+"nyt_id": "wilson-s",
+"votes": {
+"total": 16783
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "WY-G-S-2026-11-03",
+"office_id": "S",
+"race_call_status": "called",
+"outcome": {
+"won": [
+"hageman-h"
+],
+"gained": false,
+"winner_accepted_at": [
+"2026-11-04T02:00:30.98294+00:00"
+],
+"called_by": [
+"ap"
+]
+},
+"candidate_metadata": {
+"hageman-h": {
+"first_name": "Harriet",
+"last_name": "Hageman",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"byrd-j": {
+"first_name": "James",
+"last_name": "Byrd",
+"party": {
+"nyt_id": "DEM"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "WY",
+"name": "Wyoming",
+"eevp": 4.25,
+"candidates": [
+{
+"nyt_id": "hageman-h",
+"votes": {
+"total": 3537
+},
+"leader": false
+},
+{
+"nyt_id": "byrd-j",
+"votes": {
+"total": 4935
+},
+"leader": true
+}
+]
+}
+]
+}
+],
+"partyControlData": {
+"count": 1,
+"results": [
+{
+"state_postal": "US",
+"state": "United States",
+"offices": {
+"S": {
+"office_id": "S",
+"office": "U.S. Senate",
+"lg_party_id": "GOP",
+"total": 100,
+"open_seats": 35,
+"no_election_seats": 65,
+"num_races_called": 16,
+"to_win": {
+"DEM": 51,
+"GOP": 50,
+"OTH": 51
+},
+"party_balance": {
+"DEM": {
+"party_id": "DEM",
+"party": "Democrat",
+"party_abbreviation": "Dem.",
+"flip_count": 1,
+"seats": 45,
+"no_election": 34,
+"winner": false,
+"candidate_metadata": null,
+"controlled_at": null
+},
+"GOP": {
+"party_id": "GOP",
+"party": "Republican",
+"party_abbreviation": "Rep.",
+"flip_count": 0,
+"seats": 36,
+"no_election": 31,
+"winner": false,
+"candidate_metadata": null,
+"controlled_at": null
+},
+"OTH": {
+"party_id": "OTH",
+"party": "Independent",
+"party_abbreviation": "Ind.",
+"flip_count": 0,
+"seats": 0,
+"no_election": 0,
+"winner": false,
+"candidate_metadata": null,
+"controlled_at": null
+}
+},
+"current_control": {
+"DEM": 45,
+"GOP": 57,
+"OTH": 2
+},
+"nyt_model_estimates": [
+{
+"id": 149464,
+"nyt_party_id": "OTH",
+"ranking": 3,
+"seats": 0,
+"seats_quantile": [
+0,
+0,
+0,
+1,
+1
+],
+"win_probability": 0,
+"seat_margin": null,
+"seat_margin_quantile": null,
+"popular_vote": 2226166,
+"popular_vote_quantile": [
+2001901,
+2139281,
+2226166,
+2310455,
+2510103
+],
+"voteshare_margin": null,
+"voteshare_margin_quantile": null,
+"nyt_updated_at": "2026-11-04T02:58:53.239+00:00"
+},
+{
+"id": 149462,
+"nyt_party_id": "DEM",
+"ranking": 1,
+"seats": 54,
+"seats_quantile": [
+51,
+53,
+54,
+55,
+57
+],
+"win_probability": 0.99,
+"seat_margin": 9,
+"seat_margin_quantile": [
+2,
+7,
+9,
+11,
+14
+],
+"popular_vote": 40006752,
+"popular_vote_quantile": [
+38301272,
+39287572,
+40006752,
+40597625,
+42076684
+],
+"voteshare_margin": 0.0742,
+"voteshare_margin_quantile": [
+0.0465,
+0.0648,
+0.0742,
+0.0837,
+0.1025
+],
+"nyt_updated_at": "2026-11-04T02:58:53.239+00:00"
+},
+{
+"id": 149463,
+"nyt_party_id": "GOP",
+"ranking": 2,
+"seats": 45,
+"seats_quantile": [
+42,
+44,
+45,
+46,
+49
+],
+"win_probability": 0.0093,
+"seat_margin": -9,
+"seat_margin_quantile": [
+-14,
+-11,
+-9,
+-7,
+-2
+],
+"popular_vote": 34331188,
+"popular_vote_quantile": [
+32468957,
+33614285,
+34331188,
+34959456,
+36634758
+],
+"voteshare_margin": -0.0742,
+"voteshare_margin_quantile": [
+-0.1027,
+-0.0838,
+-0.0742,
+-0.0648,
+-0.0466
+],
+"nyt_updated_at": "2026-11-04T02:58:53.239+00:00"
+}
+],
+"nyt_model_chamber": {
+"id": 21524,
+"no_control": 0.0007,
+"voteshare_inclusion": {
+"dem_margin_counted": [
+{
+"dem_margin_counted_county": -0.0427,
+"dem_margin_counted_precinct": 0,
+"dem_margin_counted_township": 0.2122
+}
+],
+"dem_margin_baseline": [
+{
+"dem_margin_baseline_county": -0.0885,
+"dem_margin_baseline_precinct": 0,
+"dem_margin_baseline_township": 0.1872
+}
+],
+"n_include_voteshare": [
+{
+"n_include_voteshare_county": 643,
+"n_include_voteshare_precinct": 0,
+"n_include_voteshare_township": 242
+}
+],
+"dem_margin_benchmark": [
+{
+"dem_margin_benchmark_county": -0.0846,
+"dem_margin_benchmark_precinct": 0,
+"dem_margin_benchmark_township": 0.0195
+}
+],
+"turnout_included_voteshare": [
+{
+"turnout_included_county": 14686341,
+"turnout_included_precinct": 0,
+"turnout_included_township": 684517
+}
+]
+},
+"estimate_components": {
+"proportion_model_voteshare": 0.3938,
+"proportion_counted_voteshare": 0.4392,
+"proportion_baseline_voteshare": 0.1669
+},
+"seat_combination_probabilities": [
+{
+"DEM": 54,
+"GOP": 46,
+"OTH": 0,
+"prop_sims": 0.1706
+},
+{
+"DEM": 55,
+"GOP": 45,
+"OTH": 0,
+"prop_sims": 0.1519
+},
+{
+"DEM": 53,
+"GOP": 47,
+"OTH": 0,
+"prop_sims": 0.1399
+},
+{
+"DEM": 55,
+"GOP": 44,
+"OTH": 1,
+"prop_sims": 0.1179
+},
+{
+"DEM": 54,
+"GOP": 45,
+"OTH": 1,
+"prop_sims": 0.0873
+},
+{
+"DEM": 56,
+"GOP": 44,
+"OTH": 0,
+"prop_sims": 0.068
+},
+{
+"DEM": 56,
+"GOP": 43,
+"OTH": 1,
+"prop_sims": 0.0666
+},
+{
+"DEM": 52,
+"GOP": 48,
+"OTH": 0,
+"prop_sims": 0.058
+},
+{
+"DEM": 53,
+"GOP": 46,
+"OTH": 1,
+"prop_sims": 0.0426
+},
+{
+"DEM": 52,
+"GOP": 47,
+"OTH": 1,
+"prop_sims": 0.0187
+},
+{
+"DEM": 51,
+"GOP": 49,
+"OTH": 0,
+"prop_sims": 0.0173
+},
+{
+"DEM": 57,
+"GOP": 42,
+"OTH": 1,
+"prop_sims": 0.0167
+},
+{
+"DEM": 56,
+"GOP": 42,
+"OTH": 2,
+"prop_sims": 0.0093
+},
+{
+"DEM": 50,
+"GOP": 50,
+"OTH": 0,
+"prop_sims": 0.008
+},
+{
+"DEM": 54,
+"GOP": 44,
+"OTH": 2,
+"prop_sims": 0.0053
+},
+{
+"DEM": 57,
+"GOP": 43,
+"OTH": 0,
+"prop_sims": 0.0053
+},
+{
+"DEM": 51,
+"GOP": 48,
+"OTH": 1,
+"prop_sims": 0.004
+},
+{
+"DEM": 55,
+"GOP": 43,
+"OTH": 2,
+"prop_sims": 0.004
+},
+{
+"DEM": 57,
+"GOP": 41,
+"OTH": 2,
+"prop_sims": 0.004
+},
+{
+"DEM": 49,
+"GOP": 51,
+"OTH": 0,
+"prop_sims": 0.0013
+},
+{
+"DEM": 52,
+"GOP": 46,
+"OTH": 2,
+"prop_sims": 0.0013
+},
+{
+"DEM": 50,
+"GOP": 49,
+"OTH": 1,
+"prop_sims": 0.0007
+},
+{
+"DEM": 53,
+"GOP": 45,
+"OTH": 2,
+"prop_sims": 0.0007
+},
+{
+"DEM": 56,
+"GOP": 41,
+"OTH": 3,
+"prop_sims": 0.0007
+}
+],
+"nyt_updated_at": "2026-11-04T02:58:53.239Z"
+},
+"model_settings": {
+"start_time": "2026-11-04T00:52:00+00:00",
+"end_time": null,
+"model_status": "active",
+"model_inactive_reason": null
+},
+"is_reporting": true
+}
+}
+}
+]
+}
+},
+"governor": {
+"races": [
+{
+"nyt_id": "AL-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"jones-d": {
+"first_name": "Doug",
+"last_name": "Jones",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"tuberville-t": {
+"first_name": "Tommy",
+"last_name": "Tuberville",
+"party": {
+"nyt_id": "GOP"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "AL",
+"name": "Alabama",
+"eevp": 37.9,
+"candidates": [
+{
+"nyt_id": "tuberville-t",
+"votes": {
+"total": 407412
+},
+"leader": true
+},
+{
+"nyt_id": "jones-d",
+"votes": {
+"total": 300932
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "AK-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"kreisstomkins-j": {
+"first_name": "Jonathan",
+"last_name": "Kreiss-Tomkins",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"wilson-b": {
+"first_name": "Bernadette",
+"last_name": "Wilson",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"taylor-t": {
+"first_name": "Treg",
+"last_name": "Taylor",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"bronson-d": {
+"first_name": "Dave",
+"last_name": "Bronson",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"total_writeins": {
+"first_name": null,
+"last_name": "Total Write-ins",
+"party": {
+"nyt_id": "OTH"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "AK",
+"name": "Alaska",
+"eevp": 0,
+"candidates": [
+{
+"nyt_id": "kreisstomkins-j",
+"votes": {
+"total": 0
+},
+"leader": false
+},
+{
+"nyt_id": "wilson-b",
+"votes": {
+"total": 0
+},
+"leader": false
+},
+{
+"nyt_id": "taylor-t",
+"votes": {
+"total": 0
+},
+"leader": false
+},
+{
+"nyt_id": "bronson-d",
+"votes": {
+"total": 0
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "AZ-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"hobbs-k": {
+"first_name": "Katie",
+"last_name": "Hobbs",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"biggs-a": {
+"first_name": "Andy",
+"last_name": "Biggs",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"gonzalez_writein-g": {
+"first_name": "Gertritrude",
+"last_name": "Gonzalez (write-in)",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"novoa_writein-a": {
+"first_name": "Alice",
+"last_name": "Novoa (write-in)",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"lombardo-r": {
+"first_name": "Risa",
+"last_name": "Lombardo",
+"party": {
+"nyt_id": "GRN"
+}
+},
+"hourihan-t": {
+"first_name": "Teri Ann",
+"last_name": "Hourihan",
+"party": {
+"nyt_id": "NOL"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "AZ",
+"name": "Arizona",
+"eevp": 1.93,
+"candidates": [
+{
+"nyt_id": "hobbs-k",
+"votes": {
+"total": 29470
+},
+"leader": true
+},
+{
+"nyt_id": "biggs-a",
+"votes": {
+"total": 17183
+},
+"leader": false
+},
+{
+"nyt_id": "hourihan-t",
+"votes": {
+"total": 493
+},
+"leader": false
+},
+{
+"nyt_id": "lombardo-r",
+"votes": {
+"total": 430
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "AR-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"huckabee_sanders-s": {
+"first_name": "Sarah",
+"last_name": "Huckabee Sanders",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"love-f": {
+"first_name": "Fred",
+"last_name": "Love",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"shelby-c": {
+"first_name": "Colt",
+"last_name": "Shelby",
+"party": {
+"nyt_id": "LIB"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "AR",
+"name": "Arkansas",
+"eevp": 72.65,
+"candidates": [
+{
+"nyt_id": "huckabee_sanders-s",
+"votes": {
+"total": 326081
+},
+"leader": true
+},
+{
+"nyt_id": "love-f",
+"votes": {
+"total": 249781
+},
+"leader": false
+},
+{
+"nyt_id": "shelby-c",
+"votes": {
+"total": 41999
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "CA-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"becerra-x": {
+"first_name": "Xavier",
+"last_name": "Becerra",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"hilton-s": {
+"first_name": "Steve",
+"last_name": "Hilton",
+"party": {
+"nyt_id": "GOP"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "CA",
+"name": "California",
+"eevp": 0,
+"candidates": [
+{
+"nyt_id": "becerra-x",
+"votes": {
+"total": 0
+},
+"leader": false
+},
+{
+"nyt_id": "hilton-s",
+"votes": {
+"total": 0
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "CO-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "called",
+"outcome": {
+"won": [
+"weiser-p"
+],
+"gained": false,
+"winner_accepted_at": [
+"2026-11-04T02:01:00.700309+00:00"
+],
+"called_by": [
+"ap"
+]
+},
+"candidate_metadata": {
+"weiser-p": {
+"first_name": "Phil",
+"last_name": "Weiser",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"marx-v": {
+"first_name": "Victor",
+"last_name": "Marx",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"hamilton-s": {
+"first_name": "Stephen",
+"last_name": "Hamilton",
+"party": {
+"nyt_id": "AMC"
+}
+},
+"mulder-e": {
+"first_name": "Eric",
+"last_name": "Mulder",
+"party": {
+"nyt_id": "LIB"
+}
+},
+"peckman-j": {
+"first_name": "Jeff",
+"last_name": "Peckman",
+"party": {
+"nyt_id": "UTY"
+}
+},
+"underwood-e": {
+"first_name": "Erik",
+"last_name": "Underwood",
+"party": {
+"nyt_id": "AVP"
+}
+},
+"lopez-g": {
+"first_name": "Greg",
+"last_name": "Lopez",
+"party": {
+"nyt_id": "UNA"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "CO",
+"name": "Colorado",
+"eevp": 63.59,
+"candidates": [
+{
+"nyt_id": "weiser-p",
+"votes": {
+"total": 1019599
+},
+"leader": true
+},
+{
+"nyt_id": "marx-v",
+"votes": {
+"total": 548400
+},
+"leader": false
+},
+{
+"nyt_id": "lopez-g",
+"votes": {
+"total": 44890
+},
+"leader": false
+},
+{
+"nyt_id": "mulder-e",
+"votes": {
+"total": 23739
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "CT-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "called",
+"outcome": {
+"won": [
+"lamont-n"
+],
+"gained": false,
+"winner_accepted_at": [
+"2026-11-04T02:17:13.180358+00:00"
+],
+"called_by": [
+"ap"
+]
+},
+"candidate_metadata": {
+"lamont-n": {
+"first_name": "Ned",
+"last_name": "Lamont",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"fazio-r": {
+"first_name": "Ryan",
+"last_name": "Fazio",
+"party": {
+"nyt_id": "GOP"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "CT",
+"name": "Connecticut",
+"eevp": 19.86,
+"candidates": [
+{
+"nyt_id": "lamont-n",
+"votes": {
+"total": 154261
+},
+"leader": true
+},
+{
+"nyt_id": "fazio-r",
+"votes": {
+"total": 104188
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "FL-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "called",
+"outcome": {
+"won": [
+"donalds-b"
+],
+"gained": false,
+"winner_accepted_at": [
+"2026-11-04T02:10:17.072+00:00"
+],
+"called_by": [
+"ap"
+]
+},
+"candidate_metadata": {
+"donalds-b": {
+"first_name": "Byron",
+"last_name": "Donalds",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"jolly-d": {
+"first_name": "David",
+"last_name": "Jolly",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"abrams-d": {
+"first_name": "Dean",
+"last_name": "Abrams",
+"party": {
+"nyt_id": "NPA"
+}
+},
+"burkett-c": {
+"first_name": "Charles",
+"last_name": "Burkett",
+"party": {
+"nyt_id": "NPA"
+}
+},
+"datto-j": {
+"first_name": "Jeffrey",
+"last_name": "Datto",
+"party": {
+"nyt_id": "NPA"
+}
+},
+"dimanche-m": {
+"first_name": "Moliere",
+"last_name": "Dimanche",
+"party": {
+"nyt_id": "NPA"
+}
+},
+"jewett-s": {
+"first_name": "Scott",
+"last_name": "Jewett",
+"party": {
+"nyt_id": "LIB"
+}
+},
+"russo-f": {
+"first_name": "Frank",
+"last_name": "Russo",
+"party": {
+"nyt_id": "NPA"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "FL",
+"name": "Florida",
+"eevp": 99,
+"candidates": [
+{
+"nyt_id": "donalds-b",
+"votes": {
+"total": 4112692
+},
+"leader": true
+},
+{
+"nyt_id": "jolly-d",
+"votes": {
+"total": 3995200
+},
+"leader": false
+},
+{
+"nyt_id": "jewett-s",
+"votes": {
+"total": 37555
+},
+"leader": false
+},
+{
+"nyt_id": "russo-f",
+"votes": {
+"total": 23033
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "GA-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "called",
+"outcome": {
+"won": [
+"bottoms-k"
+],
+"gained": true,
+"winner_accepted_at": [
+"2026-11-04T02:24:12.463267+00:00"
+],
+"called_by": [
+"ap"
+]
+},
+"candidate_metadata": {
+"bottoms-k": {
+"first_name": "Keisha",
+"last_name": "Bottoms",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"jackson-r": {
+"first_name": "Rick",
+"last_name": "Jackson",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"total_writeins": {
+"first_name": null,
+"last_name": "Total Write-ins",
+"party": {
+"nyt_id": "OTH"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "GA",
+"name": "Georgia",
+"eevp": 80.95,
+"candidates": [
+{
+"nyt_id": "bottoms-k",
+"votes": {
+"total": 1955661
+},
+"leader": true
+},
+{
+"nyt_id": "jackson-r",
+"votes": {
+"total": 1636110
+},
+"leader": false
+},
+{
+"nyt_id": "total_writeins",
+"votes": {
+"total": 2
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "HI-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"green-j": {
+"first_name": "Josh",
+"last_name": "Green",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"cordery-g": {
+"first_name": "Gary",
+"last_name": "Cordery",
+"party": {
+"nyt_id": "GOP"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "HI",
+"name": "Hawaii",
+"eevp": 0,
+"candidates": [
+{
+"nyt_id": "green-j",
+"votes": {
+"total": 0
+},
+"leader": false
+},
+{
+"nyt_id": "cordery-g",
+"votes": {
+"total": 0
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "ID-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"little-b": {
+"first_name": "Brad",
+"last_name": "Little",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"pickens-t": {
+"first_name": "Terri",
+"last_name": "Pickens",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"burnett_writein-j": {
+"first_name": "Jacob",
+"last_name": "Burnett (write-in)",
+"party": {
+"nyt_id": "IND"
+}
+},
+"prolife": {
+"first_name": null,
+"last_name": "Pro-Life",
+"party": {
+"nyt_id": "CST"
+}
+},
+"sand-p": {
+"first_name": "Paul",
+"last_name": "Sand",
+"party": {
+"nyt_id": "LIB"
+}
+},
+"stegner-j": {
+"first_name": "John",
+"last_name": "Stegner",
+"party": {
+"nyt_id": "IND"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "ID",
+"name": "Idaho",
+"eevp": 0,
+"candidates": [
+{
+"nyt_id": "little-b",
+"votes": {
+"total": 0
+},
+"leader": false
+},
+{
+"nyt_id": "pickens-t",
+"votes": {
+"total": 0
+},
+"leader": false
+},
+{
+"nyt_id": "burnett_writein-j",
+"votes": {
+"total": 0
+},
+"leader": false
+},
+{
+"nyt_id": "prolife",
+"votes": {
+"total": 0
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "IL-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "called",
+"outcome": {
+"won": [
+"pritzker-j"
+],
+"gained": false,
+"winner_accepted_at": [
+"2026-11-04T01:01:05.343166+00:00"
+],
+"called_by": [
+"ap"
+]
+},
+"candidate_metadata": {
+"pritzker-j": {
+"first_name": "JB",
+"last_name": "Pritzker",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"bailey-d": {
+"first_name": "Darren",
+"last_name": "Bailey",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"corbett-c": {
+"first_name": "Collin",
+"last_name": "Corbett",
+"party": {
+"nyt_id": "IND"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "IL",
+"name": "Illinois",
+"eevp": 46.58,
+"candidates": [
+{
+"nyt_id": "pritzker-j",
+"votes": {
+"total": 1306605
+},
+"leader": true
+},
+{
+"nyt_id": "bailey-d",
+"votes": {
+"total": 748153
+},
+"leader": false
+},
+{
+"nyt_id": "corbett-c",
+"votes": {
+"total": 67061
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "IA-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"sand-r": {
+"first_name": "Rob",
+"last_name": "Sand",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"lahn-z": {
+"first_name": "Zach",
+"last_name": "Lahn",
+"party": {
+"nyt_id": "GOP"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "IA",
+"name": "Iowa",
+"eevp": 29.63,
+"candidates": [
+{
+"nyt_id": "sand-r",
+"votes": {
+"total": 251002
+},
+"leader": true
+},
+{
+"nyt_id": "lahn-z",
+"votes": {
+"total": 159094
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "KS-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"holscher-c": {
+"first_name": "Cindy",
+"last_name": "Holscher",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"masterson-t": {
+"first_name": "Ty",
+"last_name": "Masterson",
+"party": {
+"nyt_id": "GOP"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "KS",
+"name": "Kansas",
+"eevp": 62.57,
+"candidates": [
+{
+"nyt_id": "holscher-c",
+"votes": {
+"total": 414502
+},
+"leader": true
+},
+{
+"nyt_id": "masterson-t",
+"votes": {
+"total": 331193
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "ME-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"pingree-h": {
+"first_name": "Hannah",
+"last_name": "Pingree",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"charles-r": {
+"first_name": "Bobby",
+"last_name": "Charles",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"wilcox_writein-r": {
+"first_name": "Randy",
+"last_name": "Wilcox (write-in)",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"bennett-r": {
+"first_name": "Rick",
+"last_name": "Bennett",
+"party": {
+"nyt_id": "IND"
+}
+},
+"glowa_writein-j": {
+"first_name": "John",
+"last_name": "Glowa (write-in)",
+"party": {
+"nyt_id": "IND"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "ME",
+"name": "Maine",
+"eevp": 15.3,
+"candidates": [
+{
+"nyt_id": "pingree-h",
+"votes": {
+"total": 64447
+},
+"leader": true
+},
+{
+"nyt_id": "charles-r",
+"votes": {
+"total": 50128
+},
+"leader": false
+},
+{
+"nyt_id": "bennett-r",
+"votes": {
+"total": 9829
+},
+"leader": false
+},
+{
+"nyt_id": "glowa_writein-j",
+"votes": {
+"total": 16
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "MD-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "called",
+"outcome": {
+"won": [
+"moore-w"
+],
+"gained": false,
+"winner_accepted_at": [
+"2026-11-04T01:02:08.301021+00:00"
+],
+"called_by": [
+"ap"
+]
+},
+"candidate_metadata": {
+"moore-w": {
+"first_name": "Wes",
+"last_name": "Moore",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"cox-d": {
+"first_name": "Dan",
+"last_name": "Cox",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"ellis-a": {
+"first_name": "Andy",
+"last_name": "Ellis",
+"party": {
+"nyt_id": "GRN"
+}
+},
+"white-c": {
+"first_name": "Cathy",
+"last_name": "White",
+"party": {
+"nyt_id": "WCP"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "MD",
+"name": "Maryland",
+"eevp": 53.09,
+"candidates": [
+{
+"nyt_id": "moore-w",
+"votes": {
+"total": 761368
+},
+"leader": true
+},
+{
+"nyt_id": "cox-d",
+"votes": {
+"total": 406637
+},
+"leader": false
+},
+{
+"nyt_id": "white-c",
+"votes": {
+"total": 22710
+},
+"leader": false
+},
+{
+"nyt_id": "ellis-a",
+"votes": {
+"total": 22297
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "MA-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "called",
+"outcome": {
+"won": [
+"healey-m"
+],
+"gained": false,
+"winner_accepted_at": [
+"2026-11-04T01:01:32.549465+00:00"
+],
+"called_by": [
+"ap"
+]
+},
+"candidate_metadata": {
+"healey-m": {
+"first_name": "Maura",
+"last_name": "Healey",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"minogue-m": {
+"first_name": "Michael",
+"last_name": "Minogue",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"james-a": {
+"first_name": "Andrea",
+"last_name": "James",
+"party": {
+"nyt_id": "IND"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "MA",
+"name": "Massachusetts",
+"eevp": 15.45,
+"candidates": [
+{
+"nyt_id": "healey-m",
+"votes": {
+"total": 302306
+},
+"leader": true
+},
+{
+"nyt_id": "minogue-m",
+"votes": {
+"total": 127380
+},
+"leader": false
+},
+{
+"nyt_id": "james-a",
+"votes": {
+"total": 15641
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "MI-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"benson-j": {
+"first_name": "Jocelyn",
+"last_name": "Benson",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"james-j": {
+"first_name": "John",
+"last_name": "James",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"hudson-a": {
+"first_name": "Anthony",
+"last_name": "Hudson",
+"party": {
+"nyt_id": "LIB"
+}
+},
+"brandenburg-d": {
+"first_name": "Donna",
+"last_name": "Brandenburg",
+"party": {
+"nyt_id": "UST"
+}
+},
+"campbell-d": {
+"first_name": "Douglas",
+"last_name": "Campbell",
+"party": {
+"nyt_id": "GRN"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "MI",
+"name": "Michigan",
+"eevp": 19.89,
+"candidates": [
+{
+"nyt_id": "benson-j",
+"votes": {
+"total": 553223
+},
+"leader": true
+},
+{
+"nyt_id": "james-j",
+"votes": {
+"total": 413168
+},
+"leader": false
+},
+{
+"nyt_id": "hudson-a",
+"votes": {
+"total": 8120
+},
+"leader": false
+},
+{
+"nyt_id": "campbell-d",
+"votes": {
+"total": 3440
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "MN-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"klobuchar-a": {
+"first_name": "Amy",
+"last_name": "Klobuchar",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"demuth-l": {
+"first_name": "Lisa",
+"last_name": "Demuth",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"young-s": {
+"first_name": "Steven",
+"last_name": "Young",
+"party": {
+"nyt_id": "GRN"
+}
+},
+"total_writeins": {
+"first_name": null,
+"last_name": "Total Write-ins",
+"party": {
+"nyt_id": "OTH"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "MN",
+"name": "Minnesota",
+"eevp": 2.4,
+"candidates": [
+{
+"nyt_id": "demuth-l",
+"votes": {
+"total": 39295
+},
+"leader": true
+},
+{
+"nyt_id": "klobuchar-a",
+"votes": {
+"total": 31234
+},
+"leader": false
+},
+{
+"nyt_id": "young-s",
+"votes": {
+"total": 1166
+},
+"leader": false
+},
+{
+"nyt_id": "total_writeins",
+"votes": {
+"total": 75
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "NE-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"pillen-j": {
+"first_name": "Jim",
+"last_name": "Pillen",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"walz-l": {
+"first_name": "Lynne",
+"last_name": "Walz",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"beard-r": {
+"first_name": "Rick",
+"last_name": "Beard",
+"party": {
+"nyt_id": "IND"
+}
+},
+"lindstrom-b": {
+"first_name": "Brett",
+"last_name": "Lindstrom",
+"party": {
+"nyt_id": "AFI"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "NE",
+"name": "Nebraska",
+"eevp": 36.78,
+"candidates": [
+{
+"nyt_id": "walz-l",
+"votes": {
+"total": 163162
+},
+"leader": true
+},
+{
+"nyt_id": "pillen-j",
+"votes": {
+"total": 125262
+},
+"leader": false
+},
+{
+"nyt_id": "lindstrom-b",
+"votes": {
+"total": 11758
+},
+"leader": false
+},
+{
+"nyt_id": "beard-r",
+"votes": {
+"total": 6472
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "NV-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"lombardo-j": {
+"first_name": "Joe",
+"last_name": "Lombardo",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"ford-a": {
+"first_name": "Aaron",
+"last_name": "Ford",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"ford-d": {
+"first_name": "Danielle",
+"last_name": "Ford",
+"party": {
+"nyt_id": "NPA"
+}
+},
+"none_of_these_candidates": {
+"first_name": null,
+"last_name": "None of These Candidates",
+"party": {
+"nyt_id": "NPD"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "NV",
+"name": "Nevada",
+"eevp": 0,
+"candidates": [
+{
+"nyt_id": "lombardo-j",
+"votes": {
+"total": 0
+},
+"leader": false
+},
+{
+"nyt_id": "ford-a",
+"votes": {
+"total": 0
+},
+"leader": false
+},
+{
+"nyt_id": "ford-d",
+"votes": {
+"total": 0
+},
+"leader": false
+},
+{
+"nyt_id": "none_of_these_candidates",
+"votes": {
+"total": 0
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "NH-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"ayotte-k": {
+"first_name": "Kelly",
+"last_name": "Ayotte",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"warmington-c": {
+"first_name": "Cinde",
+"last_name": "Warmington",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"villee-s": {
+"first_name": "Stephen",
+"last_name": "Villee",
+"party": {
+"nyt_id": "LIB"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "NH",
+"name": "New Hampshire",
+"eevp": 54.48,
+"candidates": [
+{
+"nyt_id": "ayotte-k",
+"votes": {
+"total": 187761
+},
+"leader": true
+},
+{
+"nyt_id": "warmington-c",
+"votes": {
+"total": 179412
+},
+"leader": false
+},
+{
+"nyt_id": "villee-s",
+"votes": {
+"total": 8093
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "NM-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"haaland-d": {
+"first_name": "Deb",
+"last_name": "Haaland",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"hull-g": {
+"first_name": "Gregg",
+"last_name": "Hull",
+"party": {
+"nyt_id": "GOP"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "NM",
+"name": "New Mexico",
+"eevp": 26.49,
+"candidates": [
+{
+"nyt_id": "haaland-d",
+"votes": {
+"total": 116680
+},
+"leader": true
+},
+{
+"nyt_id": "hull-g",
+"votes": {
+"total": 82560
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "NY-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "called",
+"outcome": {
+"won": [
+"hochul-k"
+],
+"gained": false,
+"winner_accepted_at": [
+"2026-11-04T02:00:31.577162+00:00"
+],
+"called_by": [
+"ap"
+]
+},
+"candidate_metadata": {
+"hochul-k": {
+"first_name": "Kathy",
+"last_name": "Hochul",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"blakeman-b": {
+"first_name": "Bruce",
+"last_name": "Blakeman",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"total_writeins": {
+"first_name": null,
+"last_name": "Total Write-ins",
+"party": {
+"nyt_id": "OTH"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "NY",
+"name": "New York",
+"eevp": 54.39,
+"candidates": [
+{
+"nyt_id": "hochul-k",
+"votes": {
+"total": 2503423
+},
+"leader": true
+},
+{
+"nyt_id": "blakeman-b",
+"votes": {
+"total": 1270038
+},
+"leader": false
+},
+{
+"nyt_id": "total_writeins",
+"votes": {
+"total": 7499
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "OH-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"acton-a": {
+"first_name": "Amy",
+"last_name": "Acton",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"ramaswamy-v": {
+"first_name": "Vivek",
+"last_name": "Ramaswamy",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"kissick-d": {
+"first_name": "Don",
+"last_name": "Kissick",
+"party": {
+"nyt_id": "LIB"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "OH",
+"name": "Ohio",
+"eevp": 72.6,
+"candidates": [
+{
+"nyt_id": "acton-a",
+"votes": {
+"total": 1722649
+},
+"leader": true
+},
+{
+"nyt_id": "ramaswamy-v",
+"votes": {
+"total": 1575551
+},
+"leader": false
+},
+{
+"nyt_id": "kissick-d",
+"votes": {
+"total": 113660
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "OK-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"mazzei-m": {
+"first_name": "Mike",
+"last_name": "Mazzei",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"munson-c": {
+"first_name": "Cyndi",
+"last_name": "Munson",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"griffin-j": {
+"first_name": "Jerry",
+"last_name": "Griffin",
+"party": {
+"nyt_id": "IND"
+}
+},
+"brooks-r": {
+"first_name": "Robert",
+"last_name": "Brooks",
+"party": {
+"nyt_id": "IND"
+}
+},
+"bush-o": {
+"first_name": "Orlando",
+"last_name": "Bush",
+"party": {
+"nyt_id": "IND"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "OK",
+"name": "Oklahoma",
+"eevp": 69.88,
+"candidates": [
+{
+"nyt_id": "mazzei-m",
+"votes": {
+"total": 468532
+},
+"leader": true
+},
+{
+"nyt_id": "munson-c",
+"votes": {
+"total": 380139
+},
+"leader": false
+},
+{
+"nyt_id": "brooks-r",
+"votes": {
+"total": 9395
+},
+"leader": false
+},
+{
+"nyt_id": "griffin-j",
+"votes": {
+"total": 5990
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "OR-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"kotek-t": {
+"first_name": "Tina",
+"last_name": "Kotek",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"drazan-c": {
+"first_name": "Christine",
+"last_name": "Drazan",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"smith-b": {
+"first_name": "Brett",
+"last_name": "Smith",
+"party": {
+"nyt_id": "PAG"
+}
+},
+"total_writeins": {
+"first_name": null,
+"last_name": "Total Write-ins",
+"party": {
+"nyt_id": "OTH"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "OR",
+"name": "Oregon",
+"eevp": 0,
+"candidates": [
+{
+"nyt_id": "kotek-t",
+"votes": {
+"total": 0
+},
+"leader": false
+},
+{
+"nyt_id": "drazan-c",
+"votes": {
+"total": 0
+},
+"leader": false
+},
+{
+"nyt_id": "smith-b",
+"votes": {
+"total": 0
+},
+"leader": false
+},
+{
+"nyt_id": "total_writeins",
+"votes": {
+"total": 0
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "PA-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "called",
+"outcome": {
+"won": [
+"shapiro-j"
+],
+"gained": false,
+"winner_accepted_at": [
+"2026-11-04T01:02:07.741956+00:00"
+],
+"called_by": [
+"ap"
+]
+},
+"candidate_metadata": {
+"shapiro-j": {
+"first_name": "Josh",
+"last_name": "Shapiro",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"garrity-s": {
+"first_name": "Stacy",
+"last_name": "Garrity",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"krawchuk-k": {
+"first_name": "Ken",
+"last_name": "Krawchuk",
+"party": {
+"nyt_id": "LIB"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "PA",
+"name": "Pennsylvania",
+"eevp": 59.16,
+"candidates": [
+{
+"nyt_id": "shapiro-j",
+"votes": {
+"total": 1948622
+},
+"leader": true
+},
+{
+"nyt_id": "garrity-s",
+"votes": {
+"total": 1139480
+},
+"leader": false
+},
+{
+"nyt_id": "krawchuk-k",
+"votes": {
+"total": 39207
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "RI-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "called",
+"outcome": {
+"won": [
+"foulkes-h"
+],
+"gained": false,
+"winner_accepted_at": [
+"2026-11-04T01:32:45.498253+00:00"
+],
+"called_by": [
+"ap"
+]
+},
+"candidate_metadata": {
+"foulkes-h": {
+"first_name": "Helena",
+"last_name": "Foulkes",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"guckian-a": {
+"first_name": "Aaron",
+"last_name": "Guckian",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"block-k": {
+"first_name": "Kenneth",
+"last_name": "Block",
+"party": {
+"nyt_id": "IND"
+}
+},
+"gotra-j": {
+"first_name": "Jasjit",
+"last_name": "Gotra",
+"party": {
+"nyt_id": "IND"
+}
+},
+"reynolds-c": {
+"first_name": "C.",
+"last_name": "Reynolds",
+"party": {
+"nyt_id": "IND"
+}
+},
+"total_writeins": {
+"first_name": null,
+"last_name": "Total Write-ins",
+"party": {
+"nyt_id": "OTH"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "RI",
+"name": "Rhode Island",
+"eevp": 92.24,
+"candidates": [
+{
+"nyt_id": "foulkes-h",
+"votes": {
+"total": 198157
+},
+"leader": true
+},
+{
+"nyt_id": "block-k",
+"votes": {
+"total": 95928
+},
+"leader": false
+},
+{
+"nyt_id": "guckian-a",
+"votes": {
+"total": 45600
+},
+"leader": false
+},
+{
+"nyt_id": "reynolds-c",
+"votes": {
+"total": 1959
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "SC-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"johnson-j": {
+"first_name": "Jermaine",
+"last_name": "Johnson",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"wilson-a": {
+"first_name": "Alan",
+"last_name": "Wilson",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"addison-m": {
+"first_name": "Michael",
+"last_name": "Addison",
+"party": {
+"nyt_id": "UCZ"
+}
+},
+"hakim-w": {
+"first_name": "Walid",
+"last_name": "Hakim",
+"party": {
+"nyt_id": "GRN"
+}
+},
+"total_writeins": {
+"first_name": null,
+"last_name": "Total Write-ins",
+"party": {
+"nyt_id": "OTH"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "SC",
+"name": "South Carolina",
+"eevp": 87.08,
+"candidates": [
+{
+"nyt_id": "wilson-a",
+"votes": {
+"total": 930400
+},
+"leader": true
+},
+{
+"nyt_id": "johnson-j",
+"votes": {
+"total": 848885
+},
+"leader": false
+},
+{
+"nyt_id": "addison-m",
+"votes": {
+"total": 14032
+},
+"leader": false
+},
+{
+"nyt_id": "hakim-w",
+"votes": {
+"total": 7764
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "SD-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"rhoden-l": {
+"first_name": "Larry",
+"last_name": "Rhoden",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"ahlers-d": {
+"first_name": "Dan",
+"last_name": "Ahlers",
+"party": {
+"nyt_id": "DEM"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "SD",
+"name": "South Dakota",
+"eevp": 14.56,
+"candidates": [
+{
+"nyt_id": "rhoden-l",
+"votes": {
+"total": 32182
+},
+"leader": true
+},
+{
+"nyt_id": "ahlers-d",
+"votes": {
+"total": 16463
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "TN-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"blackburn-m": {
+"first_name": "Marsha",
+"last_name": "Blackburn",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"green-j": {
+"first_name": "Jerri",
+"last_name": "Green",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"pinkston-l": {
+"first_name": "Lauren",
+"last_name": "Pinkston",
+"party": {
+"nyt_id": "IND"
+}
+},
+"hatley-d": {
+"first_name": "David",
+"last_name": "Hatley",
+"party": {
+"nyt_id": "IND"
+}
+},
+"abidi-m": {
+"first_name": "Misam",
+"last_name": "Abidi",
+"party": {
+"nyt_id": "IND"
+}
+},
+"brewer-d": {
+"first_name": "Dean",
+"last_name": "Brewer",
+"party": {
+"nyt_id": "IND"
+}
+},
+"brown-r": {
+"first_name": "Ray",
+"last_name": "Brown",
+"party": {
+"nyt_id": "IND"
+}
+},
+"jackson-w": {
+"first_name": "Wendell",
+"last_name": "Jackson",
+"party": {
+"nyt_id": "IND"
+}
+},
+"van_morgan-c": {
+"first_name": "Charles",
+"last_name": "Van Morgan",
+"party": {
+"nyt_id": "IND"
+}
+},
+"murphy-e": {
+"first_name": "Eddie",
+"last_name": "Murphy",
+"party": {
+"nyt_id": "IND"
+}
+},
+"scoggin-v": {
+"first_name": "Victor",
+"last_name": "Scoggin",
+"party": {
+"nyt_id": "IND"
+}
+},
+"seeman-d": {
+"first_name": "Dave",
+"last_name": "Seeman",
+"party": {
+"nyt_id": "IND"
+}
+},
+"smithson-k": {
+"first_name": "Karl",
+"last_name": "Smithson",
+"party": {
+"nyt_id": "IND"
+}
+},
+"vick-r": {
+"first_name": "Robert",
+"last_name": "Vick",
+"party": {
+"nyt_id": "IND"
+}
+},
+"taylor-l": {
+"first_name": "L.",
+"last_name": "Taylor",
+"party": {
+"nyt_id": "IND"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "TN",
+"name": "Tennessee",
+"eevp": 70.24,
+"candidates": [
+{
+"nyt_id": "blackburn-m",
+"votes": {
+"total": 720743
+},
+"leader": true
+},
+{
+"nyt_id": "green-j",
+"votes": {
+"total": 711896
+},
+"leader": false
+},
+{
+"nyt_id": "hatley-d",
+"votes": {
+"total": 145768
+},
+"leader": false
+},
+{
+"nyt_id": "pinkston-l",
+"votes": {
+"total": 19783
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "TX-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"abbott-g": {
+"first_name": "Greg",
+"last_name": "Abbott",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"hinojosa-g": {
+"first_name": "Gina",
+"last_name": "Hinojosa",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"dixon-p": {
+"first_name": "Pat",
+"last_name": "Dixon",
+"party": {
+"nyt_id": "LIB"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "TX",
+"name": "Texas",
+"eevp": 55.75,
+"candidates": [
+{
+"nyt_id": "hinojosa-g",
+"votes": {
+"total": 3296378
+},
+"leader": true
+},
+{
+"nyt_id": "abbott-g",
+"votes": {
+"total": 2442125
+},
+"leader": false
+},
+{
+"nyt_id": "dixon-p",
+"votes": {
+"total": 73384
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "VT-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"scott-p": {
+"first_name": "Phil",
+"last_name": "Scott",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"janoo-a": {
+"first_name": "Amanda",
+"last_name": "Janoo",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"goodband-j": {
+"first_name": "June",
+"last_name": "Goodband",
+"party": {
+"nyt_id": "PJP"
+}
+},
+"judd-b": {
+"first_name": "Brian",
+"last_name": "Judd",
+"party": {
+"nyt_id": "IND"
+}
+},
+"roy-d": {
+"first_name": "Dean",
+"last_name": "Roy",
+"party": {
+"nyt_id": "OTH"
+}
+},
+"total_writeins": {
+"first_name": null,
+"last_name": "Total Write-ins",
+"party": {
+"nyt_id": "OTH"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "VT",
+"name": "Vermont",
+"eevp": 79.88,
+"candidates": [
+{
+"nyt_id": "scott-p",
+"votes": {
+"total": 129371
+},
+"leader": true
+},
+{
+"nyt_id": "janoo-a",
+"votes": {
+"total": 115346
+},
+"leader": false
+},
+{
+"nyt_id": "judd-b",
+"votes": {
+"total": 1992
+},
+"leader": false
+},
+{
+"nyt_id": "goodband-j",
+"votes": {
+"total": 986
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "WI-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "too_early",
+"outcome": {
+"won": [],
+"gained": null,
+"winner_accepted_at": [],
+"called_by": []
+},
+"candidate_metadata": {
+"crowley-d": {
+"first_name": "David",
+"last_name": "Crowley",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"tiffany-t": {
+"first_name": "Tom",
+"last_name": "Tiffany",
+"party": {
+"nyt_id": "GOP"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "WI",
+"name": "Wisconsin",
+"eevp": 39.35,
+"candidates": [
+{
+"nyt_id": "crowley-d",
+"votes": {
+"total": 642271
+},
+"leader": true
+},
+{
+"nyt_id": "tiffany-t",
+"votes": {
+"total": 486384
+},
+"leader": false
+}
+]
+}
+]
+},
+{
+"nyt_id": "WY-G-G-2026-11-03",
+"office_id": "G",
+"race_call_status": "called",
+"outcome": {
+"won": [
+"barlow-e"
+],
+"gained": false,
+"winner_accepted_at": [
+"2026-11-04T02:00:30.98294+00:00"
+],
+"called_by": [
+"ap"
+]
+},
+"candidate_metadata": {
+"barlow-e": {
+"first_name": "Eric",
+"last_name": "Barlow",
+"party": {
+"nyt_id": "GOP"
+}
+},
+"casner-k": {
+"first_name": "Kenneth",
+"last_name": "Casner",
+"party": {
+"nyt_id": "DEM"
+}
+},
+"bextel-r": {
+"first_name": "Rebecca",
+"last_name": "Bextel",
+"party": {
+"nyt_id": "CST"
+}
+}
+},
+"reporting_units": [
+{
+"state_postal": "WY",
+"name": "Wyoming",
+"eevp": 4.26,
+"candidates": [
+{
+"nyt_id": "barlow-e",
+"votes": {
+"total": 5213
+},
+"leader": true
+},
+{
+"nyt_id": "casner-k",
+"votes": {
+"total": 2317
+},
+"leader": false
+},
+{
+"nyt_id": "bextel-r",
+"votes": {
+"total": 960
+},
+"leader": false
+}
+]
+}
+]
+}
+],
+"partyControlData": {
+"count": 1,
+"results": [
+{
+"state_postal": "US",
+"state": "United States",
+"offices": {
+"H": {
+"office_id": "H",
+"office": "U.S. House",
+"lg_party_id": null,
+"total": 435,
+"open_seats": 435,
+"no_election_seats": 0,
+"num_races_called": 160,
+"to_win": {
+"DEM": 218,
+"GOP": 218,
+"OTH": 218
+},
+"party_balance": {
+"DEM": {
+"party_id": "DEM",
+"party": "Democrat",
+"party_abbreviation": "Dem.",
+"flip_count": 1,
+"seats": 102,
+"no_election": 0,
+"winner": false,
+"candidate_metadata": null,
+"controlled_at": null
+},
+"GOP": {
+"party_id": "GOP",
+"party": "Republican",
+"party_abbreviation": "Rep.",
+"flip_count": 0,
+"seats": 58,
+"no_election": 0,
+"winner": false,
+"candidate_metadata": null,
+"controlled_at": null
+},
+"OTH": {
+"party_id": "OTH",
+"party": "Independent",
+"party_abbreviation": "Ind.",
+"flip_count": 0,
+"seats": 0,
+"no_election": 0,
+"winner": false,
+"candidate_metadata": null,
+"controlled_at": null
+}
+},
+"current_control": {
+"DEM": 214,
+"GOP": 218,
+"OTH": 1
+},
+"nyt_model_estimates": [
+{
+"id": 149461,
+"nyt_party_id": "OTH",
+"ranking": 3,
+"seats": 0,
+"seats_quantile": [
+0,
+0,
+0,
+1,
+1
+],
+"win_probability": 0,
+"seat_margin": null,
+"seat_margin_quantile": null,
+"popular_vote": 1411738,
+"popular_vote_quantile": [
+1312829,
+1371936,
+1411738,
+1443154,
+1560214
+],
+"voteshare_margin": null,
+"voteshare_margin_quantile": null,
+"nyt_updated_at": "2026-11-04T02:58:53.239+00:00"
+},
+{
+"id": 149459,
+"nyt_party_id": "DEM",
+"ranking": 1,
+"seats": 250,
+"seats_quantile": [
+231,
+243,
+250,
+256,
+270
+],
+"win_probability": 1,
+"seat_margin": 65,
+"seat_margin_quantile": [
+27,
+52,
+65,
+77,
+106
+],
+"popular_vote": 65851510,
+"popular_vote_quantile": [
+62198950,
+64592172,
+65851510,
+67092033,
+69540401
+],
+"voteshare_margin": 0.1231,
+"voteshare_margin_quantile": [
+0.0782,
+0.1097,
+0.1231,
+0.1376,
+0.1642
+],
+"nyt_updated_at": "2026-11-04T02:58:53.239+00:00"
+},
+{
+"id": 149460,
+"nyt_party_id": "GOP",
+"ranking": 2,
+"seats": 185,
+"seats_quantile": [
+164,
+179,
+185,
+191,
+204
+],
+"win_probability": 0,
+"seat_margin": -65,
+"seat_margin_quantile": [
+-106,
+-77,
+-65,
+-52,
+-27
+],
+"popular_vote": 51258165,
+"popular_vote_quantile": [
+48235273,
+50090334,
+51258165,
+52291852,
+54549525
+],
+"voteshare_margin": -0.1231,
+"voteshare_margin_quantile": [
+-0.1646,
+-0.1377,
+-0.1231,
+-0.1099,
+-0.079
+],
+"nyt_updated_at": "2026-11-04T02:58:53.239+00:00"
+}
+],
+"nyt_model_chamber": {
+"id": 21523,
+"no_control": 0,
+"voteshare_inclusion": {
+"dem_margin_counted": [
+{
+"dem_margin_counted_county": -0.0522,
+"dem_margin_counted_precinct": 0,
+"dem_margin_counted_township": 0.2367
+}
+],
+"dem_margin_baseline": [
+{
+"dem_margin_baseline_county": -0.1036,
+"dem_margin_baseline_precinct": 0,
+"dem_margin_baseline_township": 0.2429
+}
+],
+"n_include_voteshare": [
+{
+"n_include_voteshare_county": 843,
+"n_include_voteshare_precinct": 0,
+"n_include_voteshare_township": 432
+}
+],
+"dem_margin_benchmark": [
+{
+"dem_margin_benchmark_county": -0.0373,
+"dem_margin_benchmark_precinct": 0,
+"dem_margin_benchmark_township": 0.0017
+}
+],
+"turnout_included_voteshare": [
+{
+"turnout_included_county": 16487288,
+"turnout_included_precinct": 0,
+"turnout_included_township": 868325
+}
+]
+},
+"estimate_components": {
+"proportion_model_voteshare": 0.311,
+"proportion_counted_voteshare": 0.28,
+"proportion_baseline_voteshare": 0.409
+},
+"seat_combination_probabilities": [
+{
+"DEM": 245,
+"GOP": 190,
+"OTH": 0,
+"prop_sims": 0.0386
+},
+{
+"DEM": 249,
+"GOP": 186,
+"OTH": 0,
+"prop_sims": 0.0353
+},
+{
+"DEM": 247,
+"GOP": 188,
+"OTH": 0,
+"prop_sims": 0.0333
+},
+{
+"DEM": 248,
+"GOP": 187,
+"OTH": 0,
+"prop_sims": 0.0326
+},
+{
+"DEM": 251,
+"GOP": 184,
+"OTH": 0,
+"prop_sims": 0.032
+},
+{
+"DEM": 252,
+"GOP": 183,
+"OTH": 0,
+"prop_sims": 0.032
+},
+{
+"DEM": 250,
+"GOP": 185,
+"OTH": 0,
+"prop_sims": 0.03
+},
+{
+"DEM": 243,
+"GOP": 192,
+"OTH": 0,
+"prop_sims": 0.028
+},
+{
+"DEM": 244,
+"GOP": 191,
+"OTH": 0,
+"prop_sims": 0.026
+},
+{
+"DEM": 253,
+"GOP": 182,
+"OTH": 0,
+"prop_sims": 0.0233
+},
+{
+"DEM": 255,
+"GOP": 180,
+"OTH": 0,
+"prop_sims": 0.0233
+},
+{
+"DEM": 242,
+"GOP": 193,
+"OTH": 0,
+"prop_sims": 0.0227
+},
+{
+"DEM": 238,
+"GOP": 197,
+"OTH": 0,
+"prop_sims": 0.022
+},
+{
+"DEM": 240,
+"GOP": 195,
+"OTH": 0,
+"prop_sims": 0.0213
+},
+{
+"DEM": 254,
+"GOP": 181,
+"OTH": 0,
+"prop_sims": 0.0207
+},
+{
+"DEM": 256,
+"GOP": 179,
+"OTH": 0,
+"prop_sims": 0.02
+},
+{
+"DEM": 241,
+"GOP": 194,
+"OTH": 0,
+"prop_sims": 0.0173
+},
+{
+"DEM": 246,
+"GOP": 189,
+"OTH": 0,
+"prop_sims": 0.0173
+},
+{
+"DEM": 251,
+"GOP": 183,
+"OTH": 1,
+"prop_sims": 0.0173
+},
+{
+"DEM": 237,
+"GOP": 198,
+"OTH": 0,
+"prop_sims": 0.016
+},
+{
+"DEM": 239,
+"GOP": 196,
+"OTH": 0,
+"prop_sims": 0.0147
+},
+{
+"DEM": 257,
+"GOP": 177,
+"OTH": 1,
+"prop_sims": 0.0147
+},
+{
+"DEM": 258,
+"GOP": 176,
+"OTH": 1,
+"prop_sims": 0.014
+},
+{
+"DEM": 248,
+"GOP": 186,
+"OTH": 1,
+"prop_sims": 0.0133
+},
+{
+"DEM": 249,
+"GOP": 185,
+"OTH": 1,
+"prop_sims": 0.0133
+},
+{
+"DEM": 253,
+"GOP": 181,
+"OTH": 1,
+"prop_sims": 0.0133
+},
+{
+"DEM": 257,
+"GOP": 178,
+"OTH": 0,
+"prop_sims": 0.0133
+},
+{
+"DEM": 260,
+"GOP": 174,
+"OTH": 1,
+"prop_sims": 0.0133
+},
+{
+"DEM": 250,
+"GOP": 184,
+"OTH": 1,
+"prop_sims": 0.0127
+},
+{
+"DEM": 254,
+"GOP": 180,
+"OTH": 1,
+"prop_sims": 0.0127
+},
+{
+"DEM": 260,
+"GOP": 175,
+"OTH": 0,
+"prop_sims": 0.0127
+},
+{
+"DEM": 243,
+"GOP": 191,
+"OTH": 1,
+"prop_sims": 0.012
+},
+{
+"DEM": 261,
+"GOP": 173,
+"OTH": 1,
+"prop_sims": 0.012
+},
+{
+"DEM": 252,
+"GOP": 182,
+"OTH": 1,
+"prop_sims": 0.0113
+},
+{
+"DEM": 255,
+"GOP": 179,
+"OTH": 1,
+"prop_sims": 0.0113
+},
+{
+"DEM": 256,
+"GOP": 178,
+"OTH": 1,
+"prop_sims": 0.0113
+},
+{
+"DEM": 236,
+"GOP": 199,
+"OTH": 0,
+"prop_sims": 0.0107
+},
+{
+"DEM": 247,
+"GOP": 187,
+"OTH": 1,
+"prop_sims": 0.0107
+},
+{
+"DEM": 233,
+"GOP": 202,
+"OTH": 0,
+"prop_sims": 0.01
+},
+{
+"DEM": 235,
+"GOP": 200,
+"OTH": 0,
+"prop_sims": 0.01
+},
+{
+"DEM": 245,
+"GOP": 189,
+"OTH": 1,
+"prop_sims": 0.01
+},
+{
+"DEM": 258,
+"GOP": 177,
+"OTH": 0,
+"prop_sims": 0.01
+},
+{
+"DEM": 259,
+"GOP": 176,
+"OTH": 0,
+"prop_sims": 0.01
+},
+{
+"DEM": 263,
+"GOP": 171,
+"OTH": 1,
+"prop_sims": 0.01
+},
+{
+"DEM": 261,
+"GOP": 174,
+"OTH": 0,
+"prop_sims": 0.0093
+},
+{
+"DEM": 234,
+"GOP": 201,
+"OTH": 0,
+"prop_sims": 0.0087
+},
+{
+"DEM": 264,
+"GOP": 170,
+"OTH": 1,
+"prop_sims": 0.0087
+},
+{
+"DEM": 268,
+"GOP": 166,
+"OTH": 1,
+"prop_sims": 0.0087
+},
+{
+"DEM": 259,
+"GOP": 175,
+"OTH": 1,
+"prop_sims": 0.008
+},
+{
+"DEM": 262,
+"GOP": 172,
+"OTH": 1,
+"prop_sims": 0.008
+},
+{
+"DEM": 246,
+"GOP": 188,
+"OTH": 1,
+"prop_sims": 0.0073
+},
+{
+"DEM": 231,
+"GOP": 204,
+"OTH": 0,
+"prop_sims": 0.0067
+},
+{
+"DEM": 263,
+"GOP": 172,
+"OTH": 0,
+"prop_sims": 0.006
+},
+{
+"DEM": 264,
+"GOP": 171,
+"OTH": 0,
+"prop_sims": 0.006
+},
+{
+"DEM": 265,
+"GOP": 169,
+"OTH": 1,
+"prop_sims": 0.006
+},
+{
+"DEM": 241,
+"GOP": 193,
+"OTH": 1,
+"prop_sims": 0.0053
+},
+{
+"DEM": 267,
+"GOP": 168,
+"OTH": 0,
+"prop_sims": 0.0053
+},
+{
+"DEM": 232,
+"GOP": 203,
+"OTH": 0,
+"prop_sims": 0.0047
+},
+{
+"DEM": 242,
+"GOP": 192,
+"OTH": 1,
+"prop_sims": 0.0047
+},
+{
+"DEM": 266,
+"GOP": 168,
+"OTH": 1,
+"prop_sims": 0.0047
+},
+{
+"DEM": 244,
+"GOP": 190,
+"OTH": 1,
+"prop_sims": 0.004
+},
+{
+"DEM": 265,
+"GOP": 170,
+"OTH": 0,
+"prop_sims": 0.004
+},
+{
+"DEM": 266,
+"GOP": 169,
+"OTH": 0,
+"prop_sims": 0.004
+},
+{
+"DEM": 270,
+"GOP": 165,
+"OTH": 0,
+"prop_sims": 0.004
+},
+{
+"DEM": 272,
+"GOP": 162,
+"OTH": 1,
+"prop_sims": 0.004
+},
+{
+"DEM": 228,
+"GOP": 207,
+"OTH": 0,
+"prop_sims": 0.0033
+},
+{
+"DEM": 230,
+"GOP": 205,
+"OTH": 0,
+"prop_sims": 0.0033
+},
+{
+"DEM": 231,
+"GOP": 203,
+"OTH": 1,
+"prop_sims": 0.0033
+},
+{
+"DEM": 239,
+"GOP": 195,
+"OTH": 1,
+"prop_sims": 0.0033
+},
+{
+"DEM": 262,
+"GOP": 173,
+"OTH": 0,
+"prop_sims": 0.0033
+},
+{
+"DEM": 267,
+"GOP": 167,
+"OTH": 1,
+"prop_sims": 0.0033
+},
+{
+"DEM": 225,
+"GOP": 210,
+"OTH": 0,
+"prop_sims": 0.0027
+},
+{
+"DEM": 240,
+"GOP": 194,
+"OTH": 1,
+"prop_sims": 0.0027
+},
+{
+"DEM": 269,
+"GOP": 165,
+"OTH": 1,
+"prop_sims": 0.0027
+},
+{
+"DEM": 269,
+"GOP": 166,
+"OTH": 0,
+"prop_sims": 0.0027
+},
+{
+"DEM": 271,
+"GOP": 163,
+"OTH": 1,
+"prop_sims": 0.0027
+},
+{
+"DEM": 275,
+"GOP": 159,
+"OTH": 1,
+"prop_sims": 0.0027
+},
+{
+"DEM": 223,
+"GOP": 211,
+"OTH": 1,
+"prop_sims": 0.002
+},
+{
+"DEM": 229,
+"GOP": 206,
+"OTH": 0,
+"prop_sims": 0.002
+},
+{
+"DEM": 237,
+"GOP": 197,
+"OTH": 1,
+"prop_sims": 0.002
+},
+{
+"DEM": 238,
+"GOP": 196,
+"OTH": 1,
+"prop_sims": 0.002
+},
+{
+"DEM": 268,
+"GOP": 167,
+"OTH": 0,
+"prop_sims": 0.002
+},
+{
+"DEM": 270,
+"GOP": 164,
+"OTH": 1,
+"prop_sims": 0.002
+},
+{
+"DEM": 273,
+"GOP": 161,
+"OTH": 1,
+"prop_sims": 0.002
+},
+{
+"DEM": 274,
+"GOP": 160,
+"OTH": 1,
+"prop_sims": 0.002
+},
+{
+"DEM": 219,
+"GOP": 216,
+"OTH": 0,
+"prop_sims": 0.0013
+},
+{
+"DEM": 224,
+"GOP": 211,
+"OTH": 0,
+"prop_sims": 0.0013
+},
+{
+"DEM": 227,
+"GOP": 207,
+"OTH": 1,
+"prop_sims": 0.0013
+},
+{
+"DEM": 234,
+"GOP": 200,
+"OTH": 1,
+"prop_sims": 0.0013
+},
+{
+"DEM": 235,
+"GOP": 199,
+"OTH": 1,
+"prop_sims": 0.0013
+},
+{
+"DEM": 274,
+"GOP": 161,
+"OTH": 0,
+"prop_sims": 0.0013
+},
+{
+"DEM": 277,
+"GOP": 158,
+"OTH": 0,
+"prop_sims": 0.0013
+},
+{
+"DEM": 283,
+"GOP": 151,
+"OTH": 1,
+"prop_sims": 0.0013
+},
+{
+"DEM": 220,
+"GOP": 215,
+"OTH": 0,
+"prop_sims": 0.0007
+},
+{
+"DEM": 221,
+"GOP": 214,
+"OTH": 0,
+"prop_sims": 0.0007
+},
+{
+"DEM": 222,
+"GOP": 213,
+"OTH": 0,
+"prop_sims": 0.0007
+},
+{
+"DEM": 223,
+"GOP": 212,
+"OTH": 0,
+"prop_sims": 0.0007
+},
+{
+"DEM": 225,
+"GOP": 209,
+"OTH": 1,
+"prop_sims": 0.0007
+},
+{
+"DEM": 226,
+"GOP": 209,
+"OTH": 0,
+"prop_sims": 0.0007
+},
+{
+"DEM": 227,
+"GOP": 208,
+"OTH": 0,
+"prop_sims": 0.0007
+},
+{
+"DEM": 228,
+"GOP": 206,
+"OTH": 1,
+"prop_sims": 0.0007
+},
+{
+"DEM": 229,
+"GOP": 204,
+"OTH": 2,
+"prop_sims": 0.0007
+},
+{
+"DEM": 230,
+"GOP": 204,
+"OTH": 1,
+"prop_sims": 0.0007
+},
+{
+"DEM": 271,
+"GOP": 164,
+"OTH": 0,
+"prop_sims": 0.0007
+},
+{
+"DEM": 272,
+"GOP": 163,
+"OTH": 0,
+"prop_sims": 0.0007
+},
+{
+"DEM": 273,
+"GOP": 162,
+"OTH": 0,
+"prop_sims": 0.0007
+},
+{
+"DEM": 275,
+"GOP": 160,
+"OTH": 0,
+"prop_sims": 0.0007
+},
+{
+"DEM": 276,
+"GOP": 158,
+"OTH": 1,
+"prop_sims": 0.0007
+},
+{
+"DEM": 278,
+"GOP": 156,
+"OTH": 1,
+"prop_sims": 0.0007
+},
+{
+"DEM": 280,
+"GOP": 154,
+"OTH": 1,
+"prop_sims": 0.0007
+},
+{
+"DEM": 281,
+"GOP": 153,
+"OTH": 1,
+"prop_sims": 0.0007
+},
+{
+"DEM": 282,
+"GOP": 152,
+"OTH": 1,
+"prop_sims": 0.0007
+},
+{
+"DEM": 289,
+"GOP": 145,
+"OTH": 1,
+"prop_sims": 0.0007
+}
+],
+"nyt_updated_at": "2026-11-04T02:58:53.239Z"
+},
+"model_settings": {
+"start_time": "2026-11-04T00:52:00+00:00",
+"end_time": null,
+"model_status": "active",
+"model_inactive_reason": null
+},
+"is_reporting": false
+},
+"S": {
+"office_id": "S",
+"office": "U.S. Senate",
+"lg_party_id": "GOP",
+"total": 100,
+"open_seats": 35,
+"no_election_seats": 65,
+"num_races_called": 16,
+"to_win": {
+"DEM": 51,
+"GOP": 50,
+"OTH": 51
+},
+"party_balance": {
+"DEM": {
+"party_id": "DEM",
+"party": "Democrat",
+"party_abbreviation": "Dem.",
+"flip_count": 1,
+"seats": 45,
+"no_election": 34,
+"winner": false,
+"candidate_metadata": null,
+"controlled_at": null
+},
+"GOP": {
+"party_id": "GOP",
+"party": "Republican",
+"party_abbreviation": "Rep.",
+"flip_count": 0,
+"seats": 36,
+"no_election": 31,
+"winner": false,
+"candidate_metadata": null,
+"controlled_at": null
+},
+"OTH": {
+"party_id": "OTH",
+"party": "Independent",
+"party_abbreviation": "Ind.",
+"flip_count": 0,
+"seats": 0,
+"no_election": 0,
+"winner": false,
+"candidate_metadata": null,
+"controlled_at": null
+}
+},
+"current_control": {
+"DEM": 45,
+"GOP": 57,
+"OTH": 2
+},
+"nyt_model_estimates": [
+{
+"id": 149464,
+"nyt_party_id": "OTH",
+"ranking": 3,
+"seats": 0,
+"seats_quantile": [
+0,
+0,
+0,
+1,
+1
+],
+"win_probability": 0,
+"seat_margin": null,
+"seat_margin_quantile": null,
+"popular_vote": 2226166,
+"popular_vote_quantile": [
+2001901,
+2139281,
+2226166,
+2310455,
+2510103
+],
+"voteshare_margin": null,
+"voteshare_margin_quantile": null,
+"nyt_updated_at": "2026-11-04T02:58:53.239+00:00"
+},
+{
+"id": 149462,
+"nyt_party_id": "DEM",
+"ranking": 1,
+"seats": 54,
+"seats_quantile": [
+51,
+53,
+54,
+55,
+57
+],
+"win_probability": 0.99,
+"seat_margin": 9,
+"seat_margin_quantile": [
+2,
+7,
+9,
+11,
+14
+],
+"popular_vote": 40006752,
+"popular_vote_quantile": [
+38301272,
+39287572,
+40006752,
+40597625,
+42076684
+],
+"voteshare_margin": 0.0742,
+"voteshare_margin_quantile": [
+0.0465,
+0.0648,
+0.0742,
+0.0837,
+0.1025
+],
+"nyt_updated_at": "2026-11-04T02:58:53.239+00:00"
+},
+{
+"id": 149463,
+"nyt_party_id": "GOP",
+"ranking": 2,
+"seats": 45,
+"seats_quantile": [
+42,
+44,
+45,
+46,
+49
+],
+"win_probability": 0.0093,
+"seat_margin": -9,
+"seat_margin_quantile": [
+-14,
+-11,
+-9,
+-7,
+-2
+],
+"popular_vote": 34331188,
+"popular_vote_quantile": [
+32468957,
+33614285,
+34331188,
+34959456,
+36634758
+],
+"voteshare_margin": -0.0742,
+"voteshare_margin_quantile": [
+-0.1027,
+-0.0838,
+-0.0742,
+-0.0648,
+-0.0466
+],
+"nyt_updated_at": "2026-11-04T02:58:53.239+00:00"
+}
+],
+"nyt_model_chamber": {
+"id": 21524,
+"no_control": 0.0007,
+"voteshare_inclusion": {
+"dem_margin_counted": [
+{
+"dem_margin_counted_county": -0.0427,
+"dem_margin_counted_precinct": 0,
+"dem_margin_counted_township": 0.2122
+}
+],
+"dem_margin_baseline": [
+{
+"dem_margin_baseline_county": -0.0885,
+"dem_margin_baseline_precinct": 0,
+"dem_margin_baseline_township": 0.1872
+}
+],
+"n_include_voteshare": [
+{
+"n_include_voteshare_county": 643,
+"n_include_voteshare_precinct": 0,
+"n_include_voteshare_township": 242
+}
+],
+"dem_margin_benchmark": [
+{
+"dem_margin_benchmark_county": -0.0846,
+"dem_margin_benchmark_precinct": 0,
+"dem_margin_benchmark_township": 0.0195
+}
+],
+"turnout_included_voteshare": [
+{
+"turnout_included_county": 14686341,
+"turnout_included_precinct": 0,
+"turnout_included_township": 684517
+}
+]
+},
+"estimate_components": {
+"proportion_model_voteshare": 0.3938,
+"proportion_counted_voteshare": 0.4392,
+"proportion_baseline_voteshare": 0.1669
+},
+"seat_combination_probabilities": [
+{
+"DEM": 54,
+"GOP": 46,
+"OTH": 0,
+"prop_sims": 0.1706
+},
+{
+"DEM": 55,
+"GOP": 45,
+"OTH": 0,
+"prop_sims": 0.1519
+},
+{
+"DEM": 53,
+"GOP": 47,
+"OTH": 0,
+"prop_sims": 0.1399
+},
+{
+"DEM": 55,
+"GOP": 44,
+"OTH": 1,
+"prop_sims": 0.1179
+},
+{
+"DEM": 54,
+"GOP": 45,
+"OTH": 1,
+"prop_sims": 0.0873
+},
+{
+"DEM": 56,
+"GOP": 44,
+"OTH": 0,
+"prop_sims": 0.068
+},
+{
+"DEM": 56,
+"GOP": 43,
+"OTH": 1,
+"prop_sims": 0.0666
+},
+{
+"DEM": 52,
+"GOP": 48,
+"OTH": 0,
+"prop_sims": 0.058
+},
+{
+"DEM": 53,
+"GOP": 46,
+"OTH": 1,
+"prop_sims": 0.0426
+},
+{
+"DEM": 52,
+"GOP": 47,
+"OTH": 1,
+"prop_sims": 0.0187
+},
+{
+"DEM": 51,
+"GOP": 49,
+"OTH": 0,
+"prop_sims": 0.0173
+},
+{
+"DEM": 57,
+"GOP": 42,
+"OTH": 1,
+"prop_sims": 0.0167
+},
+{
+"DEM": 56,
+"GOP": 42,
+"OTH": 2,
+"prop_sims": 0.0093
+},
+{
+"DEM": 50,
+"GOP": 50,
+"OTH": 0,
+"prop_sims": 0.008
+},
+{
+"DEM": 54,
+"GOP": 44,
+"OTH": 2,
+"prop_sims": 0.0053
+},
+{
+"DEM": 57,
+"GOP": 43,
+"OTH": 0,
+"prop_sims": 0.0053
+},
+{
+"DEM": 51,
+"GOP": 48,
+"OTH": 1,
+"prop_sims": 0.004
+},
+{
+"DEM": 55,
+"GOP": 43,
+"OTH": 2,
+"prop_sims": 0.004
+},
+{
+"DEM": 57,
+"GOP": 41,
+"OTH": 2,
+"prop_sims": 0.004
+},
+{
+"DEM": 49,
+"GOP": 51,
+"OTH": 0,
+"prop_sims": 0.0013
+},
+{
+"DEM": 52,
+"GOP": 46,
+"OTH": 2,
+"prop_sims": 0.0013
+},
+{
+"DEM": 50,
+"GOP": 49,
+"OTH": 1,
+"prop_sims": 0.0007
+},
+{
+"DEM": 53,
+"GOP": 45,
+"OTH": 2,
+"prop_sims": 0.0007
+},
+{
+"DEM": 56,
+"GOP": 41,
+"OTH": 3,
+"prop_sims": 0.0007
+}
+],
+"nyt_updated_at": "2026-11-04T02:58:53.239Z"
+},
+"model_settings": {
+"start_time": "2026-11-04T00:52:00+00:00",
+"end_time": null,
+"model_status": "active",
+"model_inactive_reason": null
+},
+"is_reporting": false
+}
+}
+}
+]
+}
+}
+}

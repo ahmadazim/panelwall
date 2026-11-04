@@ -135,6 +135,17 @@ class PrayersConfig:
 
 
 @dataclass
+class ElectionConfig:
+    """Election-night tracker (channels/election.py). Results from the NYT's public results JSON."""
+    date: str = _env("PW_ELECTION_DATE", "2026-11-03")
+    base: str = _env("PW_ELECTION_BASE", "https://static01.nyt.com/elections-assets/pages/data/{date}/results-{office}.json")
+    live_seconds: float = 60.0           # while votes are being counted
+    idle_seconds: float = 900.0
+    view_seconds: float = 10.0           # senate map -> governor map -> house chamber
+    banner_seconds: float = 12.0         # 'PROJECTED WINNER' takeover after a new call
+
+
+@dataclass
 class FlightWallConfig:
     """The FlightWall Widescreen replica card (channels/flightwall.py)."""
     title: str = _env("PW_FW_TITLE", "airline")           # airline | flight   (row 1: 'Southwest Airlines' or 'WN 1187')
@@ -159,6 +170,7 @@ class Config:
     forecast: ForecastConfig = field(default_factory=ForecastConfig)
     flightwall: FlightWallConfig = field(default_factory=FlightWallConfig)
     prayers: PrayersConfig = field(default_factory=PrayersConfig)
+    election: ElectionConfig = field(default_factory=ElectionConfig)
 
 
 CONFIG = Config()

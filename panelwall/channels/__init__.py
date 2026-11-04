@@ -1,4 +1,5 @@
 from .base import Channel
+from .election import ElectionChannel
 from .flights import FlightsChannel
 from .flightwall import FlightWallChannel
 from .forecast import ForecastChannel
@@ -11,4 +12,4 @@ from .silhouette import SilhouetteChannel
 from .sports import SportsChannel
 from .testpattern import TestPatternChannel
 
-__all__ = ["Channel", "FlightsChannel", "FlightWallChannel", "ForecastChannel", "GreenOverviewChannel", "MbtaChannel", "MeadowChannel", "PrayersChannel", "RadarChannel", "SilhouetteChannel", "SportsChannel", "TestPatternChannel"]
+__all__ = ["Channel", "ElectionChannel", "FlightsChannel", "FlightWallChannel", "ForecastChannel", "GreenOverviewChannel", "MbtaChannel", "MeadowChannel", "PrayersChannel", "RadarChannel", "SilhouetteChannel", "SportsChannel", "TestPatternChannel"]

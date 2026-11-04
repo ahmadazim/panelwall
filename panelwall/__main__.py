@@ -28,7 +28,7 @@ def _sink(args):
     return make_sink("sim", png_path=args.png, window=None if not args.no_window else False)
 
 
-DEFAULT_CHANNELS = ["flightwall", "flights", "radar", "silhouette", "mbta", "greenb", "greenc", "greend", "green", "sports", "boston", "nfl", "nba", "ucl", "f1", "tennis", "forecast", "prayers", "meadow"]
+DEFAULT_CHANNELS = ["flightwall", "flights", "radar", "silhouette", "mbta", "greenb", "greenc", "greend", "green", "sports", "boston", "nfl", "nba", "ucl", "f1", "tennis", "election", "forecast", "prayers", "meadow"]
 AIRCRAFT_CHANNELS = {"flightwall", "flights", "radar", "silhouette"}
 
 
@@ -78,6 +78,8 @@ def build_channels(names: list[str]):
             out.append(ch.PrayersChannel())
         elif name == "meadow":
             out.append(ch.MeadowChannel(forecast=fc_feed))
+        elif name == "election":
+            out.append(ch.ElectionChannel())
         elif name == "testpattern":
             out.append(ch.TestPatternChannel())
         else:
@@ -189,6 +191,16 @@ def fixture_channel(name: str, **kw):
     if name == "forecast":
         from .data.openmeteo import ForecastFeed
         return ch.ForecastChannel(feed=ForecastFeed(static=json.loads((FIXTURES / "openmeteo.json").read_text())), view=kw.get("view"))
+    if name == "election":
+        import time as _time
+        from .data.elections import ElectionFeed
+        feed = ElectionFeed(static=json.loads((FIXTURES / "nyt_election.json").read_text()))
+        if kw.get("banner"):                       # pretend the newest call just came in
+            called = sorted([r for r in feed.results.races.values() if r.called], key=lambda r: r.called_at)
+            pick = next((r for r in reversed(called) if r.state == kw["banner"]), called[-1] if called else None)
+            if pick:
+                feed.calls = [(_time.time() + 3600, pick)]
+        return ch.ElectionChannel(feed=feed, view=kw.get("view") if kw.get("view") in ("S", "G", "H") else None)
     if name == "meadow":
         from datetime import datetime
         from .data.openmeteo import ForecastFeed
@@ -201,7 +213,7 @@ def fixture_channel(name: str, **kw):
     raise ValueError(f"no fixture demo for {name!r}")
 
 
-DEMO_CHANNELS = ["flightwall", "flights", "radar", "silhouette", "mbta", "greenb", "greenc", "greend", "green", "sports", "boston", "nfl", "nba", "ucl", "f1", "tennis", "forecast", "prayers", "meadow", "testpattern"]
+DEMO_CHANNELS = ["flightwall", "flights", "radar", "silhouette", "mbta", "greenb", "greenc", "greend", "green", "sports", "boston", "nfl", "nba", "ucl", "f1", "tennis", "election", "forecast", "prayers", "meadow", "testpattern"]
 
 
 def cmd_demo(args):
@@ -212,6 +224,8 @@ def cmd_demo(args):
         kw["case"] = args.case
     if getattr(args, "page", None):
         kw["page"] = args.page
+    if getattr(args, "banner", None):
+        kw["banner"] = args.banner
     if getattr(args, "sky", None):
         kw["sky"] = args.sky
     if getattr(args, "hour", None) is not None:
@@ -252,6 +266,10 @@ def cmd_sheet(args):
                 tiles.append((f"sports ({pg})", led_image(render_channel_frame(n, page=pg), scale)))
         elif n in ("boston", "nfl", "nba", "ucl", "f1", "tennis"):
             continue                                  # same art as the sports pages above
+        elif n == "election":
+            for v in ("S", "G", "H"):
+                tiles.append((f"election ({v})", led_image(render_channel_frame(n, view=v), scale)))
+            tiles.append(("election (projected winner)", led_image(render_channel_frame(n, banner="NC"), scale)))
         elif n == "forecast":
             for v in ("week", "hourly"):
                 tiles.append((f"forecast ({v})", led_image(render_channel_frame(n, view=v), scale)))
@@ -440,6 +458,9 @@ def main(argv=None):
         if name == "sports":
             sp.add_argument("--page", choices=["live", "boston", "nfl", "nba", "ucl", "f1", "tennis"], default=None,
                             help="pin one page of the board (default: rotate)")
+        if name == "election":
+            sp.add_argument("--view", choices=["S", "G", "H"], default=None, help="pin Senate / Governors / House")
+            sp.add_argument("--banner", default=None, metavar="STATE", help="show the PROJECTED WINNER banner for a called race (e.g. NC)")
         if name == "meadow":
             sp.add_argument("--sky", choices=["sun", "partly", "cloud", "fog", "rain", "snow", "storm"], default=None,
                             help="force the weather (default: the forecast fixture's current code)")

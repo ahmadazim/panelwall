@@ -226,6 +226,13 @@ panelwall/
                        crests, LARGE score / kickoff, live minute or Q+clock; soccer goal scorers + minutes + red
                        cards, NFL down&distance + leaders, NBA per-team PTS/REB/AST leaders, MLB bases + outs); f1 podium + next race + car in livery lapping y 50-62;
                        tennis two scorebugs (MEDIUM names, set boxes). prio 25/12 (boston & sports only) / 4 / 0
+    election.py        ElectionChannel - views S / G / H every 10 s: map (usmap, 96x62 at x 0) with called states
+                       solid party colour, leaders pulsing dim, no votes grey, no race near-black, a call from the
+                       last 30 s flashing white; right panel from x 100: title, n/N CALLED, balance bar (Senate
+                       counts seats not up; majority tick), DEM n / n TO WIN / GOP n, FLIPS, 3 latest calls (or 3
+                       closest uncalled races). H = 435-seat hemicycle + DEM/GOP NEEDS n. PROJECTED WINNER banner
+                       (state silhouette 62x60, LARGE name, vote split bar) for 12 s per new call.
+                       prio 25 banner / 6 counting / 2 / 0
     prayers.py         PrayersChannel — athan/iqama table (5 rows, 9 px pitch, athan right@104, iqama right@160,
                        next prayer amber, past grey) + right block "NEXT ATHAN IN / ASR / 0:45:12" + sunrise/Jumu'ah.
                        prio 20 in a window around each athan/iqama (alert), else 4
@@ -282,6 +289,12 @@ panelwall/
                        fetched on a background thread on first use, cached in ~/.panelwall/logos (PW_LOGO_CACHE);
                        fixtures/logos/ also searched so demos/tests show crests offline. Render never waits: badge
                        until the tile arrives
+    elections.py       NYT results JSON (UNOFFICIAL, keyless, AP calls): static01.nyt.com/elections-assets/pages/
+                       data/<date>/results-{senate,governor}.json, ~120 KB gzipped each, every 60 s while votes are
+                       counted, else 15 min. The governor file's partyControlData carries Senate AND House control,
+                       so the 9 MB House file is never fetched. calls = races that became called while running
+                       (races already called at start-up are not news). CNN's politics.api.cnn.io national-races
+                       files also work but have no balance of power.
     espn.py            ESPN site API (UNOFFICIAL, keyless). Sources: /teams/<abbr>/schedule per tracked team (hourly),
                        today's /scoreboard for a league only while a tracked game is on or <30 min away (60 s,
                        situation details), NFL week (10 min), UCL ?dates=YYYYMM (15 min), F1 ?dates=YYYY (1 h),
@@ -526,6 +539,13 @@ spec-driven (config.MBTA_LINES). VERIFIED live: Green-B/C/D stops, vehicles (par
 at place-wascm / place-kencl, /routes direction_destinations, bus 65 predictions with filter[stop]=1295,1273 in
 one request. Keyless budget: one panel on screen = 3 req / 30 s; the overview = 7 req / 30 s = 14/min, still
 under 20/min but get a free MBTA key if more panels poll at once.
+
+3 Nov (election night): election channel (Ahmad: "when a state gets called ... put it up there ... render
+the US map and show the states going blue or red ... make it cool"). Map = Census 2010 20m outlines, Albers,
+AK/HI insets (tools/build_us_map.py -> assets/data/us_states.json, 59 KB); every state owns >= 1 LED at 96x62
+(DE 1 px, CT 3). VERIFIED live: both NYT files parse (71 races; NC Senate flip Cooper, GA governor flip Bottoms);
+a 30 s `run --channels election` updated the House from 160 to 169 called. UNVERIFIED: a call arriving while the
+wall runs (the detection path is covered by a test that flips a race in the fixture to called).
 
 4 Nov: NBA panel + Boston panel redesign (Ahmad: "the Boston one ... ugly as fuck" - the week list is gone).
 VERIFIED live: NBA scoreboard with per-team leaders and crests; Boston team headers (Celtics 5-2, 2nd in

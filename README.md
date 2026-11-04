@@ -35,6 +35,7 @@ web         the control server (standard library http.server, no build step)
 | `ucl` | Champions League matchday, two matches per screen: crests, score, live minute, goal scorers with minutes (P penalty, OG own goal), red cards | 4 |
 | `f1` | host-country flag beside each Grand Prix name, last race podium (P2, P1, P3 with team colours), next race countdown, the winner's car in livery lapping the bottom of the wall | 4 |
 | `tennis` | ATP/WTA, two TV-style scorebugs per screen: tournament, round, names, set boxes, the winner's ball | 4 |
+| `election` | election night: US map with states turning blue/red as AP calls come in (leaders pulse, new calls flash), Senate and Governors balance bars with latest calls and flips, a 435-seat House parliament chart, and a full-screen PROJECTED WINNER banner with the state's silhouette whenever a race is called | 25 for 12 s after a call, 6 while votes are counted, else 2 |
 | `prayers` | today's athan and iqama times from your fiveprayers.org display page, next-prayer countdown, sunrise and Jumu'ah | 20 from 10 min before to 3 min after each athan / iqama, else 4 |
 | `meadow` | screensaver: an orange tabby and Kuromi wander a looping parallax meadow. The sky follows the real time and weather from the shared forecast feed: sun on an east-left to west-right arc, dawn/dusk glow on the sun's side, moon and stars at night, clouds, rain, snow, lightning, fog | 2 (idle) |
 | `forecast` | Open-Meteo (keyless): WEEK view (7 days, glyphs, hi/lo, precip %) and HOURLY view (next 12 h temperature line) alternating every 20 s | 3, or 8 for 60 s when the current weather turns to precipitation |
@@ -58,6 +59,7 @@ python -m panelwall demo-radar | demo-silhouette | demo-mbta | demo-sports
 python -m panelwall demo-forecast --view week|hourly     # omit --view to alternate
 python -m panelwall demo-meadow --sky rain --hour 19      # force a sky / local hour for review
 python -m panelwall demo-sports --page boston|nfl|nba|ucl|f1|tennis   # or demo-ucl, demo-f1, ...
+python -m panelwall demo-election --view S|G|H          # Senate / Governors / House; --banner NC for a call
 python tools/capture_espn_fixture.py                     # refresh the sports fixture + crest tiles from live ESPN
 python -m panelwall probe-sports | probe-forecast        # hit every ESPN source / Open-Meteo and summarise
 python -m panelwall run                                  # live data + control UI on :8080
@@ -120,6 +122,8 @@ All optional. The app runs with none of them set.
 | `PW_CITY` | `BOSTON` | header of the sports channel |
 | `PW_SPORTS` | `boston,nfl,nba,ucl,f1,tennis` | sections of the `sports` wall, in rotation order |
 | `PW_LOGO_CACHE` | `~/.panelwall/logos` | where downloaded team crests are cached (each is fetched once, ever) |
+| `PW_ELECTION_DATE` | `2026-11-03` | which election the `election` channel follows (NYT results file date) |
+| `PW_ELECTION_BASE` | NYT results URL with `{date}` and `{office}` | swap the source if the NYT moves its files |
 | `PW_TZ` | `America/New_York` | timezone for Open-Meteo timestamps and prayer-time calculation |
 | `PW_PRAYERS_URL` | your fiveprayers.org display page | the page has no API: it is fetched every 6 h for its parameters and fixed iqama times, and the athan times are computed locally with the same algorithm its JavaScript uses (verified against it) |
 
